@@ -15,9 +15,10 @@
 #include "delay.h"
 
 
-//#define FOSC 1843200 //clock speed
-//#define BAUD 9600
-//#define MYUBRR FOSC/16/BAUD-1
+//uart
+#define FOSC 1843200 //clock speed
+#define BAUD 9600
+#define MYUBRR FOSC/16/BAUD-1
 
 
 void testPin();
@@ -27,16 +28,21 @@ int main() {
     //SFIOR = (1 << PUD);
     DDRB |= (1 << DDB0); //ouput
     //uartInit(54354);
-
-    //uartInit(MYUBRR);
+    uartInit(MYUBRR);
    
 
 while (1){
 
-    // uartTransmit(0xFF);
+    uartTransmit(0xFF);
          //testPin();
            //testPin();
     //PORTB ^= (1 << PB0); //toggle pin
+    sleep();
+
+    uartTransmit(0x00);
+    sleep();
+    //uartTransmit();
+//printf("im here\n");
 
     
 
@@ -49,11 +55,6 @@ while (1){
      sleep();
          
 
-    //uartTransmit(0x00);
-
-
-    //uartTransmit();
-//printf("im here\n");
 }
     return 0;
 }
