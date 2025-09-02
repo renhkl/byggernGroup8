@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "io.h": "c",
+        "sfr_defs.h": "c",
+        "uart.h": "c",
+        "iom162.h": "c",
+        "unistd.h": "c",
+        "iom163.h": "c",
+        "delay.h": "c",
+        "math.h": "c",
+        "delay_basic.h": "c"
+    }
+}

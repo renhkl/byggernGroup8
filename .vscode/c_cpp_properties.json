@@ -11,7 +11,7 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-x64",
              "compilerArgs": [
-                "-mmcu=atmega328p",     // Will ensure MCU defines are set correctly
+                "-mmcu=atmega162",     // Will ensure MCU defines are set correctly
                 "-DF_CPU=16000000UL",   // Will ensure F_CPU is set correctly
                 "-Os"                   // Will avoid optimization warnings re: _delay
             ]
