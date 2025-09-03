@@ -16,7 +16,7 @@
 
 
 //uart
-#define FOSC 1843200 //clock speed
+#define FOSC 4915200 //clock speed
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 
@@ -24,14 +24,26 @@
 void testPin();
 void sleep();
 
+
 int main() {
     //SFIOR = (1 << PUD);
     DDRB |= (1 << DDB0); //ouput
     //uartInit(54354);
     uartInit(MYUBRR);
+
+    //unsigned char received_data;
+
+    fdevopen(uartPutChar, NULL);
+
+    printf("Ready");
+    
    
 
 while (1){
+
+    char c2 = 'V';
+    uartTransmit('A');
+    putchar(c2);
 
     /*
     uartTransmit("{");
@@ -44,11 +56,20 @@ while (1){
     sleep();
     */
 
+    char c = getchar();
+    putchar(c);
+    
+    /*received_data = uartReceive();
+
+    uartTransmit(received_data);*/
+
+    /*printf("hei\n");
+
     uartTransmit("{");
 
-    printf(uartReceive());
+    printf(uartReceive());*/
 
-    //printf("hei\n");
+   
     
     //uartTransmit();
 //printf("im here\n");
@@ -61,9 +82,8 @@ while (1){
     sleep();
 
     PORTB &= ~(1 << PB0);
-
-     sleep();
-     */
+    */
+    sleep();
          
 
 }
