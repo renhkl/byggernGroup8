@@ -8,6 +8,8 @@
         "iom163.h": "c",
         "delay.h": "c",
         "math.h": "c",
-        "delay_basic.h": "c"
+        "delay_basic.h": "c",
+        "interrupt.h": "c",
+        "stdio.h": "c"
     }
 }
