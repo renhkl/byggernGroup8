@@ -12,20 +12,19 @@ UCSR0B = (1 << RXEN0) | (1< TXEN0); //enable RX and TX
 
 UCSR0C = (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00); //two stop bits
 
+UCSR0B |= (1 << RXCIE0); //interrupt rx
+
 }
 
 
- uartTransmit(uint8_t data) { //ubrr er input..
-/*int ubrr = 0;
-*/
-
+void uartTransmit(unsigned char data) { //ubrr er input.., byttet fra unit8_t
 while (!(UCSR0A & (1 << UDRE0)));
+//while ((!UCSR0A & (1 << TXC0))) //when tx is not busy
 UDR0 = data;
-
 }
 
 unsigned char uartReceive() {
-// while (!(UCSR0A & (1 << RXC0))) { //if receive completed
-//    return UDR;
-// }
+ while (!(UCSR0A & (1 << RXC0))); //data ready to be read
+    return UDR0;
+ 
 }

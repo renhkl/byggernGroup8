@@ -4,10 +4,10 @@
 # how to run
 > gcc main.c uart.c
 > make
-> ./a.out
+> make flash (ikke ./a.out)
 
 # Topp 10 kuleste signaler
-1. 
+1. GND (often overlooked, but critical just like a base guitar)
 2.
 3.
 4.

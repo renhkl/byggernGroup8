@@ -5,7 +5,7 @@
 
 void uartInit(unsigned int ubrr);
 
-void uartTransmit();
+void uartTransmit(unsigned char data);
 
 unsigned char uartReceive();
 

@@ -33,19 +33,29 @@ int main() {
 
 while (1){
 
-    uartTransmit(0xFF);
+    /*
+    uartTransmit("{");
          //testPin();
            //testPin();
     //PORTB ^= (1 << PB0); //toggle pin
     sleep();
 
-    uartTransmit(0x00);
+    uartTransmit(" ");
     sleep();
+    */
+
+    uartTransmit("{");
+
+    printf(uartReceive());
+
+    //printf("hei\n");
+    
     //uartTransmit();
 //printf("im here\n");
 
     
 
+    /*
     PORTB |= (1 << PINB0);
 
     sleep();
@@ -53,6 +63,7 @@ while (1){
     PORTB &= ~(1 << PB0);
 
      sleep();
+     */
          
 
 }
