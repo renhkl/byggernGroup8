@@ -1,9 +1,9 @@
 //#include </usr/lib/avr/include/avr/io.h>
-//#include <avr/io.h>
+#include <avr/io.h>
 
 #include "uart.h"
 
-#include "avr/io.h"
+//#include "avr/io.h"
 #include </usr/lib/avr/include/avr/iom162.h>
 #include <stdio.h>
 //#include <asm/types.h>
@@ -33,31 +33,35 @@ int main() {
 
     //unsigned char received_data;
 
-    fdevopen(uartPutChar, NULL);
+    //FILE* uartStream = fdevopen(uartPutChar, uartGetChar);
+    //stdout = uartStream; //printf with uart
+    //stdin = uartStream; //scanf with uart
 
-    printf("Ready");
+    //printf("Ready");
     
    
 
 while (1){
 
-    char c2 = 'V';
-    uartTransmit('A');
-    putchar(c2);
+    //char c2 = 'V';
+    uartTransmit('a');
+    //putchar(c2);  
 
-    /*
-    uartTransmit("{");
+    
+    //uartTransmit("{");
          //testPin();
            //testPin();
     //PORTB ^= (1 << PB0); //toggle pin
-    sleep();
+    //sleep();
 
-    uartTransmit(" ");
-    sleep();
-    */
+    //uartTransmit(" ");
+    //sleep();
+    //printf("yo\n");
+    
 
-    char c = getchar();
-    putchar(c);
+    //char c = getchar();
+    //putchar(c);
+    
     
     /*received_data = uartReceive();
 
