@@ -1,7 +1,8 @@
 #include "uart.h"
 #include "avr/io.h"
-#include </usr/lib/avr/include/avr/iom162.h>
 #include <stdio.h>
+#include </usr/lib/avr/include/avr/iom162.h>
+//#include <stdio.h>
 
 //we are using UART0
 
@@ -14,6 +15,8 @@ UCSR0B = (1 << RXEN0) | (1< TXEN0); //enable RX and TX
 UCSR0C = (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00); //two stop bits
 
 UCSR0B |= (1 << RXCIE0); //interrupt rx
+
+// fdevopen(uartPutChar, uartGetChar);
 
 }
 
