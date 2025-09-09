@@ -2,10 +2,10 @@
 #include </usr/lib/avr/include/avr/iom162.h>
 #include </usr/lib/avr/include/avr/interrupt.h>
 #include <stdio.h>
-#include <util/delay.h>
+//#include <avr/interrupt.h>
+//#include <util/delay.h>
 
-// --- Configuration Macros ---
-#define F_CPU 16000000UL // The CPU clock speed of the ATmega162
+#define F_CPU 4915200UL // Define CPU frequency as 16 MHz
 #define BAUD 9600 // The desired baud rate for serial communication
 #define UBRR_VAL ((F_CPU/16/BAUD)-1)
 
@@ -71,7 +71,7 @@ uart_putchar('\r', stream);
 }
 // Wait for the transmit buffer to be empty
 while (!(UCSR0A & (1 << UDRE0)));
-// Put data into the buffer and send it
+// Put data into the buffer and send it 
 UDR0 = c;
 return 0;
 }
