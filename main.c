@@ -16,107 +16,21 @@
 
 
 //uart
-#define FOSC 4915200 //clock speed
+#define F_CPU 4915200 //clock speed
 #define BAUD 9600
-#define MYUBRR FOSC/16/BAUD-1
-
-
-void testPin();
-void sleep();
-
+#define MYUBRR F_CPU/16/BAUD-1
 
 int main() {
-    //SFIOR = (1 << PUD);
-    DDRB |= (1 << DDB0); //ouput
-    //uartInit(54354);
+
     uartInit(MYUBRR);
 
-    //unsigned char received_data;
+    printf("HELLO WORLD");
 
-    //FILE* uartStream = fdevopen(uartPutChar, uartGetChar);
-    //stdout = uartStream; //printf with uart
-    //stdin = uartStream; //scanf with uart
-
-    //printf("Ready");
+    while(1){
+        char c = getchar();
+        printf("You typed: %c\n", c);
+    }
     
-   
-
-while (1){
-
-    //char c2 = 'V';
-    uartTransmit('a');
-    //putchar(c2);  
-
-    
-    //uartTransmit("{");
-         //testPin();
-           //testPin();
-    //PORTB ^= (1 << PB0); //toggle pin
-    //sleep();
-
-    //uartTransmit(" ");
-    //sleep();
-    //printf("yo\n");
-    
-
-    //char c = getchar();
-    //putchar(c);
-    
-    
-    /*received_data = uartReceive();
-
-    uartTransmit(received_data);*/
-
-    /*printf("hei\n");
-
-    uartTransmit("{");
-
-    printf(uartReceive());*/
-
-   
-    
-    //uartTransmit();
-//printf("im here\n");
-
-    
-
-    /*
-    PORTB |= (1 << PINB0);
-
-    sleep();
-
-    PORTB &= ~(1 << PB0);
-    */
-    sleep();
-         
-
-}
     return 0;
 }
 
-
-void sleep() {
-    for (long i = 0; i < 1000000; i++) {
-        __asm__("nop");
-    }
-}
-
-void testPin() {
-    
-    
-    //DDRB &= ~(1 << DDB0); //input
-    //PORTB |= (1 << PB0); //internal pullup
-    
-
-    
-    //PORTB &= ~(1 << PB0);
-    PORTB ^= (1 << PB2);
-    //PORTB ^= (1 << PB0); //toggle pin
-    //PINB |= (1 << PINB0);
-
-    sleep();
-    //_delay_ms(1000);
-
-    //PORTB &= ~(1 << PB0);
-//sleep();
-}

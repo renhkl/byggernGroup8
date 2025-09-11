@@ -12,7 +12,7 @@
 
 
 /dev/ttyACM0
-2. picocom -b 9600 -r -l /dev/ttyACM0
+2. picocom -b 9600 -r -l /dev/ttyS0
 (picocom -b <baudrate> -y <parity> d <databits> -p <stopbits> <serial port>)
 
 *** Picocom commands (all prefixed by [C-a])
