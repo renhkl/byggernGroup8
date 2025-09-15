@@ -3,6 +3,8 @@
 #include <stdio.h>
 
 #include "latch_test.h"
+#include "sram_test.h"
+
 #include "uart.h"
 #include "delay.h"
 
@@ -14,11 +16,12 @@
 int main() {
 
     MCUCR |= (1 << SRE);
-    latch_test();
 
     uartInit(MYUBRR);
 
     printf("LIZZARD");
+
+    SRAM_test();
 
     while(1){
         char c = getchar();

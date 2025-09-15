@@ -1,7 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include "avr/io.h"
-#include </usr/lib/avr/include/avr/iom162.h>
+#include "sram_test.h"
 
 void SRAM_test (void){
 
