@@ -14,9 +14,6 @@ void uartInit(unsigned int ubrr) {
     UCSR0C = (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00); //two stop bits
 
     fdevopen(uartPutChar, uartGetChar);
-
-    // fdevopen(uartPutChar, uartGetChar);
-
 }
 
 
@@ -44,6 +41,7 @@ int uartPutChar(char c, FILE *stream){
 
     return 0;
 }
+
 int uartGetChar(FILE *stream){
     while(!(UCSR0A & (1 << RXC0)));
 
