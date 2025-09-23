@@ -22,6 +22,8 @@ int main()
 
     uartInit(MYUBRR);
     counterInit();
+    printf("%d\n", adcRead());
+
     printf("LIZZARD");
 
     xmem_init();
@@ -34,8 +36,11 @@ int main()
         // xmem_write(0xF0, 0x1D00); //sram address, active high
         // xmem_write(0x0F, 0x1500);//adc address, active low
 
-        char c = getchar();
-        printf("You typed: %c\n", c);
+        // printf("%d\n", adcRead());
+        //_delay_ms(50);
+
+        // char c = getchar();
+        // printf("You typed: %c\n", c);
     }
 
     return 0;
