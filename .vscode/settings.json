@@ -10,7 +10,8 @@
     "math.h": "c",
     "delay_basic.h": "c",
     "stdio.h": "c",
-    "adc_joystick.h": "c"
+    "adc_joystick.h": "c",
+    "cstdint": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
