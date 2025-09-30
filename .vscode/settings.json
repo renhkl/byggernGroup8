@@ -11,7 +11,11 @@
     "delay_basic.h": "c",
     "stdio.h": "c",
     "adc_joystick.h": "c",
-    "cstdint": "c"
+    "cstdint": "c",
+    "cstddef": "c",
+    "array": "c",
+    "string": "c",
+    "string_view": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

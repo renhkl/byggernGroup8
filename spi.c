@@ -1,7 +1,7 @@
 #include "spi.h"
 
-#define SS1 PB3
-#define SS2 PB4
+#define SS1 PB3 //display
+#define SS2 PB4 //io
 
 //MASTER
 void SPIMasterInit(void){
@@ -20,10 +20,10 @@ void SPIMasterTransmit(char cData, int slave){
     _delay_ms(0.408);
 
     if (slave == 1){
-        PORTB &= ~(1 << SS1);
+        PORTB &= ~(1 << SS1); //display
     }
     else if (slave == 2){
-        PORTB &= ~(1 << SS2);
+        PORTB &= ~(1 << SS2); //io
     }
 
     _delay_ms(0.408);
@@ -35,5 +35,10 @@ void SPIMasterTransmit(char cData, int slave){
     }
 
     PORTB |= (1 << SS1 | 1 << SS2);
+}
+
+
+void SPIMasterTransmitDisplay(char cData){
+SPIMasterTransmit(cData, 1); 
 }
 

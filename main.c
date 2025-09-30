@@ -30,12 +30,22 @@ int main()
     SPIMasterInit();
     // printf("%d\n", adcRead());
     printf("LIZZARD");
+      oledInit();
+
+  
 
     // SRAM_cr_test();
     // ADC_test();
 
+    oledSetBrightness(255);
+    oledClearScreen();
+    oledPrintArrow(2, 0b01010101);
+    oledPrintChar();
+
+
     while (1)
     {
+        /*
         uint8_t *values = adcReap();
         int xPercentage = joystickPercentage(values[3]);
         int yPercentage = joystickPercentage(values[2]);
@@ -45,7 +55,12 @@ int main()
         printf(" DIRECTION: ");
         printDirection(direction);
         printf(" Angle: %d\n", voltageToAngle(values));
-        SPIMasterTransmit(0b00110011, 1);
+        */
+
+
+
+        // SPIMasterTransmit(0b00110011, 1);
+        
        
 
         // chip select test
@@ -62,4 +77,5 @@ int main()
     }
 
     return 0;
+
 }

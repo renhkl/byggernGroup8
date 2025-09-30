@@ -7,6 +7,7 @@
 
 void SPIMasterInit(void);
 void SPIMasterTransmit(char cData, int slave);
+void SPIMasterTransmitDisplay(char cData);
 int readByte();
 void writeByte(int byte);
 void writeNBytes(int *bytes, int n);
