@@ -6,6 +6,7 @@
 #include "sram_test.h"
 #include "xmem.h"
 #include "adc_joystick.h"
+#include <avr/interrupt.h>
 
 #include "uart.h"
 #include "delay.h"
@@ -16,6 +17,7 @@
 // uart baudrate
 #define BAUD 9600
 #define MYUBRR F_CPU / 16 / BAUD - 1
+
 
 int main()
 {
@@ -40,6 +42,7 @@ int main()
         printf(" DIRECTION: ");
         printDirection(direction);
         printf(" Angle: %d\n", voltageToAngle(values));
+       
 
         // chip select test
         // xmem_write(0xF0, 0x1D00); //sram address, active high

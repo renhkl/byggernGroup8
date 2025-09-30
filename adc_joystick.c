@@ -1,33 +1,72 @@
 #include "adc_joystick.h"
 #include <avr/io.h>
 #include <math.h>
+#include <avr/interrupt.h>
 
 // joystick init with calibrate?
 
 void counterInit(void) // timer/counter 3
 {
 
-    // wgm
-    // 1114
     DDRD |= (1 << DDD4);
 
-    // 01 toggle, 10 clear, 11 set
-    // TCCR3A |= (1 << COM3A1);
-    TCCR3A |= (1 << COM3A0); //
-
-    TCCR3B |= (1 << CS30); // prescaler = clk/1
+    // TCCR3B |= (1 << CS30); // prescaler = clk/1
     // TCCR3B |= (1 << CS31); // prescaler = clk/8
+        // 01 toggle, 10 clear, 11 set
+    // TCCR3A |= (1 << COM3A1);
+    // TCCR3A |= (1 << COM3A0); //toggle
+
+
     // TCCR3B |= (1 << CS32);
 
+    ///////////////////////////////////////////////
+    /*
     TCCR3A |= (1 << WGM32); // CTC with OCRnA
+    TCCR3A |= (1 << FOC3A);
 
     // accessing 16 bit reg on page 109
     // compare value
-    OCR3AH = 10;
-    OCR3AL = 255;
+    OCR3AH = 0;
+    OCR3AL = 100;
+
+    cli();
+
+    TIFR |= (1 << OCF3A);
+    TIMSK |= (1 << OCIE3A);
+
+    sei();
+    //TOV3
+    */
+
+    // TCCR3A |= (1 << COM3A1);
+    TCCR3A |= (1 << COM3A0); //toggle on compare match
+    // TCCR3A |= (1 << COM3B1);
+    // TCCR3A |= (1 << COM3B0);
+
+    // TCCR3A |= (1 << FOC3A);
+    // TCCR3A |= (1 << FOC3B);
+    
+
+    // TCCR3B |= (1 << ICNC3);
+    // TCCR3B |= (1 << ICES3);
+
+    // Waveform generation mode (CTC)
+    // TCCR3A |= (1 << WGM31);
+    // TCCR3A |= (1 << WGM30);
+    // TCCR3B |= (1 << WGM33);
+    TCCR3B |= (1 << WGM32);
+
+    // Prescaler (satt til 1)
+    // TCCR3B |= (1 << CS32);
+    // TCCR3B |= (1 << CS31);
+    TCCR3B |= (1 << CS30);
+    
+    OCR3AH = 0;
+    OCR3AL = 100;
+
 }
 
-int adcRead(void)
+int adcRead(void) //not used
 {
 
     xmem_read(0x1500); // read from adc so chip select

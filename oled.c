@@ -9,3 +9,10 @@ void oledPrintArrow(uint8_t row, uint8_t col) {
     oledWriteData(0b00011000);
 
 }
+
+void oledInit() { //datasheet
+    oledWriteData();
+    oledWriteData();
+     oledWriteData();
+    oledWriteData();
+}
