@@ -7,60 +7,18 @@
 
 void counterInit(void) // timer/counter 3
 {
+    DDRD |= (1 << DDD4); //pin D4 to output
 
-    DDRD |= (1 << DDD4);
-
-    // TCCR3B |= (1 << CS30); // prescaler = clk/1
-    // TCCR3B |= (1 << CS31); // prescaler = clk/8
-        // 01 toggle, 10 clear, 11 set
-    // TCCR3A |= (1 << COM3A1);
-    // TCCR3A |= (1 << COM3A0); //toggle
-
-
-    // TCCR3B |= (1 << CS32);
-
-    ///////////////////////////////////////////////
-    /*
-    TCCR3A |= (1 << WGM32); // CTC with OCRnA
-    TCCR3A |= (1 << FOC3A);
-
-    // accessing 16 bit reg on page 109
-    // compare value
-    OCR3AH = 0;
-    OCR3AL = 100;
-
-    cli();
-
-    TIFR |= (1 << OCF3A);
-    TIMSK |= (1 << OCIE3A);
-
-    sei();
-    //TOV3
-    */
-
-    // TCCR3A |= (1 << COM3A1);
     TCCR3A |= (1 << COM3A0); //toggle on compare match
-    // TCCR3A |= (1 << COM3B1);
-    // TCCR3A |= (1 << COM3B0);
-
-    // TCCR3A |= (1 << FOC3A);
-    // TCCR3A |= (1 << FOC3B);
-    
-
-    // TCCR3B |= (1 << ICNC3);
-    // TCCR3B |= (1 << ICES3);
-
+  
     // Waveform generation mode (CTC)
-    // TCCR3A |= (1 << WGM31);
-    // TCCR3A |= (1 << WGM30);
-    // TCCR3B |= (1 << WGM33);
+  
     TCCR3B |= (1 << WGM32);
 
     // Prescaler (satt til 1)
-    // TCCR3B |= (1 << CS32);
-    // TCCR3B |= (1 << CS31);
     TCCR3B |= (1 << CS30);
     
+    //compare value
     OCR3AH = 0;
     OCR3AL = 100;
 

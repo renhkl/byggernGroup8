@@ -11,6 +11,8 @@
 #include "uart.h"
 #include "delay.h"
 
+#include "spi.h"
+
 // #define F_CPU 4952000UL
 #define F_CPU 4915200UL
 
@@ -25,6 +27,7 @@ int main()
     uartInit(MYUBRR);
     xmem_init();
     counterInit();
+    SPIMasterInit();
     // printf("%d\n", adcRead());
     printf("LIZZARD");
 
@@ -42,6 +45,7 @@ int main()
         printf(" DIRECTION: ");
         printDirection(direction);
         printf(" Angle: %d\n", voltageToAngle(values));
+        SPIMasterTransmit(0b00110011, 1);
        
 
         // chip select test
