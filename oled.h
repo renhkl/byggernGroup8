@@ -2,6 +2,8 @@
 #define OLED_H
 
 #include <stdio.h>
+#include "adc_joystick.h"
+#include <avr/io.h>
 
 #define DISPLAY_OFF 0xAE
 #define SEGMENT_REMAP 0xA1
@@ -20,6 +22,13 @@
 #define DISPLAY_SS 1
 #define ASCII_OFFSET 32
 
+
+struct joystickCoordinates {
+    int row;
+    int column;
+};
+
+
 void oledInit();
 void goToLine(uint8_t line);
 void goToColumn(uint8_t column);
@@ -33,6 +42,13 @@ void oledWriteData(uint8_t data);
 void oledWriteCommand(uint8_t command);
 void oledSetBrightness(uint8_t lvl);
 void oledPrintChar(char c);
+void removeSymbol(uint8_t row, uint8_t col);
+
+//IO functions
+void moveArrowWithJoystick();
+int getJoystickButtonPosition(enum Direction direction, int row, int column);
+
+
 
 //graphics
 

@@ -46,11 +46,11 @@ int adcRead(void) //not used
 
 uint8_t *adcReap(void)
 {
-    static uint8_t values[4];
+    static uint8_t values[4]; 
 
     volatile uint8_t *adr = (volatile uint8_t *)0x1000;
     adr[0] = 0;
-    while (!(PINE & (1 << PE2)))
+    while (!(PINE & (1 << PE2))) //check busy signal
     {
     }
 
@@ -128,6 +128,8 @@ uint8_t voltageToAngle(uint8_t *values)
 
     return deg;
 }
+
+
 /*
 // uint8_t adc_read(uint8_t channel) { //volatile
 //
@@ -140,13 +142,5 @@ struct getJoystickPosition(void)
     return 1;
 
 }
-
-
-
-void pinClock()
-{ // using pin D4
-    DDRD |= (1 << DDD4);
-    PORTD ^= (1 << PIN4);
-    _delay_ms(100); // unknown delay
-}
     */
+

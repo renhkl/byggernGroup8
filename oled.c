@@ -12,6 +12,16 @@ void oledPrintArrow(uint8_t row, uint8_t col) {
     oledWriteData(0b00011000);
 }
 
+void removeSymbol(uint8_t row, uint8_t col) {
+    oledSetPosition(row, col);
+    oledWriteData(0b11111111);
+    oledWriteData(0b11111111);
+    oledWriteData(0b11111111);
+    oledWriteData(0b11111111);
+    oledWriteData(0b11111111);
+
+}
+
 void oledInit() { //datasheet
 
    DDRB |= (1 << PB2);
@@ -160,3 +170,85 @@ oledWriteData(0b00000000);
         
         
 }
+
+
+int getJoystickButtonPosition(enum Direction direction, int row, int column) {
+    DDRD &= ~(1 << DDD5); //set pin D5 as input
+
+    /*
+    struct joystickCoordinates jsCoord;
+    jsCoord.row = row;
+    jsCoord.column = column;
+    */
+
+    switch (direction) {
+        case LEFT:
+        if (column > 0 ) {
+            column--;
+               _delay_ms(500);
+        }
+     
+        break;
+        
+        case RIGHT:
+        if(column < 127) {
+            column++;
+               _delay_ms(500);
+        }
+        break;
+        
+        case UP:
+        if (row > 0) {
+            removeSymbol(row, 1);
+            row--;
+             oledPrintArrow(row, 1);
+            _delay_ms(500);
+          }
+        break;
+
+        case DOWN:
+         if (row < 7) {
+             removeSymbol(row, 1);
+          row++;
+           oledPrintArrow(row, 1);
+          _delay_ms(500);
+          }
+        break;
+    }
+
+    
+    if (!(PIND & (1 << PIN5))) {
+        return row;
+    }
+    else {
+        return column;
+    }
+
+    //oledSetPosition(row, column);
+
+
+}
+
+/*
+void moveArrowWithJoystick() {
+       if (direction == UP) {
+          if (row > 0){
+             removeSymbol(row, 1);
+            row--;
+            oledPrintArrow(row, 1);
+            _delay_ms(500);
+          }
+
+        }
+
+        else if (direction == DOWN) {
+          if (row < 7) {
+          removeSymbol(row, 1);
+          row++;
+          oledPrintArrow(row, 1);
+          _delay_ms(500);
+          }
+
+        }
+}
+        */
