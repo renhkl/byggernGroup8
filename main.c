@@ -32,6 +32,8 @@ int main()
     printf("LIZZARD");
       oledInit();
 
+      DDRD &= ~(1 << DDD5); //set pin D5 as input (joystick pin)
+ 
   
 
     // SRAM_cr_test();
@@ -39,23 +41,104 @@ int main()
 
     oledSetBrightness(255);
     oledClearScreen();
-    oledPrintArrow(2, 0b01010101);
-    oledPrintChar();
 
+  
+      oledSetPosition(0, 9);
+      oledPrintChar('h');
+      oledPrintChar('i');
+      oledPrintChar('g');
+      oledPrintChar('h');
+      oledPrintChar('s');
+      oledPrintChar('c');
+      oledPrintChar('o');
+      oledPrintChar('r');
+      oledPrintChar('e');
+           
+      oledSetPosition(1, 9);
+      oledPrintChar('0');
+
+      oledSetPosition(2, 9);
+      oledPrintChar('p');
+      oledPrintChar('l');
+      oledPrintChar('a');
+      oledPrintChar('y');
+
+      oledSetPosition(3, 9);
+      oledPrintChar('e');
+      oledPrintChar('x');
+      oledPrintChar('i');
+      oledPrintChar('t');
+
+      int row = 0;
+      int column = 0;
 
     while (1)
     {
-        /*
+        
         uint8_t *values = adcReap();
         int xPercentage = joystickPercentage(values[3]);
         int yPercentage = joystickPercentage(values[2]);
-        printf("TP_X: %d  TP_Y: %d  JS_Y: %d  JS_X: %d\n",
-               values[0], values[1], yPercentage, xPercentage);
+        //printf("TP_X: %d  TP_Y: %d  JS_Y: %d  JS_X: %d\n",
+        //       values[0], values[1], yPercentage, xPercentage);
         enum Direction direction = getJoystickDirection(xPercentage, yPercentage);
-        printf(" DIRECTION: ");
-        printDirection(direction);
-        printf(" Angle: %d\n", voltageToAngle(values));
-        */
+        //printf(" DIRECTION: ");
+        //printDirection(direction);
+        //printf(" Angle: %d\n", voltageToAngle(values));
+
+        //submenu
+
+        //getJoystickButtonPosition(direction, row, column);
+        //printf("%d \n", getJoystickButtonPosition());
+        
+
+        
+        if (direction == UP) {
+          if (row > 0){
+             removeSymbol(row, 1);
+            row--;
+            oledPrintArrow(row, 1);
+            _delay_ms(500);
+          }
+
+        }
+
+        else if (direction == DOWN) {
+          if (row < 7) {
+          removeSymbol(row, 1);
+          row++;
+          oledPrintArrow(row, 1);
+          _delay_ms(500);
+          }
+
+        }
+
+        else if (direction == LEFT) {
+          if (column > 0) {
+            column--;
+               _delay_ms(500);
+        }
+        }
+
+        else if (direction == RIGHT) {
+          if(column < 127) {
+            column++;
+               _delay_ms(500);
+        }
+        }
+
+
+         if (!(PIND & (1 << PIN5))) {
+         printf("%d %d\n", row, column);
+        }
+
+
+       
+
+        
+        
+
+  
+        
 
 
 

@@ -1,6 +1,7 @@
 #include "oled.h"
 #include "spi.h"
 #include "fonts.h"
+#include <avr/pgmspace.h>
 
 void oledPrintArrow(uint8_t row, uint8_t col) {
     oledSetPosition(row, col);
@@ -9,6 +10,15 @@ void oledPrintArrow(uint8_t row, uint8_t col) {
     oledWriteData(0b01111110);
     oledWriteData(0b00111100);
     oledWriteData(0b00011000);
+}
+
+void removeSymbol(uint8_t row, uint8_t col) {
+    oledSetPosition(row, col);
+    oledWriteData(0b11111111);
+    oledWriteData(0b11111111);
+    oledWriteData(0b11111111);
+    oledWriteData(0b11111111);
+    oledWriteData(0b11111111);
 
 }
 
@@ -112,12 +122,133 @@ void oledSetBrightness(uint8_t lvl) {
 }
 
 void oledPrintChar(char c) {
+ 
     int index = c - ASCII_OFFSET;
-    unsigned char charData[] = pgm_read_byte(*font8[index]);
+    //unsigned char charData[1][8] = pgm_read_byte(*font8[index][8]);
+    //printf(pgm_read_word(&font8[index][0]));
+    unsigned char charData[9] = //{pgm_read_byte(&font8[index])};
+    { pgm_read_byte(&font8[index][0]),
+    pgm_read_byte(&font8[index][1]),
+    pgm_read_byte(&font8[index][2]),
+    pgm_read_byte(&font8[index][3]),
+    pgm_read_byte(&font8[index][4]),
+    pgm_read_byte(&font8[index][5]),
+    pgm_read_byte(&font8[index][6]),
+    pgm_read_byte(&font8[index][7])};
     
     
-    for (int i = 0; i < 8; i++) {
+    
+  /*
+    printf("%d %d %d\n", c, index, pgm_read_byte(&font8[0]));
+    printf("%d %d %d %d %d %d %d %d \n", pgm_read_byte(&font8[index][0]),
+    pgm_read_byte(&font8[index][1]),
+    pgm_read_byte(&font8[index][2]),
+    pgm_read_byte(&font8[index][3]),
+    pgm_read_byte(&font8[index][4]),
+    pgm_read_byte(&font8[index][5]),
+    pgm_read_byte(&font8[index][6]),
+    pgm_read_byte(&font8[index][7]));
+   
+
+oledWriteData(0b00000000);
+oledWriteData(0b00000110);
+oledWriteData(0b01011111);
+oledWriteData(0b01011111);
+oledWriteData(0b00000110);
+oledWriteData(0b00000000);
+oledWriteData(0b00000000);
+oledWriteData(0b00000000);
+*/
+
+
+    for (int i = 0; i < 9; i++) {
+
         oledWriteData(charData[i]);
+        //printf("%d\n", charData[i]);
+
     }
         
+        
 }
+
+
+int getJoystickButtonPosition(enum Direction direction, int row, int column) {
+    DDRD &= ~(1 << DDD5); //set pin D5 as input
+
+    /*
+    struct joystickCoordinates jsCoord;
+    jsCoord.row = row;
+    jsCoord.column = column;
+    */
+
+    switch (direction) {
+        case LEFT:
+        if (column > 0 ) {
+            column--;
+               _delay_ms(500);
+        }
+     
+        break;
+        
+        case RIGHT:
+        if(column < 127) {
+            column++;
+               _delay_ms(500);
+        }
+        break;
+        
+        case UP:
+        if (row > 0) {
+            removeSymbol(row, 1);
+            row--;
+             oledPrintArrow(row, 1);
+            _delay_ms(500);
+          }
+        break;
+
+        case DOWN:
+         if (row < 7) {
+             removeSymbol(row, 1);
+          row++;
+           oledPrintArrow(row, 1);
+          _delay_ms(500);
+          }
+        break;
+    }
+
+    
+    if (!(PIND & (1 << PIN5))) {
+        return row;
+    }
+    else {
+        return column;
+    }
+
+    //oledSetPosition(row, column);
+
+
+}
+
+/*
+void moveArrowWithJoystick() {
+       if (direction == UP) {
+          if (row > 0){
+             removeSymbol(row, 1);
+            row--;
+            oledPrintArrow(row, 1);
+            _delay_ms(500);
+          }
+
+        }
+
+        else if (direction == DOWN) {
+          if (row < 7) {
+          removeSymbol(row, 1);
+          row++;
+          oledPrintArrow(row, 1);
+          _delay_ms(500);
+          }
+
+        }
+}
+        */

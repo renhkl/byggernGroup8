@@ -73,6 +73,6 @@ void buttonTest(void){
 }
 
 void SPIMasterTransmitDisplay(char cData){
-SPIMasterTransmit(cData, 1); 
+    SPIMasterTransmit(cData, 1); 
 }
 
