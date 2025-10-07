@@ -8,6 +8,8 @@ void SPIMasterInit(void){
     //      MOSI       SCK        
     DDRB |= (1 << PB5 | 1 << PB7 | 1 << PB3 | 1 << PB4);
 
+    DDRB &= ~(1 << PB6);
+
     PORTB |= (1 << SS1 | 1 << SS2);
 
     SPCR |= (1 << SPE) | (1 << MSTR) | (1 << SPR0) | (0 << CPOL) | (0 << CPHA);
@@ -37,6 +39,38 @@ void SPIMasterTransmit(char cData, int slave){
     PORTB |= (1 << SS1 | 1 << SS2);
 }
 
+char SPIMasterReceive(void){
+
+    PORTB &= ~(1 << SS2);
+
+    SPDR = 0xFF;
+
+    while(!(SPSR & (1 << SPIF))){
+        ;
+    }
+
+    PORTB |= (1 << SS2);
+
+    return SPDR;
+}
+
+void ledInit(void){
+    DDRD |= (1 << PD2);
+    PORTD &= ~(1 << PD2); 
+}
+
+void ledToggle(void){
+    PORTD ^= (1 << PD2);
+}
+
+void buttonTest(void){
+    buttons = SPIMasterReceive();
+
+    if(buttons & 1){
+        ledToggle();
+        _delay_ms(200);
+    }
+}
 
 void SPIMasterTransmitDisplay(char cData){
 SPIMasterTransmit(cData, 1); 
