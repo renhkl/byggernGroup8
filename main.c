@@ -28,6 +28,7 @@ int main()
     xmem_init();
     counterInit();
     SPIMasterInit();
+    ledInit();
     // printf("%d\n", adcRead());
     printf("LIZZARD");
       oledInit();
@@ -75,6 +76,7 @@ int main()
     while (1)
     {
         
+        buttonTest();
         uint8_t *values = adcReap();
         int xPercentage = joystickPercentage(values[3]);
         int yPercentage = joystickPercentage(values[2]);

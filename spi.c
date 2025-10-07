@@ -2,6 +2,7 @@
 
 #define SS1 PB3 //display
 #define SS2 PB4 //io
+#define IO_DELAY 40
 
 //MASTER
 void SPIMasterInit(void){
@@ -39,19 +40,29 @@ void SPIMasterTransmit(char cData, int slave){
     PORTB |= (1 << SS1 | 1 << SS2);
 }
 
-char SPIMasterReceive(void){
+void SPIMasterReceive(IOcommands command, char *data, uint8_t lenData){
 
     PORTB &= ~(1 << SS2);
 
-    SPDR = 0xFF;
+    SPDR = command;
+    _delay_us(IO_DELAY);
 
-    while(!(SPSR & (1 << SPIF))){
+    for(int i = 0; i < lenData; i++){
+        SPDR = 0xFF;
+        while(!(SPSR & (1 << SPIF))){
         ;
+        }
+        data[i] = SPDR;
+        _delay_us(2);
     }
 
     PORTB |= (1 << SS2);
+}
 
-    return SPDR;
+Buttons ioButton(void){
+    uint8_t data[3];
+    SPIMasterReceive(BUTTONS, data, 3);
+    return (Buttons) {data[0], data[1], data[2]};
 }
 
 void ledInit(void){
@@ -64,12 +75,17 @@ void ledToggle(void){
 }
 
 void buttonTest(void){
-    buttons = SPIMasterReceive();
+    Buttons buttons = ioButton();
+    printf("buttons: %x\n", buttons);
+    printf("buttons.right = 0x%02X\n", buttons.right);
+    printf("buttons.left = 0x%02X\n", buttons.left);
+    printf("buttons.nav = 0x%02X\n", buttons.nav);
 
-    if(buttons & 1){
+    if(buttons.left == 1){
         ledToggle();
-        _delay_ms(200);
+        printf("halla");
     }
+
 }
 
 void SPIMasterTransmitDisplay(char cData){
