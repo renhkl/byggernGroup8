@@ -1,6 +1,7 @@
 #include "oled.h"
 #include "spi.h"
 #include "fonts.h"
+#include <avr/pgmspace.h>
 
 void oledPrintArrow(uint8_t row, uint8_t col) {
     oledSetPosition(row, col);
@@ -9,7 +10,6 @@ void oledPrintArrow(uint8_t row, uint8_t col) {
     oledWriteData(0b01111110);
     oledWriteData(0b00111100);
     oledWriteData(0b00011000);
-
 }
 
 void oledInit() { //datasheet
@@ -112,12 +112,51 @@ void oledSetBrightness(uint8_t lvl) {
 }
 
 void oledPrintChar(char c) {
+ 
     int index = c - ASCII_OFFSET;
-    unsigned char charData[] = pgm_read_byte(*font8[index]);
+    //unsigned char charData[1][8] = pgm_read_byte(*font8[index][8]);
+    //printf(pgm_read_word(&font8[index][0]));
+    unsigned char charData[9] = //{pgm_read_byte(&font8[index])};
+    { pgm_read_byte(&font8[index][0]),
+    pgm_read_byte(&font8[index][1]),
+    pgm_read_byte(&font8[index][2]),
+    pgm_read_byte(&font8[index][3]),
+    pgm_read_byte(&font8[index][4]),
+    pgm_read_byte(&font8[index][5]),
+    pgm_read_byte(&font8[index][6]),
+    pgm_read_byte(&font8[index][7])};
     
     
-    for (int i = 0; i < 8; i++) {
+    
+  /*
+    printf("%d %d %d\n", c, index, pgm_read_byte(&font8[0]));
+    printf("%d %d %d %d %d %d %d %d \n", pgm_read_byte(&font8[index][0]),
+    pgm_read_byte(&font8[index][1]),
+    pgm_read_byte(&font8[index][2]),
+    pgm_read_byte(&font8[index][3]),
+    pgm_read_byte(&font8[index][4]),
+    pgm_read_byte(&font8[index][5]),
+    pgm_read_byte(&font8[index][6]),
+    pgm_read_byte(&font8[index][7]));
+   
+
+oledWriteData(0b00000000);
+oledWriteData(0b00000110);
+oledWriteData(0b01011111);
+oledWriteData(0b01011111);
+oledWriteData(0b00000110);
+oledWriteData(0b00000000);
+oledWriteData(0b00000000);
+oledWriteData(0b00000000);
+*/
+
+
+    for (int i = 0; i < 9; i++) {
+
         oledWriteData(charData[i]);
+        //printf("%d\n", charData[i]);
+
     }
+        
         
 }

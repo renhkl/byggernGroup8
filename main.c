@@ -31,7 +31,7 @@ int main()
     // printf("%d\n", adcRead());
     printf("LIZZARD");
       oledInit();
-
+ 
   
 
     // SRAM_cr_test();
@@ -40,7 +40,33 @@ int main()
     oledSetBrightness(255);
     oledClearScreen();
     oledPrintArrow(2, 0b01010101);
-    oledPrintChar();
+       oledSetPosition(2, 4);
+         oledPrintChar('h');
+      oledPrintChar('i');
+           oledPrintChar('g');
+      oledPrintChar('h');
+             oledPrintChar('s');
+      oledPrintChar('c');
+           oledPrintChar('o');
+      oledPrintChar('r');
+           oledPrintChar('e');
+
+           oledSetPosition(3, 4);
+
+                 oledPrintChar('p');
+      oledPrintChar('l');
+           oledPrintChar('a');
+      oledPrintChar('y');
+
+      oledSetPosition(4, 4);
+             oledPrintChar('e');
+      oledPrintChar('x');
+           oledPrintChar('i');
+      oledPrintChar('t');
+
+
+
+    
 
 
     while (1)
