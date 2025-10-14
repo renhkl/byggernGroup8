@@ -8,7 +8,7 @@
 //MASTER
 void SPIMasterInit(void){
     //      MOSI       SCK        
-    DDRB |= (1 << PB5 | 1 << PB7 | 1 << PB3 | 1 << PB4);
+    DDRB |= (1 << PB5 | 1 << PB7 | 1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
 
     DDRB &= ~(1 << PB6);
 
@@ -30,7 +30,7 @@ void SPIMasterTransmit(char cData, int slave){
         PORTB &= ~(1 << IO_SS); //io
     }
     else if (slave == 3){
-        PORTB &= ~(1 << CAN_SS); //io
+        PORTB &= ~(1 << CAN_SS); //CAN
     }
 
     _delay_ms(0.408);
@@ -41,7 +41,7 @@ void SPIMasterTransmit(char cData, int slave){
         ;
     }
 
-    PORTB |= (1 << DISPLAY_SS | 1 << IO_SS);
+    PORTB |= (1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
 }
 
 void SPIMasterReceive(IOcommands command, char *data, uint8_t lenData){

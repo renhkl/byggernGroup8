@@ -29,7 +29,6 @@ void mcp2515Reset (){
 
 uint8_t mcp2515Init ()
 {
-    SPIMasterInit(); // Initialize SPI
     mcp2515Reset(); // Send reset - command
     // Self - test
     uint8_t value = mcp2515Read(MCP_CANSTAT);
