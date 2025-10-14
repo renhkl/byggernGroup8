@@ -1,7 +1,7 @@
 #include "spi.h"
 
-#define SS1 PB3 //display
-#define SS2 PB4 //io
+#define DISPLAY_SS PB3 //display
+#define IO_SS PB4 //io
 #define CAN_SS PB0
 #define IO_DELAY 40
 
@@ -12,22 +12,22 @@ void SPIMasterInit(void){
 
     DDRB &= ~(1 << PB6);
 
-    PORTB |= (1 << SS1 | 1 << SS2);
+    PORTB |= (1 << DISPLAY_SS | 1 << IO_SS);
 
     SPCR |= (1 << SPE) | (1 << MSTR) | (1 << SPR0) | (0 << CPOL) | (0 << CPHA);
 }
 
 void SPIMasterTransmit(char cData, int slave){
 
-    PORTB |= (1 << SS1 | 1 << SS2 | 1 << CAN_SS);
+    PORTB |= (1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
 
     _delay_ms(0.408);
 
     if (slave == 1){
-        PORTB &= ~(1 << SS1); //display
+        PORTB &= ~(1 << DISPLAY_SS); //display
     }
     else if (slave == 2){
-        PORTB &= ~(1 << SS2); //io
+        PORTB &= ~(1 << IO_SS); //io
     }
     else if (slave == 3){
         PORTB &= ~(1 << CAN_SS); //io
@@ -41,12 +41,25 @@ void SPIMasterTransmit(char cData, int slave){
         ;
     }
 
-    PORTB |= (1 << SS1 | 1 << SS2);
+    PORTB |= (1 << DISPLAY_SS | 1 << IO_SS);
 }
 
-void SPIMasterReceive(IOcommands command, char *data, uint8_t lenData){
+void SPIMasterReceive(IOcommands command, char *data, uint8_t lenData, uint8_t slave){
 
-    PORTB &= ~(1 << SS2);
+    PORTB |= (1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
+
+    _delay_ms(0.408);
+
+    if (slave == 1){
+        printf("NOT IMPLEMENTED. STOOOP.\n");
+        return;
+    }
+    if (slave == 2){
+        PORTB &= ~(1 << IO_SS);
+    }
+    if (slave == 3){
+        PORTB &= ~(1 << CAN_SS);
+    }
 
     SPDR = command;
     _delay_us(IO_DELAY);
@@ -60,12 +73,12 @@ void SPIMasterReceive(IOcommands command, char *data, uint8_t lenData){
         _delay_us(2);
     }
 
-    PORTB |= (1 << SS2);
+    PORTB |= (1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
 }
 
 Buttons ioButton(void){
     uint8_t data[3];
-    SPIMasterReceive(BUTTONS, data, 3);
+    SPIMasterReceive(BUTTONS, data, 3, 2);
     return (Buttons) {data[0], data[1], data[2]};
 }
 

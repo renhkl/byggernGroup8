@@ -83,7 +83,7 @@ typedef struct __attribute__((packed)) {
 
 void SPIMasterInit(void);
 void SPIMasterTransmit(char cData, int slave);
-void SPIMasterReceive(IOcommands command, char *data, uint8_t lenData);
+void SPIMasterReceive(IOcommands command, char *data, uint8_t lenData, uint8_t slave);
 void SPIMasterTransmitDisplay(char cData);
 int readByte();
 void writeByte(int byte);
