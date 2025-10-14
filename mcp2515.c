@@ -5,6 +5,19 @@
 
 #define CAN_CS PB0
 
+uint8_t SPIMCP2515ReadStatus () {
+    PORTB &= ~(1 << PB0);
+    SPIMCP2515Transmit(MCP_READ_STATUS);
+    uint8_t result = SPIMCP2515Receive();
+    PORTB |= (1 << PB0);
+}
+
+uint8_t SPIMCP2515RTSAll() {
+    PORTB &= ~(1 << PB0);
+    SPIMCP2515Transmit(MCP_RTS_ALL);
+    PORTB |= (1 << PB0);
+}
+
 void SPIMCP2515Transmit(char cData) {
     
     _delay_ms(0.408);
