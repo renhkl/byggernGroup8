@@ -6,6 +6,29 @@
 #include <stdio.h>
 #include <util/delay.h>
 
+#define SR1 0x01
+#define SR2 0x02
+#define SR3 0x04
+#define SR4 0x08
+#define SR5 0x10
+#define SR6 0x20
+
+#define SL1 0x01
+#define SL2 0x02
+#define SL3 0x04
+#define SL4 0x08
+#define SL5 0x10
+#define SL6 0x20
+#define SL7 0x40
+
+#define NAV_BUTTON 0x01
+#define NAV_RIGHT 0x02
+#define NAV_DOWN 0x04
+#define NAV_LEFT 0x08
+#define NAV_UP 0x10
+
+
+
 typedef enum {
     TOUCH_PAD = 0x01,
     TOUCH_SLIDER = 0x02,
@@ -18,6 +41,18 @@ typedef enum {
 } IOcommands;
 
 typedef struct __attribute__((packed)) {
+
+     union {
+        uint8_t nav;
+        struct {
+        uint8_t NB:1;
+        uint8_t NR:1;
+        uint8_t ND:1;
+        uint8_t NL:1;
+        uint8_t NU:1;
+        };
+    };
+      
     union {
         uint8_t right;
         struct {
@@ -29,7 +64,8 @@ typedef struct __attribute__((packed)) {
         uint8_t R6:1;
         };
     };
-    union {
+
+      union {
         uint8_t left;
         struct {
         uint8_t L1:1;
@@ -41,16 +77,8 @@ typedef struct __attribute__((packed)) {
         uint8_t L7:1;
         };
     };
-    union {
-        uint8_t nav;
-        struct {
-        uint8_t NB:1;
-        uint8_t NR:1;
-        uint8_t ND:1;
-        uint8_t NL:1;
-        uint8_t NU:1;
-        };
-    };
+
+   
 } Buttons;
 
 void SPIMasterInit(void);
@@ -67,6 +95,6 @@ Buttons ioButton(void);
 //For testing io receive
 void ledInit(void);
 void ledToggle(void);
-void buttonTest(Buttons buttons);
+Buttons buttonTest(Buttons prevButtons);
 
 #endif

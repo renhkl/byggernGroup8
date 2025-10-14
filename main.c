@@ -46,10 +46,12 @@ int main()
       int row = 0;
       int column = 0;
 
+    Buttons buttons = ioButton();
+
     while (1)
     {
-        Buttons buttons = ioButton();
-        buttonTest();
+        
+        buttons = buttonTest(buttons);
         uint8_t *values = adcReap();
         int xPercentage = joystickPercentage(values[3]);
         int yPercentage = joystickPercentage(values[2]);
@@ -57,7 +59,7 @@ int main()
         //       values[0], values[1], yPercentage, xPercentage);
         enum Direction direction = getJoystickDirection(xPercentage, yPercentage);
         //printf(" DIRECTION: ");
-        //printDirection(direction);
+        printDirection(direction);
         //printf(" Angle: %d\n", voltageToAngle(values));
 
         //submenu
@@ -99,11 +101,6 @@ int main()
                _delay_ms(500);
         }
         }
-
-        //else {
-        //  oledPrintArrow(row, column);
-        //}
-
 
          if (!(PIND & (1 << PIN5))) {
          printf("%d %d\n", row, column);

@@ -74,20 +74,23 @@ void ledToggle(void){
     PORTD ^= (1 << PD2);
 }
 
-void buttonTest(Buttons buttons){
-    Buttons prevButtons = buttons;
-    buttons = ioButton();
+Buttons buttonTest(Buttons prevButtons){
+
+    Buttons buttons = ioButton();
 
     // printf("buttons: %x\n", buttons);
-    if (prevButtons.right != buttons.right) {printf("buttons.right = 0x%02X\n", buttons.right);}
-    if (prevButtons.left != buttons.left) {printf("buttons.left = 0x%02X\n", buttons.left);}
-    if (prevButtons.nav != buttons.nav) {printf("buttons.nav = 0x%02X\n", buttons.nav);}
+    if (prevButtons.left != buttons.left && buttons.left != 0) {printf("buttons.left = 0x%02X\n", buttons.left);}
+    //button SR3 toggles constantly anyway, so it has a defect and we choose to not use it
+    if (prevButtons.right != buttons.right && buttons.right != 0 && buttons.right != 0x04) {printf("buttons.right = 0x%02X\n", buttons.right);}
+    if (prevButtons.nav != buttons.nav && buttons.nav != 0) {printf("buttons.nav = 0x%02X\n", buttons.nav);}
     
 
     if(buttons.left == 1){
         ledToggle();
         printf("halla");
     }
+
+    return buttons;
 
 }
 
