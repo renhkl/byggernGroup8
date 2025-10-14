@@ -42,6 +42,7 @@ void oledWriteData(uint8_t data);
 void oledWriteCommand(uint8_t command);
 void oledSetBrightness(uint8_t lvl);
 void oledPrintChar(char c);
+void oledPrintString(char *str);
 void removeSymbol(uint8_t row, uint8_t col);
 
 //IO functions

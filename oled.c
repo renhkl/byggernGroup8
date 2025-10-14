@@ -171,6 +171,13 @@ oledWriteData(0b00000000);
         
 }
 
+void oledPrintString(char *str) {
+    while (*str != '\0') {
+        oledPrintChar(*str);
+        str++;
+    }
+}
+
 
 int getJoystickButtonPosition(enum Direction direction, int row, int column) {
     DDRD &= ~(1 << DDD5); //set pin D5 as input
@@ -232,31 +239,16 @@ int getJoystickButtonPosition(enum Direction direction, int row, int column) {
 void oledMakeTextMenu() {
      
       oledSetPosition(0, 9);
-      oledPrintChar('h');
-      oledPrintChar('i');
-      oledPrintChar('g');
-      oledPrintChar('h');
-      oledPrintChar('s');
-      oledPrintChar('c');
-      oledPrintChar('o');
-      oledPrintChar('r');
-      oledPrintChar('e');
+      oledPrintString("highscore");
            
       oledSetPosition(1, 9);
       oledPrintChar('0');
 
       oledSetPosition(2, 9);
-      oledPrintChar('p');
-      oledPrintChar('l');
-      oledPrintChar('a');
-      oledPrintChar('y');
+      oledPrintString("play");
 
       oledSetPosition(3, 9);
-      oledPrintChar('e');
-      oledPrintChar('x');
-      oledPrintChar('i');
-      oledPrintChar('t');
-
+      oledPrintString("exit");
 }
 
 /*
