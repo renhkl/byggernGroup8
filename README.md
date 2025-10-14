@@ -4,9 +4,8 @@ install toolchain from home (cd)
 
 
 # how to run
-> gcc main.c uart.c
 > make
-> make flash (ikke ./a.out)
+> make flash
 
 make && make flash
 

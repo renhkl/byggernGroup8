@@ -170,5 +170,8 @@ void mcp2515Reset();
 void mcp2515ReadStatus();
 void mcp2515Transmit(uint8_t data);
 
+void SPIMCP2515Transmit(char cData);
+uint8_t SPIMCP2515Receive();
+
 
 #endif //MCP2515

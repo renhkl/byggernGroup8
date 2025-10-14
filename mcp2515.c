@@ -5,11 +5,34 @@
 
 #define CAN_CS PB0
 
+void SPIMCP2515Transmit(char cData) {
+    
+    _delay_ms(0.408);
+
+    SPDR = cData;
+
+    while(!(SPSR & (1 << SPIF))){
+        ;
+    }
+}
+
+uint8_t SPIMCP2515Receive(){
+
+    SPDR = 0;
+    _delay_us(2);
+
+    while(!(SPSR & (1 << SPIF))){}
+    _delay_us(2);
+
+    return SPDR;
+}
+
 uint8_t mcp2515Read (uint8_t address)
 {
     PORTB &= ~(1 << CAN_CS); // Select CAN - controller
-    SPIMasterTransmit(MCP_READ, 3); // Send read instruction
-    uint8_t result = SPIMasterReceiveCAN(address); // Send address & Read result
+    SPIMCP2515Transmit(MCP_READ); // Send read instruction
+    SPIMCP2515Transmit(address); // Send address
+    uint8_t result = SPIMCP2515Receive(); // Send address & Read result
     PORTB |= (1 << CAN_CS); // Deselect CAN - controller
 
     //mcp2515BitModify(MCP_CANINTF,0b00000011, 0);
@@ -31,6 +54,7 @@ uint8_t mcp2515Init ()
 {
     mcp2515Reset(); // Send reset - command
     // Self - test
+    _delay_ms(10);
     uint8_t value = mcp2515Read(MCP_CANSTAT);
     printf("VALUE IS: %d\n", value);
     if ((value & MODE_MASK) != MODE_CONFIG) {

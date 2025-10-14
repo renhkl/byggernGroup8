@@ -67,27 +67,6 @@ void SPIMasterReceive(IOcommands command, char *data, uint8_t lenData){
     PORTB |= (1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
 }
 
-uint8_t SPIMasterReceiveCAN(uint8_t command){
-
-
-    PORTB |= (1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
-
-    _delay_ms(0.408);
-
-    PORTB &= ~(1 << CAN_SS);
-
-
-    SPDR = command;
-    _delay_us(IO_DELAY);
-
-    while(!(SPSR & (1 << SPIF))){}
-    _delay_us(2);
-    uint8_t result = SPDR;
-
-    PORTB |= (1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
-    return result;
-}
-
 Buttons ioButton(void){
     uint8_t data[3];
     SPIMasterReceive(BUTTONS, data, 3);
