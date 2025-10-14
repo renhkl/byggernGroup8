@@ -40,6 +40,14 @@ void mcp2515Write(uint8_t address, uint8_t data) {
     SPIMasterTransmit(data, 3);
 }
 
+void mcp2515BitModify(uint8_t address, uint8_t mask, uint8_t data) {
+
+    SPIMasterTransmit(0b00000101, 3);
+    SPIMasterTransmit(address, 3);
+    SPIMasterTransmit(mask, 3);
+    SPIMasterTransmit(data, 3);
+}
+
 void mcp2515Transmit(uint8_t data) {
 
     //CANINTEXinE
