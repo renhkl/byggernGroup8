@@ -2,6 +2,7 @@
 
 #define SS1 PB3 //display
 #define SS2 PB4 //io
+#define CAN_SS PB0
 #define IO_DELAY 40
 
 //MASTER
@@ -18,7 +19,7 @@ void SPIMasterInit(void){
 
 void SPIMasterTransmit(char cData, int slave){
 
-    PORTB |= (1 << SS1 | 1 << SS2);
+    PORTB |= (1 << SS1 | 1 << SS2 | 1 << CAN_SS);
 
     _delay_ms(0.408);
 
@@ -27,6 +28,9 @@ void SPIMasterTransmit(char cData, int slave){
     }
     else if (slave == 2){
         PORTB &= ~(1 << SS2); //io
+    }
+    else if (slave == 3){
+        PORTB &= ~(1 << CAN_SS); //io
     }
 
     _delay_ms(0.408);

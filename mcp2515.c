@@ -2,8 +2,9 @@
 
 #include "mcp2515.h"
 
-#define CAN_CS 3
+//#define CAN_CS 3
 
+/*
 uint8_t mcp2515Read (uint8_t address )
 {
 uint8_t result ;
@@ -29,4 +30,36 @@ return 1;
 }
 // More initialization
 return 0;
+}
+*/
+
+void mcp2515Write(uint8_t address, uint8_t data) {
+
+    SPIMasterTransmit(0b00000010, 3);
+    SPIMasterTransmit(address, 3);
+    SPIMasterTransmit(data, 3);
+}
+
+void mcp2515Transmit(uint8_t data) {
+
+    //CANINTEXinE
+    //txbnctrl txreq
+    //if (TxBnCTRL & (1 << TXREQ)) {
+
+    //}
+
+    //CP_RXF0SIDH
+
+// sendes med spi dXBnCTRL.TXREQ bi //means ready for transmission
+
+//message ID
+//TXBnSIDH
+//TXBnSIDL
+
+//data length
+//TXBnDm
+
+
+//CAninte.TXniE is set interrupt
+
 }
