@@ -1,6 +1,3 @@
-#ifndef __MCP2515_H
-#define __MCP2515_H
-
 /*
 mcp2515.h
 
@@ -12,6 +9,14 @@ v1.00       2003/12/11  Initial release
 
 Copyright 2003 Kimberly Otten Software Consulting
 */
+
+//this driver is made for setting up and changing the mcp2515 CAN controller's control and status registers
+
+#ifndef MCP2515_H
+#define MCP2515_H
+
+#include <stdio.h>
+#include <avr/io.h>
 
 // Define MCP2515 register addresses
 
@@ -156,4 +161,14 @@ Copyright 2003 Kimberly Otten Software Consulting
 
 
 
-#endif
+uint8_t mcp2515Init();
+uint8_t mcp2515Read(uint8_t address);
+void mcp2515Write();
+void mcp2515RequestToSend();
+void mcp2515BitModify();
+void mcp2515Reset();
+void mcp2515ReadStatus();
+
+
+
+#endif //MCP2515

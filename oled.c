@@ -229,6 +229,36 @@ int getJoystickButtonPosition(enum Direction direction, int row, int column) {
 
 }
 
+void oledMakeTextMenu() {
+     
+      oledSetPosition(0, 9);
+      oledPrintChar('h');
+      oledPrintChar('i');
+      oledPrintChar('g');
+      oledPrintChar('h');
+      oledPrintChar('s');
+      oledPrintChar('c');
+      oledPrintChar('o');
+      oledPrintChar('r');
+      oledPrintChar('e');
+           
+      oledSetPosition(1, 9);
+      oledPrintChar('0');
+
+      oledSetPosition(2, 9);
+      oledPrintChar('p');
+      oledPrintChar('l');
+      oledPrintChar('a');
+      oledPrintChar('y');
+
+      oledSetPosition(3, 9);
+      oledPrintChar('e');
+      oledPrintChar('x');
+      oledPrintChar('i');
+      oledPrintChar('t');
+
+}
+
 /*
 void moveArrowWithJoystick() {
        if (direction == UP) {

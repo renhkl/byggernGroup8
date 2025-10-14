@@ -53,5 +53,6 @@ int getJoystickButtonPosition(enum Direction direction, int row, int column);
 //graphics
 
 void oledPrintArrow(uint8_t row, uint8_t col);
+void oledMakeTextMenu();
 
 #endif

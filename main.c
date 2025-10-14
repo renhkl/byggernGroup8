@@ -35,48 +35,21 @@ int main()
 
       DDRD &= ~(1 << DDD5); //set pin D5 as input (joystick pin)
  
-  
-
     // SRAM_cr_test();
     // ADC_test();
 
     oledSetBrightness(255);
     oledClearScreen();
+    oledMakeTextMenu();
 
-  
-      oledSetPosition(0, 9);
-      oledPrintChar('h');
-      oledPrintChar('i');
-      oledPrintChar('g');
-      oledPrintChar('h');
-      oledPrintChar('s');
-      oledPrintChar('c');
-      oledPrintChar('o');
-      oledPrintChar('r');
-      oledPrintChar('e');
-           
-      oledSetPosition(1, 9);
-      oledPrintChar('0');
-
-      oledSetPosition(2, 9);
-      oledPrintChar('p');
-      oledPrintChar('l');
-      oledPrintChar('a');
-      oledPrintChar('y');
-
-      oledSetPosition(3, 9);
-      oledPrintChar('e');
-      oledPrintChar('x');
-      oledPrintChar('i');
-      oledPrintChar('t');
-
+ 
       int row = 0;
       int column = 0;
 
     while (1)
     {
         
-        buttonTest();
+        //buttonTest();
         uint8_t *values = adcReap();
         int xPercentage = joystickPercentage(values[3]);
         int yPercentage = joystickPercentage(values[2]);
@@ -84,14 +57,13 @@ int main()
         //       values[0], values[1], yPercentage, xPercentage);
         enum Direction direction = getJoystickDirection(xPercentage, yPercentage);
         //printf(" DIRECTION: ");
-        //printDirection(direction);
+        printDirection(direction);
         //printf(" Angle: %d\n", voltageToAngle(values));
 
         //submenu
 
         //getJoystickButtonPosition(direction, row, column);
         //printf("%d \n", getJoystickButtonPosition());
-        
 
         
         if (direction == UP) {
@@ -127,6 +99,10 @@ int main()
                _delay_ms(500);
         }
         }
+
+        //else {
+        //  oledPrintArrow(row, column);
+        //}
 
 
          if (!(PIND & (1 << PIN5))) {
