@@ -43,7 +43,7 @@ uint8_t mcp2515Read (uint8_t address)
 
 void mcp2515Reset (){
     PORTB &= ~(1 << CAN_CS);
-    SPIMasterTransmit(MCP_RESET, 3);
+    SPIMCP2515Transmit(MCP_RESET);
     _delay_ms(0.408);
     PORTB |= (1 << CAN_CS);
     return 0;
@@ -70,17 +70,21 @@ uint8_t mcp2515Init ()
 
 void mcp2515Write(uint8_t address, uint8_t data) {
 
-    SPIMasterTransmit(0b00000010, 3);
-    SPIMasterTransmit(address, 3);
-    SPIMasterTransmit(data, 3);
+    PORTB &= ~(1 << CAN_CS);
+    SPIMCP2515Transmit(0b00000010);
+    SPIMCP2515Transmit(address);
+    SPIMCP2515Transmit(data);
+    PORTB |= (1 << CAN_CS);
 }
 
 void mcp2515BitModify(uint8_t address, uint8_t mask, uint8_t data) {
 
-    SPIMasterTransmit(0b00000101, 3);
-    SPIMasterTransmit(address, 3);
-    SPIMasterTransmit(mask, 3);
-    SPIMasterTransmit(data, 3);
+    PORTB &= ~(1 << CAN_CS);
+    SPIMCP2515Transmit(0b00000101);
+    SPIMCP2515Transmit(address);
+    SPIMCP2515Transmit(mask);
+    SPIMCP2515Transmit(data);
+    PORTB |= (1 << CAN_CS);
 }
 
 void mcp2515Transmit(uint8_t data) {

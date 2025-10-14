@@ -52,7 +52,7 @@ int main()
 
     while (1)
     {
-        //mcp2515BitModify(MCP_CANCTRL, 0b11100000, 0b10000000);
+        mcp2515BitModify(MCP_CANCTRL, 0b11100000, 0b01000000);
         uint8_t read = mcp2515Read(MCP_CANCTRL);
         printf("READ VALUE: %d\n", read);
         
