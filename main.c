@@ -28,7 +28,7 @@ int main()
     xmem_init();
     counterInit();
     SPIMasterInit();
-    ledInit();
+    //ledInit();
     // printf("%d\n", adcRead());
     printf("LIZZARD");
       oledInit();
@@ -48,8 +48,8 @@ int main()
 
     while (1)
     {
-        
-        //buttonTest();
+        Buttons buttons = ioButton();
+        buttonTest();
         uint8_t *values = adcReap();
         int xPercentage = joystickPercentage(values[3]);
         int yPercentage = joystickPercentage(values[2]);
@@ -57,7 +57,7 @@ int main()
         //       values[0], values[1], yPercentage, xPercentage);
         enum Direction direction = getJoystickDirection(xPercentage, yPercentage);
         //printf(" DIRECTION: ");
-        printDirection(direction);
+        //printDirection(direction);
         //printf(" Angle: %d\n", voltageToAngle(values));
 
         //submenu

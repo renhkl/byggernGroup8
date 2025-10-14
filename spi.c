@@ -74,12 +74,15 @@ void ledToggle(void){
     PORTD ^= (1 << PD2);
 }
 
-void buttonTest(void){
-    Buttons buttons = ioButton();
-    printf("buttons: %x\n", buttons);
-    printf("buttons.right = 0x%02X\n", buttons.right);
-    printf("buttons.left = 0x%02X\n", buttons.left);
-    printf("buttons.nav = 0x%02X\n", buttons.nav);
+void buttonTest(Buttons buttons){
+    Buttons prevButtons = buttons;
+    buttons = ioButton();
+
+    // printf("buttons: %x\n", buttons);
+    if (prevButtons.right != buttons.right) {printf("buttons.right = 0x%02X\n", buttons.right);}
+    if (prevButtons.left != buttons.left) {printf("buttons.left = 0x%02X\n", buttons.left);}
+    if (prevButtons.nav != buttons.nav) {printf("buttons.nav = 0x%02X\n", buttons.nav);}
+    
 
     if(buttons.left == 1){
         ledToggle();

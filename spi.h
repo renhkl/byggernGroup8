@@ -67,6 +67,6 @@ Buttons ioButton(void);
 //For testing io receive
 void ledInit(void);
 void ledToggle(void);
-void buttonTest(void);
+void buttonTest(Buttons buttons);
 
 #endif

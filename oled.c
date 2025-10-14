@@ -30,11 +30,11 @@ void oledInit() { //datasheet
 
 SPIMasterTransmitDisplay(DISPLAY_OFF);
 SPIMasterTransmitDisplay(SEGMENT_REMAP);
-SPIMasterTransmitDisplay(COM_PINS_HARDWARE_CONFIGURATION);
-SPIMasterTransmitDisplay(0x12);
+//SPIMasterTransmitDisplay(COM_PINS_HARDWARE_CONFIGURATION);
+//SPIMasterTransmitDisplay(0x12);
 SPIMasterTransmitDisplay(COM_OUTPUT_SCAN_DIRECTION);
-SPIMasterTransmitDisplay(MULTIPLEXER_RATIO);
-SPIMasterTransmitDisplay(0x3F);
+//SPIMasterTransmitDisplay(MULTIPLEXER_RATIO);
+/*SPIMasterTransmitDisplay(0x3F);
 SPIMasterTransmitDisplay(DISPLAY_CLOCK_DIVIDER_RATIO);
 SPIMasterTransmitDisplay(0x80);
 SPIMasterTransmitDisplay(CONTRAST_CONTROL_FOR_BANK0);
@@ -49,6 +49,7 @@ SPIMasterTransmitDisplay(0xAD);
 SPIMasterTransmitDisplay(0x00);
 SPIMasterTransmitDisplay(ENTIRE_DISPLAY_ON);
 SPIMasterTransmitDisplay(NORMAL_DISPLAY);
+*/
 SPIMasterTransmitDisplay(DISPLAY_ON);
 
 }
