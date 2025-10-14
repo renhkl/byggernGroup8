@@ -5,16 +5,14 @@
 
 #define CAN_CS PB0
 
-uint8_t *mcp2515Read (uint8_t address)
+uint8_t mcp2515Read (uint8_t address)
 {
-    static uint8_t result[1];
     PORTB &= ~(1 << CAN_CS); // Select CAN - controller
     SPIMasterTransmit(MCP_READ, 3); // Send read instruction
-    //SPIMasterTransmit(address, 3); // Send address
-    SPIMasterReceive(address, result, 1, 3); // Read result
+    uint8_t result = SPIMasterReceiveCAN(address); // Send address & Read result
     PORTB |= (1 << CAN_CS); // Deselect CAN - controller
 
-    mcp2515BitModify(MCP_CANINTF,0b00000011, 0);
+    //mcp2515BitModify(MCP_CANINTF,0b00000011, 0);
 
     return result;
 }
@@ -31,13 +29,12 @@ void mcp2515Reset (){
 
 uint8_t mcp2515Init ()
 {
-    uint8_t *value;
     SPIMasterInit(); // Initialize SPI
     mcp2515Reset(); // Send reset - command
     // Self - test
-    value = mcp2515Read(MCP_CANSTAT);
-    printf("VALUE IS: %d\n", *value);
-    if ((*value & MODE_MASK) != MODE_CONFIG) {
+    uint8_t value = mcp2515Read(MCP_CANSTAT);
+    printf("VALUE IS: %d\n", value);
+    if ((value & MODE_MASK) != MODE_CONFIG) {
         printf("MCP2515 is NOT in configuration mode after reset!\n");
         return 1;
     }

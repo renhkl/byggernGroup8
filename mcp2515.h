@@ -162,7 +162,7 @@ Copyright 2003 Kimberly Otten Software Consulting
 
 
 uint8_t mcp2515Init();
-uint8_t *mcp2515Read(uint8_t address);
+uint8_t mcp2515Read (uint8_t address);
 void mcp2515Write(uint8_t address, uint8_t data);
 void mcp2515RequestToSend(); //txn rts pins..
 void mcp2515BitModify(uint8_t address, uint8_t mask, uint8_t data);

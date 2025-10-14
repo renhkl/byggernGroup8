@@ -53,8 +53,8 @@ int main()
     while (1)
     {
         //mcp2515BitModify(MCP_CANCTRL, 0b11100000, 0b10000000);
-        uint8_t *read = mcp2515Read(01110000);
-        printf("READ VALUE: %d\n", *read);
+        uint8_t read = mcp2515Read(MCP_CANCTRL);
+        printf("READ VALUE: %d\n", read);
         
         buttons = buttonTest(buttons);
         uint8_t *values = adcReap();
