@@ -2,6 +2,7 @@
 
 #define SS1 PB3 //display
 #define SS2 PB4 //io
+#define CAN_SS PB0
 #define IO_DELAY 40
 
 //MASTER
@@ -18,7 +19,7 @@ void SPIMasterInit(void){
 
 void SPIMasterTransmit(char cData, int slave){
 
-    PORTB |= (1 << SS1 | 1 << SS2);
+    PORTB |= (1 << SS1 | 1 << SS2 | 1 << CAN_SS);
 
     _delay_ms(0.408);
 
@@ -27,6 +28,9 @@ void SPIMasterTransmit(char cData, int slave){
     }
     else if (slave == 2){
         PORTB &= ~(1 << SS2); //io
+    }
+    else if (slave == 3){
+        PORTB &= ~(1 << CAN_SS); //io
     }
 
     _delay_ms(0.408);
@@ -74,20 +78,23 @@ void ledToggle(void){
     PORTD ^= (1 << PD2);
 }
 
-void buttonTest(Buttons buttons){
-    Buttons prevButtons = buttons;
-    buttons = ioButton();
+Buttons buttonTest(Buttons prevButtons){
+
+    Buttons buttons = ioButton();
 
     // printf("buttons: %x\n", buttons);
-    if (prevButtons.right != buttons.right) {printf("buttons.right = 0x%02X\n", buttons.right);}
-    if (prevButtons.left != buttons.left) {printf("buttons.left = 0x%02X\n", buttons.left);}
-    if (prevButtons.nav != buttons.nav) {printf("buttons.nav = 0x%02X\n", buttons.nav);}
+    if (prevButtons.left != buttons.left && buttons.left != 0) {printf("buttons.left = 0x%02X\n", buttons.left);}
+    //button SR3 toggles constantly anyway, so it has a defect and we choose to not use it
+    if (prevButtons.right != buttons.right && buttons.right != 0 && buttons.right != 0x04) {printf("buttons.right = 0x%02X\n", buttons.right);}
+    if (prevButtons.nav != buttons.nav && buttons.nav != 0) {printf("buttons.nav = 0x%02X\n", buttons.nav);}
     
 
     if(buttons.left == 1){
         ledToggle();
         printf("halla");
     }
+
+    return buttons;
 
 }
 

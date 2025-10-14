@@ -12,13 +12,24 @@ void oledPrintArrow(uint8_t row, uint8_t col) {
     oledWriteData(0b00011000);
 }
 
+
+
+void oledPrintCircle(uint8_t row, uint8_t col) {
+    oledSetPosition(row, col);
+    oledWriteData(0b01111110);
+    oledWriteData(0b00111100);
+    oledWriteData(0b11111111);
+    oledWriteData(0b01111110);
+    oledWriteData(0b00111100);
+}
+
 void removeSymbol(uint8_t row, uint8_t col) {
     oledSetPosition(row, col);
-    oledWriteData(0b11111111);
-    oledWriteData(0b11111111);
-    oledWriteData(0b11111111);
-    oledWriteData(0b11111111);
-    oledWriteData(0b11111111);
+    oledWriteData(0);
+    oledWriteData(0);
+    oledWriteData(0);
+    oledWriteData(0);
+    oledWriteData(0);
 
 }
 
@@ -55,6 +66,8 @@ SPIMasterTransmitDisplay(DISPLAY_ON);
 }
 
 void oledWriteData(uint8_t data) { //datasheet
+
+    //data = ~data; //background becomes white
 
     DDRB |= (1 << PB2);
     PORTB |= (1 << PIN2);
@@ -100,7 +113,7 @@ void oledClearPage(uint8_t line) {
     goToLine(line);
     goToColumn(0);
     for (int i=0; i<128; i++) {
-        oledWriteData(0xFF); //black
+        oledWriteData(0x0); //0 = black, FF = white
     }
 }
 
