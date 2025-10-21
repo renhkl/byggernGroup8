@@ -2,17 +2,17 @@
 #include </usr/lib/avr/include/avr/iom162.h>
 #include <stdio.h>
 
-#include "latch_test.h"
-#include "sram_test.h"
-#include "xmem.h"
-#include "adc_joystick.h"
+#include "TEST/latch_test.h"
+#include "TEST/sram_test.h"
+#include "MCU/xmem.h"
+#include "IO/adc_joystick.h"
 #include <avr/interrupt.h>
 
-#include "uart.h"
+#include "MCU/uart.h"
 #include "delay.h"
-#include "mcp2515.h"
+#include "CAN/mcp2515.h"
 
-#include "spi.h"
+#include "MCU/spi.h"
 
 // #define F_CPU 4952000UL
 #define F_CPU 4915200UL
@@ -32,7 +32,8 @@ int main()
     mcp2515Init();
     //ledInit();
     // printf("%d\n", adcRead());
-    printf("LIZZARD");
+    printf("LIZZARD\n");
+    _delay_ms(1000);
       oledInit();
 
       DDRD &= ~(1 << DDD5); //set pin D5 as input (joystick pin)
@@ -53,7 +54,7 @@ int main()
     while (1)
     {
         mcp2515BitModify(MCP_CANCTRL, 0b11100000, 0b01000000);
-        uint8_t read = mcp2515Read(MCP_CANCTRL);
+        uint8_t read = mcp2515Read(MCP_CANSTAT);
         printf("READ VALUE: %d\n", read);
         
         buttons = buttonTest(buttons);

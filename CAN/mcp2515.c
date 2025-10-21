@@ -24,7 +24,7 @@ void SPIMCP2515Transmit(char cData) {
 
     SPDR = cData;
 
-    while(!(SPSR & (1 << SPIF))){
+    while(!(SPSR & (1 << SPIF))){ 
         ;
     }
 }
@@ -45,7 +45,7 @@ uint8_t mcp2515Read (uint8_t address)
     PORTB &= ~(1 << CAN_CS); // Select CAN - controller
     SPIMCP2515Transmit(MCP_READ); // Send read instruction
     SPIMCP2515Transmit(address); // Send address
-    uint8_t result = SPIMCP2515Receive(); // Send address & Read result
+    uint8_t result = SPIMCP2515Receive(); //  Read result
     PORTB |= (1 << CAN_CS); // Deselect CAN - controller
 
     //mcp2515BitModify(MCP_CANINTF,0b00000011, 0);
