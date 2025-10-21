@@ -21,11 +21,19 @@ int main()
 
     //Uncomment after including uart above
     //uart_init(/*cpufreq*/, /*baud*/);
-    //printf("Hello World\n\r");
+      uart_init(84000000, 9600);
+    
+    PIOB->PIO_OER = PIO_OER_P13; //make output
+    PIOB->PIO_SODR = PIO_SODR_P13; //set high 
+    //PIOB->PIO_ODR = PIO_CODR_P13; //clear/low
+    
+
+    //PIO_PB13;
 
     while (1)
     {
         /* code */
+        printf("CHARIZARD\n\r");
     }
     
 }
