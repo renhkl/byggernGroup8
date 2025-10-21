@@ -11,6 +11,7 @@ void canSetLoopbackMode() {
 
 void canTransmit(uint8_t id, uint64_t data)  {
 
+//mcp2515RTSAll(); //init message transmission
     /* Setup
 - Message ID (TXBnSIDH &
 TXBnSIDL)
@@ -25,17 +26,17 @@ TXBnSIDL)
 uint8_t CanCTRL = mcp2515Read(TXB0CTRL);
 //printf("CANCTRL: %d\t", CanCTRL);
 if ((CanCTRL >> 3) & 1) {
-    //printf("TRANSMIT FAIL. BUSY.\n");
+    printf("TRANSMIT FAIL. BUSY.\n");
     return;
 }
 //printf("TRANSMITTING....\n");
 
-uint8_t databytes = 0;
-while ((1 << BYTE_SIZE*databytes) < data) {
-    databytes++; printf("bytes %d\t", databytes); printf("data %d\n", data);}
+uint64_t databytes = 0;
+while ((1 << BYTE_SIZE*databytes) < data) {databytes++;}
 
+printf("ID %d\t", id);
 id = id << 5;
-printf("ID %d\n", id);
+
 
 mcp2515Write(TXB0SIDL, id);
 mcp2515Write(TXB0SIDH, 0);
@@ -84,14 +85,16 @@ if ((mcp2515Read(MCP_CANINTF) & 0b00000001) == 1) {//if recieve buffer is ready
         bytes += mcp2515Read(RXB0D0+byte) << BYTE_SIZE*byte;
     }
 
-    mcp2515BitModify(MCP_CANINTF,0b00000011, 0);
+    mcp2515BitModify(MCP_CANINTF, 0b00000011, 0);
+
+    
     return bytes;
 }
 /*
 bytes += mcp2515Read(RXB0D0);
 bytes += mcp2515Read(RXB0D1) << BYTE_SIZE;
 bytes += mcp2515Read(RXB0D2) << BYTE_SIZE*2;
-bytes += mcp2515Read(RXB0D3) << BYTE_SIZE*3;
+bytes += mcp2515Read(RXB0D3) << BYTE_SIZE*32515BitModify(MCP_CANINTF,0b00000011, 0);;
 bytes += mcp2515Read(RXB0D4) << BYTE_SIZE*4;
 bytes += mcp2515Read(RXB0D5) << BYTE_SIZE*5;
 bytes += mcp2515Read(RXB0D6) << BYTE_SIZE*6;
