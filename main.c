@@ -52,17 +52,22 @@ int main()
 
     Buttons buttons = ioButton();
 
+    
+
     canSetLoopbackMode();
+    uint8_t read = mcp2515Read(MCP_CANSTAT);
+    //printf("MCP_CANSTAT VALUE: %d\n", read);
+    if (read == 255) {
+      //printf("INVALID MCP READING, CHECK YOUR CONNECTIONS\n");
+    }
 
     while (1)
     {
-        
-      canTransmit(1, 12);
+      uint64_t x = 25;
+      canTransmit(1, x);
       printf("CAN READ VALUE: %d\n", canReceive());
       
-      //uint8_t read = mcp2515Read(MCP_CANSTAT);
-      //printf("READ VALUE: %d\n", read);
-        
+      /*
         buttons = buttonTest(buttons);
         uint8_t *values = adcRead();
         int xPercentage = joystickPercentage(values[3]);
@@ -70,8 +75,9 @@ int main()
         //printf("TP_X: %d  TP_Y: %d  JS_Y: %d  JS_X: %d\n",
         //       values[0], values[1], yPercentage, xPercentage);
         enum Direction direction = getJoystickDirection(xPercentage, yPercentage);
+        moveArrowWithJoystick(&row, &column, direction);
         //printf(" DIRECTION: ");
-        printDirection(direction);
+        //printDirection(direction);
         //printf(" Angle: %d\n", voltageToAngle(values));
 
         //submenu
@@ -79,14 +85,9 @@ int main()
         //getJoystickButtonPosition(direction, row, column);
         //printf("%d \n", getJoystickButtonPosition());
 
-        
-        moveArrowWithJoystick(&row, &column, direction);
-
-
-
 
         // SPIMasterTransmit(0b00110011, 1);
-        
+        */
        
 
         // chip select test
@@ -102,6 +103,7 @@ int main()
         // printf("You typed: %c\n", c);
     }
 
+    
     return 0;
 
 }

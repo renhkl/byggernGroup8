@@ -33,8 +33,6 @@ uint8_t mcp2515Read (uint8_t address)
     uint8_t result = SPIMCP2515Receive(); //  Read result
     PORTB |= (1 << CAN_CS); // Deselect CAN - controller
 
-    //mcp2515BitModify(MCP_CANINTF,0b00000011, 0);
-
     return result;
 }
 

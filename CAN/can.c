@@ -22,10 +22,17 @@ TXBnSIDL)
 
 //TXBnSIDH.SID3 |= 0;
 //TXBnSIDL.SID3 |= 1;
-while (((mcp2515Read(TXB0CTRL) >> 3) & 1) == 1) {}
+uint8_t CanCTRL = mcp2515Read(TXB0CTRL);
+//printf("CANCTRL: %d\t", CanCTRL);
+if ((CanCTRL >> 3) & 1) {
+    //printf("TRANSMIT FAIL. BUSY.\n");
+    return;
+}
+//printf("TRANSMITTING....\n");
 
 uint8_t databytes = 0;
-while ((1 << databytes) < data) {databytes++;}
+while ((1 << BYTE_SIZE*databytes) < data) {
+    databytes++; printf("bytes %d\t", databytes); printf("data %d\n", data);}
 
 id = id << 5;
 printf("ID %d\n", id);
@@ -76,6 +83,8 @@ if ((mcp2515Read(MCP_CANINTF) & 0b00000001) == 1) {//if recieve buffer is ready
     for (uint8_t byte = 0; byte < dataLength; byte++) {
         bytes += mcp2515Read(RXB0D0+byte) << BYTE_SIZE*byte;
     }
+
+    mcp2515BitModify(MCP_CANINTF,0b00000011, 0);
     return bytes;
 }
 /*

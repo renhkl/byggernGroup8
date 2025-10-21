@@ -15,6 +15,7 @@ void SPIMasterInit(void){
     PORTB |= (1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
 
     SPCR |= (1 << SPE) | (1 << MSTR) | (1 << SPR0) | (0 << CPOL) | (0 << CPHA);
+    printf("spi initialized\n");
 }
 
 void SPIMasterTransmit(char cData, int slave){
