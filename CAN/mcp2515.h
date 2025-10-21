@@ -28,6 +28,8 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_RXF1SIDL	0x05
 #define MCP_RXF1EID8	0x06
 #define MCP_RXF1EID0	0x07
+
+
 #define MCP_RXF2SIDH	0x08
 #define MCP_RXF2SIDL	0x09
 #define MCP_RXF2EID8	0x0A
@@ -68,7 +70,101 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_RXB0CTRL	0x60
 #define MCP_RXB0SIDH	0x61
 #define MCP_RXB1CTRL	0x70
-#define MCP_RXB1SIDH	0x71
+#define MCP_RXB1SIDH    0x71
+
+
+//most of registers from can controller register map was missing
+
+
+//RXF0SIDH RXF3SIDH RXM0SIDH 
+#define TXB0CTRL 0x30
+#define TXB1CTRL 0x40
+#define TXB2CTRL 0x50
+#define RXB0CTRL 0x60
+#define RXB1CTRL 0x70
+//RXF0SIDL RXF3SIDL RXM0SIDL 
+#define TXB0SIDH 0x31
+#define TXB1SIDH 0x41
+#define TXB2SIDH 0x51
+#define RXB0SIDH 0x61
+#define RXB1SIDH 0x71
+//RXF0EID8 RXF3EID8 RXM0EID8 
+#define TXB0SIDL 0x32
+#define TXB1SIDL 0x42
+#define TXB2SIDL 0x52
+#define RXB0SIDL 0x62
+#define RXB1SIDL 0x72
+//RXF0EID0 RXF3EID0 RXM0EID0 
+#define TXB0EID8 0x33
+#define TXB1EID8 0x43
+#define TXB2EID8 0x53
+#define RXB0EID8 0x63
+#define RXB1EID8 0x73
+//RXF1SIDH RXF4SIDH RXM1SIDH 
+#define TXB0EID0 0x34
+#define TXB1EID0 0x44
+#define TXB2EID0 0x54
+#define RXB0EID0 0x64
+#define RXB1EID0 0x74
+//RXF1SIDL RXF4SIDL RXM1SIDL 
+#define TXB0DLC 0x35
+#define TXB1DLC 0x45
+#define TXB2DLC 0x55
+#define RXB0DLC 0x65
+#define RXB1DLC 0x75
+//RXF1EID8 RXF4EID8 RXM1EID8 
+#define TXB0D0 0x36
+#define TXB1D0 0x46
+#define TXB2D0 0x56
+#define RXB0D0 0x66
+#define RXB1D0 0x76
+//RXF1EID0 RXF4EID0 RXM1EID0 
+#define TXB0D1 0x37
+#define TXB1D1 0x47
+#define TXB2D1 0x57
+#define RXB0D1 0x67
+#define RXB1D1 0x77
+//RXF2SIDH RXF5SIDH CNF3 
+#define TXB0D2 0x38
+#define TXB1D2 0x48
+#define TXB2D2 0x58
+#define RXB0D2 0x68
+#define RXB1D2 0x78
+//RXF2SIDL RXF5SIDL CNF2 
+#define TXB0D3 0x39
+#define TXB1D3 0x49
+#define TXB2D3 0x59
+#define RXB0D3 0x69
+#define RXB1D3 0x79
+//RXF2EID8 RXF5EID8 CNF1 
+#define TXB0D4 0x3A
+#define TXB1D4 0x4A
+#define TXB2D4 0x5A
+#define RXB0D4 0x6A
+#define RXB1D4 0x7A
+//RXF2EID0 RXF5EID0 CANINTE 
+#define TXB0D5 0x3B
+#define TXB1D5 0x4B
+#define TXB2D5 0x5B
+#define RXB0D5 0x6B
+#define RXB1D5 0x7B
+//BFPCTRL TEC CANINTF 
+#define TXB0D6 0x3C
+#define TXB1D6 0x4C
+#define TXB2D6 0x5C
+#define RXB0D6 0x6C
+#define RXB1D6 0x7C
+//TXRTSCTRL REC EFLG 
+#define TXB0D7 0x3D
+#define TXB1D7 0x4D
+#define TXB2D7 0x5D
+#define RXB0D7 0x6D
+#define RXB1D7 0x7D
+
+
+//CANSTAT CANSTAT CANSTAT CANSTAT CANSTAT CANSTAT CANSTAT CANSTAT
+//CANCTRL CANCTRL CANCTRL CANCTRL CANCTRL CANCTRL CANCTRL CANCTRL
+
 
 
 #define MCP_TX_INT		0x1C		// Enable all transmit interrupts

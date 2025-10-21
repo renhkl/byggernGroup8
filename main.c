@@ -52,11 +52,16 @@ int main()
 
     Buttons buttons = ioButton();
 
+    canSetLoopbackMode();
+
     while (1)
     {
-        mcp2515BitModify(MCP_CANCTRL, 0b11100000, 0b01000000);
-        uint8_t read = mcp2515Read(MCP_CANSTAT);
-        printf("READ VALUE: %d\n", read);
+        
+      canTransmit(1, 12);
+      printf("CAN READ VALUE: %d\n", canReceive());
+      
+      //uint8_t read = mcp2515Read(MCP_CANSTAT);
+      //printf("READ VALUE: %d\n", read);
         
         buttons = buttonTest(buttons);
         uint8_t *values = adcRead();
@@ -76,7 +81,6 @@ int main()
 
         
         moveArrowWithJoystick(&row, &column, direction);
-        test();
 
 
 

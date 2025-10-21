@@ -97,3 +97,4 @@ void mcp2515RTSAll() {
     SPIMCP2515Transmit(MCP_RTS_ALL);
     PORTB |= (1 << PB0);
 }
+
