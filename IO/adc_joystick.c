@@ -24,27 +24,7 @@ void counterInit(void) // timer/counter 3
 
 }
 
-int adcRead(void) //not used
-{
-
-    xmem_read(0x1500); // read from adc so chip select
-    // send signal to read from ADC. it happens automatically
-    /*DDRD |= (1 << DDD7);
-    PORTD &= ~(1 << PIN7);
-    _delay_us(0.100);
-    PORTD |= (1 << PIN7);
-    _delay_us(0.180);
-    // PORTD &= ~(1 << PIN7);
-    //_delay_us(100);
-    */
-
-    DDRA |= 0x00; // set port A as input
-    // PORTA |= 0xFF;            // set as pullups
-    int joystickValue = PINA; // read value on port A
-    return joystickValue;
-}
-
-uint8_t *adcReap(void)
+uint8_t *adcRead(void)
 {
     static uint8_t values[4]; 
 

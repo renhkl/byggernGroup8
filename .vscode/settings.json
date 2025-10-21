@@ -24,7 +24,8 @@
     "type_traits": "c",
     "utility": "c",
     "sram_test.h": "c",
-    "xmem.h": "c"
+    "xmem.h": "c",
+    "oled.h": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

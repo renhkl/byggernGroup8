@@ -46,9 +46,9 @@ void oledPrintString(char *str);
 void removeSymbol(uint8_t row, uint8_t col);
 
 //IO functions
-void moveArrowWithJoystick();
+void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction direction);
 int getJoystickButtonPosition(enum Direction direction, int row, int column);
-
+void test();
 
 
 //graphics

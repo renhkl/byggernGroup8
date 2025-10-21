@@ -1,22 +1,9 @@
 //this driver is made for setting up and changing the mcp2515 CAN controller's control and status registers
 
 #include "mcp2515.h"
-#include "spi.h"
+#include "../MCU/spi.h"
 
 #define CAN_CS PB0
-
-uint8_t SPIMCP2515ReadStatus () {
-    PORTB &= ~(1 << PB0);
-    SPIMCP2515Transmit(MCP_READ_STATUS);
-    uint8_t result = SPIMCP2515Receive();
-    PORTB |= (1 << PB0);
-}
-
-uint8_t SPIMCP2515RTSAll() {
-    PORTB &= ~(1 << PB0);
-    SPIMCP2515Transmit(MCP_RTS_ALL);
-    PORTB |= (1 << PB0);
-}
 
 void SPIMCP2515Transmit(char cData) {
     
@@ -24,9 +11,7 @@ void SPIMCP2515Transmit(char cData) {
 
     SPDR = cData;
 
-    while(!(SPSR & (1 << SPIF))){ 
-        ;
-    }
+    while(!(SPSR & (1 << SPIF))){}
 }
 
 uint8_t SPIMCP2515Receive(){
@@ -100,26 +85,15 @@ void mcp2515BitModify(uint8_t address, uint8_t mask, uint8_t data) {
     PORTB |= (1 << CAN_CS);
 }
 
-void mcp2515Transmit(uint8_t data) {
+uint8_t mcp2515ReadStatus () {
+    PORTB &= ~(1 << PB0);
+    SPIMCP2515Transmit(MCP_READ_STATUS);
+    uint8_t result = SPIMCP2515Receive();
+    PORTB |= (1 << PB0);
+}
 
-    //CANINTEXinE
-    //txbnctrl txreq
-    //if (TxBnCTRL & (1 << TXREQ)) {
-
-    //}
-
-    //CP_RXF0SIDH
-
-// sendes med spi dXBnCTRL.TXREQ bi //means ready for transmission
-
-//message ID
-//TXBnSIDH
-//TXBnSIDL
-
-//data length
-//TXBnDm
-
-
-//CAninte.TXniE is set interrupt
-
+void mcp2515RTSAll() {
+    PORTB &= ~(1 << PB0);
+    SPIMCP2515Transmit(MCP_RTS_ALL);
+    PORTB |= (1 << PB0);
 }

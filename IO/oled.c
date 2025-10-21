@@ -1,6 +1,7 @@
 #include "oled.h"
-#include "spi.h"
+#include "../MCU/spi.h"
 #include "fonts.h"
+#include "adc_joystick.h"
 #include <avr/pgmspace.h>
 
 void oledPrintArrow(uint8_t row, uint8_t col) {
@@ -265,26 +266,50 @@ void oledMakeTextMenu() {
       oledPrintString("exit");
 }
 
-/*
-void moveArrowWithJoystick() {
-       if (direction == UP) {
-          if (row > 0){
-             removeSymbol(row, 1);
-            row--;
-            oledPrintArrow(row, 1);
+void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction direction) {
+        uint8_t page = *row;
+        uint8_t col = *column;
+    
+        if (direction == UP) {
+          if (page > 0){
+             removeSymbol(page, 1);
+            page--;
+            oledPrintArrow(page, 1);
             _delay_ms(500);
           }
 
         }
 
         else if (direction == DOWN) {
-          if (row < 7) {
-          removeSymbol(row, 1);
-          row++;
-          oledPrintArrow(row, 1);
+          if (page < 7) {
+          removeSymbol(page, 1);
+          page++;
+          oledPrintArrow(page, 1);
           _delay_ms(500);
           }
 
         }
+
+        else if (direction == LEFT) {
+          if (col > 0) {
+            col--;
+               _delay_ms(500);
+        }
+        }
+
+        else if (direction == RIGHT) {
+          if(col < 127) {
+            col++;
+               _delay_ms(500);
+        }
+        }
+
+         if (!(PIND & (1 << PIN5))) {
+         printf("%d %d\n", page, col);
+        }
+
+        *row = page;
+        *column = col;
 }
-        */
+
+void test() {}

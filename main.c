@@ -6,6 +6,7 @@
 #include "TEST/sram_test.h"
 #include "MCU/xmem.h"
 #include "IO/adc_joystick.h"
+#include "IO/oled.h"
 #include <avr/interrupt.h>
 
 #include "MCU/uart.h"
@@ -34,9 +35,9 @@ int main()
     // printf("%d\n", adcRead());
     printf("LIZZARD\n");
     _delay_ms(1000);
-      oledInit();
+    oledInit();
 
-      DDRD &= ~(1 << DDD5); //set pin D5 as input (joystick pin)
+    DDRD &= ~(1 << DDD5); //set pin D5 as input (joystick pin)
  
     // SRAM_cr_test();
     // ADC_test();
@@ -46,8 +47,8 @@ int main()
     oledMakeTextMenu();
 
  
-      int row = 0;
-      int column = 0;
+      uint8_t row = 0;
+      uint8_t column = 0;
 
     Buttons buttons = ioButton();
 
@@ -58,7 +59,7 @@ int main()
         printf("READ VALUE: %d\n", read);
         
         buttons = buttonTest(buttons);
-        uint8_t *values = adcReap();
+        uint8_t *values = adcRead();
         int xPercentage = joystickPercentage(values[3]);
         int yPercentage = joystickPercentage(values[2]);
         //printf("TP_X: %d  TP_Y: %d  JS_Y: %d  JS_X: %d\n",
@@ -74,52 +75,9 @@ int main()
         //printf("%d \n", getJoystickButtonPosition());
 
         
-        if (direction == UP) {
-          if (row > 0){
-             removeSymbol(row, 1);
-            row--;
-            oledPrintArrow(row, 1);
-            _delay_ms(500);
-          }
+        moveArrowWithJoystick(&row, &column, direction);
+        test();
 
-        }
-
-        else if (direction == DOWN) {
-          if (row < 7) {
-          removeSymbol(row, 1);
-          row++;
-          oledPrintArrow(row, 1);
-          _delay_ms(500);
-          }
-
-        }
-
-        else if (direction == LEFT) {
-          if (column > 0) {
-            column--;
-               _delay_ms(500);
-        }
-        }
-
-        else if (direction == RIGHT) {
-          if(column < 127) {
-            column++;
-               _delay_ms(500);
-        }
-        }
-
-         if (!(PIND & (1 << PIN5))) {
-         printf("%d %d\n", row, column);
-        }
-
-
-       
-
-        
-        
-
-  
-        
 
 
 

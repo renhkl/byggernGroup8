@@ -1,5 +1,5 @@
 # List all source files to be compiled; separate with space
-SOURCE_FILES := main.c uart.c sram_test.c xmem.c adc_joystick.c adc_test.c spi.c oled.c mcp2515.c can.c
+SOURCE_FILES := main.c TEST/sram_test.c TEST/adc_test.c MCU/uart.c MCU/xmem.c MCU/spi.c IO/adc_joystick.c IO/oled.c CAN/mcp2515.c CAN/can.c
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := yes
@@ -23,6 +23,10 @@ OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
 
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
+	mkdir $(BUILD_DIR)/CAN
+	mkdir $(BUILD_DIR)/IO
+	mkdir $(BUILD_DIR)/MCU
+	mkdir $(BUILD_DIR)/TEST
 
 $(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@

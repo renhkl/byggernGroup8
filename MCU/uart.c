@@ -20,8 +20,6 @@ void uartInit(unsigned int ubrr) {
 void uartTransmit(unsigned char data) { 
     while (!(UCSR0A & (1 << UDRE0)));
     UDR0 = data;
-
-    return 0;
 }
 
 
