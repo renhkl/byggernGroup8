@@ -63,7 +63,7 @@ int main()
 
     while (1)
     {
-      uint64_t x = 25;
+      uint64_t x = 64;
       canTransmit(2, x);
       printf("CAN READ VALUE: %d\n", canReceive());
        uint64_t y = 11;

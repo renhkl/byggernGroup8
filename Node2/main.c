@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "sam.h"
-#include "CAN/can.h"
+#include "CAN/can_controller.h"
 
 /*
  * Remember to update the Makefile with the (relative) path to the uart.c file.
@@ -40,27 +40,35 @@ int main()
     uint32_t reg;
     */
 
-    canTimeConfig tConfig;
-    tConfig.phaseSeg2 = 5;
-    tConfig.propagTimeSeg = 3;
+    CanInit tConfig = {
+        .phase2 = 4,
+        .propag = 6,
+        .phase1 = 5,
+        .sjw    = 3,
+        .brp    = 1,
+        .smp    = 0
+    };
     
+    // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
 
-     can_init(tConfig, CAN0_Handler); //can also have 0 as rx interrupt
-    can_init_def_tx_rx_mb(baud);
-
-    CanMsg message;
+    can_init_def_tx_rx_mb(tConfig); //init with predfined mailboxes
+    CAN_MESSAGE message = {
+      .id = 2,
+      .data_length = 1,
+      .data[0] = 0b01101101
+    };
+    CAN_MESSAGE read;
    
-
-    
-
     //PIO_PB13;
-
+    printf("CHARIZARD\n\r");
     while (1)
     {
         /* code */
-        printf("CHARIZARD\n\r");
-        //uint8_t message = can_rx();
-        //can_tx(message);
+        can_send(&message, 0);
+        can_receive(&read, 1);
+        printf("SAM CAN READ VALUE 1: %d", read.data[0]);
+        printf("\r\n");
+        
     }
     
 }

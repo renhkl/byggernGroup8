@@ -26,7 +26,8 @@
     "sram_test.h": "c",
     "xmem.h": "c",
     "oled.h": "c",
-    "future": "c"
+    "future": "c",
+    "compare": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
