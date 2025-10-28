@@ -9,6 +9,10 @@ make && make flash
 make sure to be in the right folder as there are one makefile for each of the nodes
 
 
+# how to add to Git when not in group folder
+git add ../Node1 ../Node2
+
+
 # to find the RS232 device
 1. dmesg | grep tty (might need sudo priviliges)
 

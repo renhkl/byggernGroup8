@@ -27,7 +27,11 @@
     "xmem.h": "c",
     "oled.h": "c",
     "future": "c",
-    "compare": "c"
+    "compare": "c",
+    "iosfwd": "c",
+    "limits": "c",
+    "stop_token": "c",
+    "streambuf": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

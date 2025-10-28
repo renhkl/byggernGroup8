@@ -75,8 +75,8 @@ int main()
     while (1)
     {
       uint64_t x = 13;
-      canTransmit(1, x);
-      //printf("CAN READ VALUE: %d\n", canReceive());
+      //canTransmit(1, x);
+      printf("CAN READ VALUE: %d\n", canReceive());
       
       /*
         buttons = buttonTest(buttons);
