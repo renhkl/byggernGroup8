@@ -4,3 +4,4 @@ Node1/build/
 ../Node1/build/main.o
 ../openocd
 openocd
+openocd/
