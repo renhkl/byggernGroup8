@@ -9,6 +9,7 @@
  */ 
 
 #include "can_controller.h"
+#include "can.h"
 
 #include "sam.h"
 

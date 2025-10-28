@@ -13,8 +13,10 @@
 #define CAN_CONTROLLER_H_
 
 #include <stdint.h>
+#include "can.h"
 
 // Struct with bit timing information
+/*
 typedef struct CanInit CanInit;
 __attribute__((packed)) struct CanInit {
     union {
@@ -29,6 +31,7 @@ __attribute__((packed)) struct CanInit {
         uint32_t reg;
     };
 };
+*/
 
 typedef struct can_message_t
 {

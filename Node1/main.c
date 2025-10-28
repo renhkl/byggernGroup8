@@ -12,6 +12,7 @@
 #include "MCU/uart.h"
 #include "delay.h"
 #include "CAN/mcp2515.h"
+#include "CAN/can.h"
 
 #include "MCU/spi.h"
 
@@ -52,23 +53,30 @@ int main()
 
     Buttons buttons = ioButton();
 
-    
-
-    canSetLoopbackMode();
     uint8_t read = mcp2515Read(MCP_CANSTAT);
     //printf("MCP_CANSTAT VALUE: %d\n", read);
     if (read == 255) {
       //printf("INVALID MCP READING, CHECK YOUR CONNECTIONS\n");
     }
 
+
+
+    canTimeConfig tConfig = {
+        .phaseSeg2 = 4,
+        .propagTimeSeg = 6,
+        .phaseSeg1 = 5,
+        .syncJumpWidth = 2,
+        .baudRatePrescaler = 3,
+        .samplingMode = 0
+    };
+
+    canInit(tConfig);
+
     while (1)
     {
-      uint64_t x = 64;
-      canTransmit(2, x);
-      printf("CAN READ VALUE: %d\n", canReceive());
-       uint64_t y = 11;
-      canTransmit(1, y);
-      printf("CAN READ VALUE: %d\n", canReceive());
+      uint64_t x = 13;
+      canTransmit(1, x);
+      //printf("CAN READ VALUE: %d\n", canReceive());
       
       /*
         buttons = buttonTest(buttons);

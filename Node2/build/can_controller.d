@@ -1,7 +1,7 @@
 build/can_controller.o: CAN/can_controller.c CAN/can_controller.h \
- sam/sam3x/include/sam.h sam/sam3x/include/sam3x8e.h sam/cmsis/core_cm3.h \
- sam/cmsis/cmsis_version.h sam/cmsis/cmsis_compiler.h \
- sam/cmsis/cmsis_gcc.h sam/cmsis/mpu_armv7.h \
+ CAN/can.h sam/sam3x/include/sam.h sam/sam3x/include/sam3x8e.h \
+ sam/cmsis/core_cm3.h sam/cmsis/cmsis_version.h \
+ sam/cmsis/cmsis_compiler.h sam/cmsis/cmsis_gcc.h sam/cmsis/mpu_armv7.h \
  sam/sam3x/source/system_sam3x.h sam/compiler.h sam/parts.h \
  sam/preprocessor.h sam/tpaste.h sam/stringz.h sam/mrepeat.h sam/io.h \
  sam/sam3x/include/sam3xa.h sam/interrupt.h \

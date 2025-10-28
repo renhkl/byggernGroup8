@@ -38,7 +38,7 @@ typedef struct {
 //    can_init((CanInit){.brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6}, 0);
 //void can_init(CanInit init, uint8_t rxInterrupt);
 
-void can_init(canTimeConfig tConfig, uint8_t rxInterrupt);
+void can_init(CanInit init, uint8_t rxInterrupt);
 
 
 // Strict-aliasing-safe reinterpret-cast

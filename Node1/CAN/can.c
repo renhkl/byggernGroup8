@@ -4,8 +4,30 @@
 #include "mcp2515.h"
 #include <stdio.h>
 
+void canInit(canTimeConfig tConfig) {
+    uint8_t phase2 = tConfig.phaseSeg2 & 0b111;         // Phase 2 segment
+    uint8_t propag = tConfig.propagTimeSeg & 0b111;     // Propagation time segment
+    uint8_t phase1 = tConfig.phaseSeg1 & 0b111;         // Phase 1 segment
+    uint8_t sjw = tConfig.syncJumpWidth & 0b11;         // Synchronization jump width
+    uint8_t brp = tConfig.baudRatePrescaler & 0b111111; // Baud rate prescaler
+    uint8_t smp = tConfig.samplingMode & 0b1;           // Sampling mode
+
+    uint8_t cnf1 = brp + sjw << 6;
+    uint8_t cnf2 = propag + phase1 << 3 + 1 << 7;
+    uint8_t cnf3 = phase2;
+    mcp2515Write(MCP_CNF1, cnf1);
+    mcp2515Write(MCP_CNF2, cnf2);
+    mcp2515Write(MCP_CNF3, cnf3);
+
+    canSetNormalMode();
+}
+
 void canSetLoopbackMode() {
     mcp2515BitModify(MCP_CANCTRL, 0b11100000, 0b01000000);
+}
+
+void canSetNormalMode() {
+    mcp2515BitModify(MCP_CANCTRL, 0b11100000, 0b00000000);
 }
 
 
