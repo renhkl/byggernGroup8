@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "sam.h"
+#include "CAN/can.h"
 
 /*
  * Remember to update the Makefile with the (relative) path to the uart.c file.
@@ -26,6 +27,30 @@ int main()
     PIOB->PIO_OER = PIO_OER_P13; //make output
     PIOB->PIO_SODR = PIO_SODR_P13; //set high 
     //PIOB->PIO_ODR = PIO_CODR_P13; //clear/low
+    int baud = 14343;
+
+
+    /*
+    uint32_t phaseSeg2;  // Phase 2 segment
+    uint32_t propagTimeSeg;  // Propagation time segment
+    uint32_t phaseSeg1;  // Phase 1 segment
+    uint32_t syncJumpWidth;     // Synchronization jump width
+    uint32_t baudRatePrescaler;     // Baud rate prescaler
+    uint32_t samplingMode;     // Sampling mode
+    uint32_t reg;
+    */
+
+    canTimeConfig tConfig;
+    tConfig.phaseSeg2 = 5;
+    tConfig.propagTimeSeg = 3;
+    
+
+     can_init(tConfig, CAN0_Handler); //can also have 0 as rx interrupt
+    can_init_def_tx_rx_mb(baud);
+
+    CanMsg message;
+   
+
     
 
     //PIO_PB13;
@@ -34,6 +59,8 @@ int main()
     {
         /* code */
         printf("CHARIZARD\n\r");
+        //uint8_t message = can_rx();
+        //can_tx(message);
     }
     
 }

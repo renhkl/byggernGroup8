@@ -1,6 +1,6 @@
 
 #include "sam.h"
-#include "../../../lib/can/can.h"
+#include "can.h"
 #include <stdio.h>
 
 void can_printmsg(CanMsg m){
@@ -19,7 +19,7 @@ void can_printmsg(CanMsg m){
 #define rxMailbox 1
 
 
-void can_init(CanInit init, uint8_t rxInterrupt){
+void can_init(canTimeConfig tConfig, uint8_t rxInterrupt){
     // Disable CAN
     CAN0->CAN_MR &= ~CAN_MR_CANEN; 
     
@@ -44,7 +44,7 @@ void can_init(CanInit init, uint8_t rxInterrupt){
     PMC->PMC_PCER1 |= 1 << (ID_CAN0 - 32);
     
     //Set baudrate, Phase1, phase2 and propagation delay for can bus. Must match on all nodes!
-    CAN0->CAN_BR = init.reg; 
+    CAN0->CAN_BR = tConfig.reg; 
     
 
 

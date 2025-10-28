@@ -9,6 +9,10 @@ SOURCE_FILES = \
 	$(BOOTUP) \
 	main.c \
 	uart.c \
+	time.c \
+	CAN/can.c \
+	CAN/can_controller.c \
+	CAN/can_interrupt.c \
 #	../path_to/uart.c \
 #   filename1.c \
 #   filename2.c \

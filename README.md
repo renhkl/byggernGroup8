@@ -1,22 +1,25 @@
 # byggernGroup8
 
+# how to install
 install toolchain from home (cd)
 
 
 # how to run
-> make
-> make flash
-
-make && make flash
+make && make flash 
+make sure to be in the right folder as there are one makefile for each of the nodes
 
 
 # to find the RS232 device
 1. dmesg | grep tty (might need sudo priviliges)
 
 
-/dev/ttyACM0
-2. picocom -b 9600 -r -l /dev/ttyS0 \
+2. ATmega162
+picocom -b 9600 -r -l /dev/ttyS0 \
 (picocom -b <baudrate> -y <parity> d <databits> -p <stopbits> <serial port>)
+
+- ATSAM
+picocom -b 9600 -r -l /dev/ttyACM1
+
 
 *** Picocom commands (all prefixed by [C-a]) \
 

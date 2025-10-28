@@ -20,13 +20,25 @@ __attribute__((packed)) struct CanInit {
     };
 };
 
+typedef struct {
+      uint32_t phaseSeg2;  // Phase 2 segment
+    uint32_t propagTimeSeg;  // Propagation time segment
+    uint32_t phaseSeg1;  // Phase 1 segment
+    uint32_t syncJumpWidth;     // Synchronization jump width
+    uint32_t baudRatePrescaler;     // Baud rate prescaler
+    uint32_t samplingMode;     // Sampling mode
+    uint32_t reg;
+} canTimeConfig;
+
 
 // Initialize CAN bus, with bit timings and optional interrupt
 // If `rxInterrupt` is not 0, an interrupt will be triggered when a message is received.
 // (See can.c for an example interrupt handler)
 // Example:
 //    can_init((CanInit){.brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6}, 0);
-void can_init(CanInit init, uint8_t rxInterrupt);
+//void can_init(CanInit init, uint8_t rxInterrupt);
+
+void can_init(canTimeConfig tConfig, uint8_t rxInterrupt);
 
 
 // Strict-aliasing-safe reinterpret-cast

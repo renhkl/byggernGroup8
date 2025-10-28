@@ -33,7 +33,7 @@ int main()
     mcp2515Init();
     //ledInit();
     // printf("%d\n", adcRead());
-    printf("LIZZARD\n");
+    printf("LIZARD\n");
     _delay_ms(1000);
     oledInit();
 
