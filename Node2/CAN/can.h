@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <stdint.h>
@@ -21,7 +20,7 @@ __attribute__((packed)) struct CanInit {
 };
 
 typedef struct {
-      uint32_t phaseSeg2;  // Phase 2 segment
+    uint32_t phaseSeg2;  // Phase 2 segment
     uint32_t propagTimeSeg;  // Propagation time segment
     uint32_t phaseSeg1;  // Phase 1 segment
     uint32_t syncJumpWidth;     // Synchronization jump width
@@ -81,6 +80,13 @@ struct Byte8 {
 //    };
 //    can_printmsg(m);
 //    // Should print: CanMsg(id:1, length:7, data:{10, 0, 20, 0, 0, 240, 193})
+
+typedef struct {
+    uint16_t  a;
+    uint8_t   b;
+    float     c;
+} __attribute__((packed)) YourStruct;
+
 typedef struct CanMsg CanMsg;
 struct CanMsg {
     uint8_t id;
