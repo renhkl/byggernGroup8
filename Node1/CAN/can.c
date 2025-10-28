@@ -31,7 +31,7 @@ void canSetNormalMode() {
     mcp2515BitModify(MCP_CANCTRL, 0b11100000, 0b00000000);
 }
 
-void canTransmit(uint8_t id, uint64_t data)  {
+void canTransmit(uint8_t id, uint8_t data)  {
     //printf("TRANSMITting.\n");
 
 //mcp2515RTSAll(); //init message transmission
@@ -54,7 +54,7 @@ if ((CanCTRL >> 3) & 1) {
 }
 
 //printf("TRANSMITTING.... %d\n",data);
-uint64_t databytes = 1;
+uint8_t databytes = 1;
 //while ((1 << BYTE_SIZE*databytes) < data && databytes < 8) {databytes++;}
 
 printf("ID %d\t", id);
@@ -64,11 +64,14 @@ id = id << 5;
 mcp2515Write(TXB0SIDL, id);
 mcp2515Write(TXB0SIDH, 0);
 mcp2515Write(TXB0DLC, databytes);
+printf("-------------------- %x -------------------------\n", mcp2515Read(TXB0SIDL));
 
+/*
 for (uint8_t byte = 0; byte < databytes; byte++) {
     mcp2515Write(TXB0D0+byte, (data >> BYTE_SIZE*byte) & 0xFF);
 }
-
+    */
+mcp2515Write(TXB0D0, data & 0xFF);
 
 }
 
@@ -103,11 +106,16 @@ if ((mcp2515Read(MCP_CANINTF) & 0b00000001) == 0) {//if recieve buffer is ready
 
     //data length and data
     int dataLength = mcp2515Read(RXB0DLC);
-    dataLength = 0x00001111 & dataLength; //only bits 0-3 are the data length size
+    printf("dataLength %u\t",dataLength);
+    dataLength = 0b00001111 & dataLength; //only bits 0-3 are the data length size
+    
+
     uint64_t bytes = 0;
+    uint64_t rsh;
 
     for (uint8_t byte = 0; byte < dataLength; byte++) {
-        bytes += mcp2515Read(RXB0D0+byte) << BYTE_SIZE*byte;
+        rsh = BYTE_SIZE*byte;
+        bytes += mcp2515Read(RXB0D0+byte) << rsh;
     }
 
     mcp2515BitModify(MCP_CANINTF, 0b00000011, 0);

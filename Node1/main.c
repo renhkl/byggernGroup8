@@ -78,13 +78,13 @@ int main()
     {
       
       uint8_t y = 12;
-      canTransmit(1, y);
+      canTransmit(2, y);
 
       //uint64_t x = canReceive();
-      printf("MCP CAN READ VALUE: %u\n", canReceive());
+      printf("CAN READ VALUE: %u\n", canReceive());
 
       uint8_t read = mcp2515Read(MCP_CANINTF);
-      printf("CAN READ VALUE: %u\n", read);
+      printf("MCP READ VALUE: %u\n", read);
       
       /*
       //printf("...\n");

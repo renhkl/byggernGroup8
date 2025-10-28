@@ -27,7 +27,7 @@ typedef struct {
 void canInit(canTimeConfig tConfig);
 void canSetLoopbackMode();
 void canSetNormalMode();
-void canTransmit(uint8_t id, uint64_t data);
+void canTransmit(uint8_t id, uint8_t data);
 uint64_t canReceive();
 
 #endif //CAN
