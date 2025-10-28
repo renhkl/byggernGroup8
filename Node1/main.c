@@ -12,6 +12,7 @@
 #include "MCU/uart.h"
 #include "delay.h"
 #include "CAN/mcp2515.h"
+#include "CAN/can.h"
 
 #include "MCU/spi.h"
 
@@ -35,6 +36,7 @@ int main()
     // printf("%d\n", adcRead());
     printf("LIZARD\n");
     _delay_ms(1000);
+    /*
     oledInit();
 
     DDRD &= ~(1 << DDD5); //set pin D5 as input (joystick pin)
@@ -52,9 +54,20 @@ int main()
 
     Buttons buttons = ioButton();
 
-    
 
+    canTimeConfig tConfig = {
+        .phaseSeg2 = 4,
+        .propagTimeSeg = 6,
+        .phaseSeg1 = 5,
+        .syncJumpWidth = 2,
+        .baudRatePrescaler = 3,
+        .samplingMode = 0
+    };
+
+    canInit(tConfig);
+    */
     canSetLoopbackMode();
+
     uint8_t read = mcp2515Read(MCP_CANSTAT);
     //printf("MCP_CANSTAT VALUE: %d\n", read);
     if (read == 255) {
@@ -63,13 +76,27 @@ int main()
 
     while (1)
     {
+      
+      uint8_t y = 12;
+      canTransmit(1, y);
+
+      //uint64_t x = canReceive();
+      printf("MCP CAN READ VALUE: %u\n", canReceive());
+
+      uint8_t read = mcp2515Read(MCP_CANINTF);
+      printf("CAN READ VALUE: %u\n", read);
+      
+      /*
+      //printf("...\n");
+      */
+      /*
       uint64_t x = 25;
       canTransmit(2, x);
       printf("CAN READ VALUE: %d\n", canReceive());
-       uint64_t y = 11;
+      uint64_t y = 11;
       canTransmit(1, y);
       printf("CAN READ VALUE: %d\n", canReceive());
-      
+      */
       /*
         buttons = buttonTest(buttons);
         uint8_t *values = adcRead();

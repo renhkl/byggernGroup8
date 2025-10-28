@@ -5,7 +5,7 @@ This file contains constants that are specific to the MCP2515.
 
 Version     Date        Description
 ----------------------------------------------------------------------
-v1.00       2003/12/11  Initial release
+v1.00       2003/12/11  Initial releaseMCP_CANSTAT)
 
 Copyright 2003 Kimberly Otten Software Consulting
 */
