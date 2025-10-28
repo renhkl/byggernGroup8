@@ -3,3 +3,4 @@ Node1/build/
 ../Node1/build/main.hex
 ../Node1/build/main.o
 ../openocd
+openocd
