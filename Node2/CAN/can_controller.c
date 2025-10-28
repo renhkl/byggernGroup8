@@ -25,9 +25,9 @@
  *
  * \retval Success(0) or failure(1)
  */
-uint8_t can_init_def_tx_rx_mb(uint32_t can_br)
+uint8_t can_init_def_tx_rx_mb(canTimeConfig tConfig)
 {
-	return can_controller_init(can_br, 1, 2);
+	return can_controller_init(tConfig, 1, 2);
 }
 
 /**
@@ -44,7 +44,7 @@ uint8_t can_init_def_tx_rx_mb(uint32_t can_br)
 
 
  //can baudrate, number of tx mailboxes, number of rx mailboxes
-uint8_t can_controller_init(uint32_t can_br, uint8_t num_tx_mb, uint8_t num_rx_mb)
+uint8_t can_controller_init(canTimeConfig tConfig, uint8_t num_tx_mb, uint8_t num_rx_mb)
 {
 	
 	//Make sure num_rx_mb and num_tx_mb is valid
@@ -81,7 +81,7 @@ uint8_t can_controller_init(uint32_t can_br, uint8_t num_tx_mb, uint8_t num_rx_m
 	PMC->PMC_PCER1 |= 1 << (ID_CAN0 - 32);
 	
 	//Set baudrate, Phase1, phase2 and propagation delay for can bus. Must match on all nodes!
-	CAN0->CAN_BR = can_br; 
+	CAN0->CAN_BR = tConfig.reg;
 	
 
 	/****** Start of mailbox configuration ******/
