@@ -48,8 +48,8 @@ int main()
     oledMakeTextMenu();
 
  
-      uint8_t row = 0;
-      uint8_t column = 0;
+    uint8_t row = 0;
+    uint8_t column = 0;
 
     Buttons buttons = ioButton();
 
@@ -78,12 +78,23 @@ int main()
       .data = {4, 7}
     };
 
+
+
     while (1)
     {
+      /*
       frame m = canReceive();
       printf("\nCAN READ VALUE ID %d\t LENGTH %d\t DATA ", m.id, m.length);
       for (uint8_t i = 0; i < m.length; i++) {printf("%d ",m.data[i]);}
+      */
       
+      enum Direction direction = getJoystickDirection();
+      printDirection(direction);
+      printf(" %d %d\n",row,column);
+      removeSymbol(row, 1);
+      moveArrowWithJoystick(&row, &column, direction);
+      oledPrintArrow(row, 1);
+
       /*
         buttons = buttonTest(buttons);
         uint8_t *values = adcRead();
@@ -91,7 +102,7 @@ int main()
         int yPercentage = joystickPercentage(values[2]);
         //printf("TP_X: %d  TP_Y: %d  JS_Y: %d  JS_X: %d\n",
         //       values[0], values[1], yPercentage, xPercentage);
-        enum Direction direction = getJoystickDirection(xPercentage, yPercentage);
+        enum Direction direction = JoystickPercentageToDirection(xPercentage, yPercentage);
         moveArrowWithJoystick(&row, &column, direction);
         //printf(" DIRECTION: ");
         //printDirection(direction);
@@ -99,7 +110,7 @@ int main()
 
         //submenu
 
-        //getJoystickButtonPosition(direction, row, column);
+        
         //printf("%d \n", getJoystickButtonPosition());
 
 

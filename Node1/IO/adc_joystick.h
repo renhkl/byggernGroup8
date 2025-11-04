@@ -7,13 +7,14 @@
 #include <avr/io.h>
 
 // struct getJoystickPosition(void);
-// enum getJoystickDirection(void);
+// enum JoystickPercentageToDirection(void);
 void counterInit(void);
 uint8_t *adcRead(void);
-enum Direction getJoystickDirection(int Xpercentage, int Ypercentage);
+enum Direction JoystickPercentageToDirection(int Xpercentage, int Ypercentage);
 int joystickPercentage(int value);
 uint8_t voltageToAngle(uint8_t *values);
 void printDirection(enum Direction dir);
+enum Direction getJoystickDirection();
 
 enum Direction
 {

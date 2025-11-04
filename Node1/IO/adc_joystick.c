@@ -24,6 +24,13 @@ void counterInit(void) // timer/counter 3
 
 }
 
+enum Direction getJoystickDirection() {
+    uint8_t *values = adcRead();
+    int Xpercentage = joystickPercentage(values[3]);
+    int Ypercentage = joystickPercentage(values[2]);
+    return JoystickPercentageToDirection(Xpercentage, Ypercentage);
+}
+
 uint8_t *adcRead(void)
 {
     static uint8_t values[4]; 
@@ -43,7 +50,9 @@ uint8_t *adcRead(void)
 
 int joystickPercentage(int value)
 {
+    printf("VAL %d ",value);
     int percentage = (value - 160) * 200 / 160;
+    printf("PERC %d ",percentage);
     return percentage;
 }
 
@@ -72,7 +81,7 @@ void printDirection(enum Direction dir)
 }
 
 // return joystick direction
-enum Direction getJoystickDirection(int Xpercentage, int Ypercentage)
+enum Direction JoystickPercentageToDirection(int Xpercentage, int Ypercentage)
 {
     enum Direction direction;
     if (Xpercentage < -33)
