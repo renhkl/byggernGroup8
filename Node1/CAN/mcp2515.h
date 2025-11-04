@@ -266,6 +266,7 @@ void mcp2515Reset();
 uint8_t mcp2515ReadStatus();
 void mcp2515Transmit(uint8_t data);
 void mcp2515RTSAll();
+void mcp2515RTSBuffer0();
 
 void SPIMCP2515Transmit(char cData);
 uint8_t SPIMCP2515Receive();

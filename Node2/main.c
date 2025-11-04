@@ -43,10 +43,19 @@ int main()
 
   CanInit tConfig = {
       .phase2 = 4,
-      .propag = 6,
+      .propag = 1,
       .phase1 = 5,
       .sjw    = 3,
-      .brp    = 1,
+      .brp    = 20,
+      .smp    = 0
+  };
+
+  static const CanInit CFG_250KBPS = {
+      .phase2 = 5,
+      .propag = 1,
+      .phase1 = 6,
+      .sjw    = 2,
+      .brp    = 20,
       .smp    = 0
   };
   
@@ -54,7 +63,7 @@ int main()
 
   //can_init_def_tx_rx_mb(tConfig); //init with predfined mailboxes
 
-  can_init(tConfig, 0);
+  can_init(CFG_250KBPS, 0);
 
   CanMsg m = (CanMsg){
     .id = 1,
@@ -62,7 +71,7 @@ int main()
     .byte8 = union_cast(Byte8, ((YourStruct){
       .a = 10,
       .b = 20,
-      .c = -30.0,
+      .c = 25,
     })),
   };
     
@@ -76,7 +85,10 @@ int main()
   };
   */
 
-  CanMsg read;
+  CanMsg read = {
+    .id = 3,
+    .length = 2
+  };
    
   //PIO_PB13;
   printf("CHARIZARD\n\r");
@@ -85,12 +97,12 @@ int main()
   {
     
       //can_send(&message, 0);
-      can_tx(m);
+      //can_tx(m);
       
       
-
-        //can_rx(&read);
-      //can_printmsg(read);
+      printf("Reading... ");
+      if(can_rx(&read)) can_printmsg(read);
+      else printf("empty soul, empty head\n\r");
       
       
   }

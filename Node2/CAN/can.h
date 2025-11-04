@@ -82,9 +82,9 @@ struct Byte8 {
 //    // Should print: CanMsg(id:1, length:7, data:{10, 0, 20, 0, 0, 240, 193})
 
 typedef struct {
-    uint16_t  a;
+    uint8_t  a;
     uint8_t   b;
-    float     c;
+    uint8_t   c;
 } __attribute__((packed)) YourStruct;
 
 typedef struct CanMsg CanMsg;

@@ -3,6 +3,11 @@
 #include "can.h"
 #include "mcp2515.h"
 #include <stdio.h>
+#define CAN_CS PB0
+
+#define MCP_16MHz_250kBPS_CFG1 (0x41)
+#define MCP_16MHz_250kBPS_CFG2 (0xF1)
+#define MCP_16MHz_250kBPS_CFG3 (0x85)
 
 void canInit(canTimeConfig tConfig) {
     uint8_t phase2 = tConfig.phaseSeg2 & 0b111;         // Phase 2 segment
@@ -12,12 +17,28 @@ void canInit(canTimeConfig tConfig) {
     uint8_t brp = tConfig.baudRatePrescaler & 0b111111; // Baud rate prescaler
     uint8_t smp = tConfig.samplingMode & 0b1;           // Sampling mode
 
-    uint8_t cnf1 = brp + sjw << 6;
-    uint8_t cnf2 = propag + phase1 << 3 + 1 << 7;
+    uint8_t cnf1 = brp + (sjw << 6);
+    uint8_t cnf2 = propag + (phase1 << 3) + (1 << 7);
     uint8_t cnf3 = phase2;
-    mcp2515Write(MCP_CNF1, cnf1);
-    mcp2515Write(MCP_CNF2, cnf2);
-    mcp2515Write(MCP_CNF3, cnf3);
+
+    //printf("CNF1 %d\n",cnf1);
+    //printf("CNF2 %d\n",cnf2);
+    //printf("CNF3 %d\n",cnf3);
+
+    uint8_t value = mcp2515Read(MCP_CANSTAT);
+    if ((value & MODE_MASK) == MODE_CONFIG) {
+        //printf("MCP2515 is in configuration mode during initialization\n");
+    }
+
+    mcp2515Write(MCP_CNF3, MCP_16MHz_250kBPS_CFG3);
+    mcp2515Write(MCP_CNF2, MCP_16MHz_250kBPS_CFG2);
+    mcp2515Write(MCP_CNF1, MCP_16MHz_250kBPS_CFG1);
+
+    
+    //printf("cnf1 %d\n",mcp2515Read(MCP_CNF1));
+    //printf("cnf2 %d\n",mcp2515Read(MCP_CNF2));
+    //printf("cnf3 %d\n",mcp2515Read(MCP_CNF3));
+    
 
     canSetNormalMode();
 }
@@ -31,9 +52,10 @@ void canSetNormalMode() {
 }
 
 
-void canTransmit(uint8_t id, uint64_t data)  {
+void canTransmit(frame message) {
 
-//mcp2515RTSAll(); //init message transmission
+
+ //init message transmission
     /* Setup
 - Message ID (TXBnSIDH &
 TXBnSIDL)
@@ -43,31 +65,48 @@ TXBnSIDL)
 (TXBnCTRL.TXREQ)
 ▶ Datasheet chapter 3*/
 
-//TXBnSIDH.SID3 |= 0;
+//TXBnSIDH.SID3 |= 0;mcp2515RTSAll();
 //TXBnSIDL.SID3 |= 1;
+
+//printf("TRANSMITTING....\n");
+//mcp2515RTSAll();
+
 uint8_t CanCTRL = mcp2515Read(TXB0CTRL);
+printf("%d\n",CanCTRL);
 //printf("CANCTRL: %d\t", CanCTRL);
 if ((CanCTRL >> 3) & 1) {
     printf("TRANSMIT FAIL. BUSY.\n");
     return;
 }
-//printf("TRANSMITTING....\n");
 
-uint64_t databytes = 0;
-while ((1 << BYTE_SIZE*databytes) < data) {databytes++;}
+uint8_t databytes = message.length;
 
-printf("ID %d\t", id);
-id = id << 5;
+uint8_t dlc = (message.length > 8) ? 8 : message.length;
 
+printf("ID %d\n", message.id);
 
-mcp2515Write(TXB0SIDL, id);
-mcp2515Write(TXB0SIDH, 0);
-mcp2515Write(TXB0DLC, databytes);
+PORTB &= ~(1 << CAN_CS);
+SPIMCP2515Transmit(MCP_LOAD_TX0);
+SPIMCP2515Transmit((message.id >> 3) & 0xFF); //high
+SPIMCP2515Transmit((message.id << 5) & 0b11100000); //low
+SPIMCP2515Transmit(0x00);
+SPIMCP2515Transmit(0x00);
+SPIMCP2515Transmit(message.length & 0x0F);
 
-for (uint8_t byte = 0; byte < databytes; byte++) {
-    mcp2515Write(TXB0D0+byte, (data >> BYTE_SIZE*byte) & 0xFF);
+for (uint8_t byte = 0; byte < dlc; byte++) {
+    //mcp2515Write(TXB0D0+byte, message.data[byte]);
+    SPIMCP2515Transmit(message.data[byte]);
 }
 
+PORTB |= (1 << CAN_CS);
+printf("data: %d\n", mcp2515Read(TXB0D0));
+
+mcp2515RTS(0);
+//mcp2515BitModify(TXB0CTRL, 0b00000100, 0);
+//mcp2515BitModify(MCP_CANINTF, 0b00000011, 0);
+
+
+    
 
 }
 
@@ -87,31 +126,31 @@ CANINTF.RXnIF)
 RXFnSIDH, RXMnSIDH. . . .
 ▶ Datasheet chapter 4 */
 
-mcp2515BitModify(MCP_CANINTE, 0b00000001, 0b00000001); //interrupt enable for receive buffer 0
+    mcp2515BitModify(MCP_CANINTE, 0b00000001, 0b00000001); //interrupt enable for receive buffer 0
 
-if ((mcp2515Read(MCP_CANINTF) & 0b00000001) == 1) {//if recieve buffer is ready
+    if ((mcp2515Read(MCP_CANINTF) & 0b00000001) == 1) {//if recieve buffer is ready
 
-    //id
-    if (mcp2515Read (MCP_RXB0SIDH) >= 1) {
-        printf("too high ID %d, not implemented\n", mcp2515Read(MCP_RXB0SIDH));
+        //id
+        if (mcp2515Read (MCP_RXB0SIDH) >= 1) {
+            printf("too high ID %d, not implemented\n", mcp2515Read(MCP_RXB0SIDH));
+        }
+
+        int id = mcp2515Read(RXB0SIDL) & 0b11100000 >> 5; //we only have two nodes, we don't care
+
+        //data length and data
+        int dataLength = mcp2515Read(RXB0DLC);
+        dataLength = 0x00001111 & dataLength; //only bits 0-3 are the data length size
+        uint64_t bytes = 0;
+
+        for (uint8_t byte = 0; byte < dataLength; byte++) {
+            bytes += mcp2515Read(RXB0D0+byte) << BYTE_SIZE*byte;
+        }
+
+        mcp2515BitModify(MCP_CANINTF, 0b00000011, 0);
+
+        
+        return bytes;
     }
-
-    int id = mcp2515Read(RXB0SIDL) & 0b11100000 >> 5; //we only have two nodes, we don't care
-
-    //data length and data
-    int dataLength = mcp2515Read(RXB0DLC);
-    dataLength = 0x00001111 & dataLength; //only bits 0-3 are the data length size
-    uint64_t bytes = 0;
-
-    for (uint8_t byte = 0; byte < dataLength; byte++) {
-        bytes += mcp2515Read(RXB0D0+byte) << BYTE_SIZE*byte;
-    }
-
-    mcp2515BitModify(MCP_CANINTF, 0b00000011, 0);
-
-    
-    return bytes;
-}
 /*
 bytes += mcp2515Read(RXB0D0);
 bytes += mcp2515Read(RXB0D1) << BYTE_SIZE;
@@ -123,9 +162,5 @@ bytes += mcp2515Read(RXB0D6) << BYTE_SIZE*6;
 bytes += mcp2515Read(RXB0D7) << BYTE_SIZE*7;
 */
 //mcp2515BitModify(MCP_RXF0SIDH, 0b10000000, 0b100000000);
-
-
-
-
 }
 

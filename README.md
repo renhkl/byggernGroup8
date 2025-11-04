@@ -1,5 +1,8 @@
 # byggernGroup8
 
+# note to self
+when finishing project, merge branch to main and also include the github link in the code delivery
+
 # how to install
 install toolchain from home (cd)
 

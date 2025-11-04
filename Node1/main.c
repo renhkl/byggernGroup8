@@ -34,7 +34,7 @@ int main()
     mcp2515Init();
     //ledInit();
     // printf("%d\n", adcRead());
-    printf("LIZARD\n");
+    //printf("LIZARD\n");
     _delay_ms(1000);
     oledInit();
 
@@ -63,20 +63,26 @@ int main()
 
     canTimeConfig tConfig = {
         .phaseSeg2 = 4,
-        .propagTimeSeg = 6,
+        .propagTimeSeg = 1,
         .phaseSeg1 = 5,
-        .syncJumpWidth = 2,
+        .syncJumpWidth = 3,
         .baudRatePrescaler = 3,
         .samplingMode = 0
     };
 
     canInit(tConfig);
 
+    frame m = {
+      .id = 3,
+      .length = 2,
+      .data = {4, 7}
+    };
+
     while (1)
     {
       uint64_t x = 13;
-      //canTransmit(1, x);
-      printf("CAN READ VALUE: %d\n", canReceive());
+      canTransmit(m);
+      //printf("CAN READ VALUE: %d\n", canReceive());
       
       /*
         buttons = buttonTest(buttons);

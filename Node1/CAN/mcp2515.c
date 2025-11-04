@@ -52,13 +52,13 @@ uint8_t mcp2515Init ()
     // Self - test
     _delay_ms(10);
     uint8_t value = mcp2515Read(MCP_CANSTAT);
-    printf("VALUE IS: %d\n", value);
+    //printf("VALUE IS: %d\n", value);
     if ((value & MODE_MASK) != MODE_CONFIG) {
-        printf("MCP2515 is NOT in configuration mode after reset!\n");
+        //printf("MCP2515 is NOT in configuration mode after reset!\n");
         return 1;
     }
     else {
-        printf("MCP2515 is in configuration mode after reset!\n");
+        //printf("MCP2515 is in configuration mode after reset!\n");
     }
     // More initialization
     return 0;
@@ -96,3 +96,21 @@ void mcp2515RTSAll() {
     PORTB |= (1 << PB0);
 }
 
+void mcp2515RTSBuffer0() {
+    PORTB &= ~(1 << PB0);
+    SPIMCP2515Transmit(0b10000001);
+    PORTB |= (1 << PB0);
+}
+
+void mcp2515RTS(uint8_t select) {
+    PORTB &= ~(1 << PB0);
+    if(select == 0)
+        SPIMCP2515Transmit(MCP_RTS_TX0);
+    else if(select == 1)
+        SPIMCP2515Transmit(MCP_RTS_TX1);
+    else if(select == 2)
+        SPIMCP2515Transmit(MCP_RTS_TX2);
+    else
+        SPIMCP2515Transmit(MCP_RTS_ALL);
+    PORTB |= (1 << PB0);
+}

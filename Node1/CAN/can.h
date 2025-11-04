@@ -9,11 +9,11 @@
 
 #define BYTE_SIZE 8
 
-struct frame {
+typedef struct {
     uint8_t id;
-    uint8_t data;
     uint8_t length;
-};
+    uint8_t data[8];
+} frame;
 
 typedef struct {
     uint8_t phaseSeg2;  // Phase 2 segment
@@ -25,7 +25,7 @@ typedef struct {
 } canTimeConfig;
 
 void canSetLoopbackMode();
-void canTransmit(uint8_t id, uint64_t data);
+void canTransmit(frame message);
 uint64_t canReceive();
 
 #endif //CAN
