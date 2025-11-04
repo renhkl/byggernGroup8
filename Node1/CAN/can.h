@@ -26,6 +26,6 @@ typedef struct {
 
 void canSetLoopbackMode();
 void canTransmit(frame message);
-uint64_t canReceive();
+frame canReceive();
 
 #endif //CAN

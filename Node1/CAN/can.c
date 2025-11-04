@@ -110,7 +110,7 @@ mcp2515RTS(0);
 
 }
 
-uint64_t canReceive() {
+frame canReceive() {
     /*Wait for a received message
 - Interrupt pin (enable using
 CANINTE.RXnIE)
@@ -130,26 +130,25 @@ RXFnSIDH, RXMnSIDH. . . .
 
     if ((mcp2515Read(MCP_CANINTF) & 0b00000001) == 1) {//if recieve buffer is ready
 
-        //id
+        frame m;
+
         if (mcp2515Read (MCP_RXB0SIDH) >= 1) {
             printf("too high ID %d, not implemented\n", mcp2515Read(MCP_RXB0SIDH));
         }
 
-        int id = mcp2515Read(RXB0SIDL) & 0b11100000 >> 5; //we only have two nodes, we don't care
+        m.id = (mcp2515Read(RXB0SIDL) & 0b11100000) >> 5; //we only have two nodes, we don't care
 
         //data length and data
-        int dataLength = mcp2515Read(RXB0DLC);
-        dataLength = 0x00001111 & dataLength; //only bits 0-3 are the data length size
-        uint64_t bytes = 0;
+        m.length = 0b00001111 & mcp2515Read(RXB0DLC); //only bits 0-3 are the data length size
 
-        for (uint8_t byte = 0; byte < dataLength; byte++) {
-            bytes += mcp2515Read(RXB0D0+byte) << BYTE_SIZE*byte;
+        for (uint8_t byte = 0; byte < m.length; byte++) {
+            m.data[byte] = mcp2515Read(RXB0D0+byte);
         }
 
         mcp2515BitModify(MCP_CANINTF, 0b00000011, 0);
 
         
-        return bytes;
+        return m;
     }
 /*
 bytes += mcp2515Read(RXB0D0);

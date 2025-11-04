@@ -66,12 +66,13 @@ int main()
   can_init(CFG_250KBPS, 0);
 
   CanMsg m = (CanMsg){
-    .id = 1,
+    .id = 5,
     .length = sizeof(YourStruct),
     .byte8 = union_cast(Byte8, ((YourStruct){
       .a = 10,
       .b = 20,
       .c = 25,
+      .d = 30,
     })),
   };
     
@@ -97,12 +98,12 @@ int main()
   {
     
       //can_send(&message, 0);
-      //can_tx(m);
+      can_tx(m);
       
       
-      printf("Reading... ");
+      /*printf("Reading... ");
       if(can_rx(&read)) can_printmsg(read);
-      else printf("empty soul, empty head\n\r");
+      else printf("empty soul, empty head\n\r");*/
       
       
   }

@@ -80,9 +80,9 @@ int main()
 
     while (1)
     {
-      uint64_t x = 13;
-      canTransmit(m);
-      //printf("CAN READ VALUE: %d\n", canReceive());
+      frame m = canReceive();
+      printf("\nCAN READ VALUE ID %d\t LENGTH %d\t DATA ", m.id, m.length);
+      for (uint8_t i = 0; i < m.length; i++) {printf("%d ",m.data[i]);}
       
       /*
         buttons = buttonTest(buttons);
