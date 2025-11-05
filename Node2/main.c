@@ -85,10 +85,19 @@ int main()
   //PIO_PB13;
   printf("CHARIZARD\n\r");
   can_printmsg(m);
+
+  printf("TURNING %d INTO %d\n\r",0,degreesToDutyCycle(0));
+  printf("TURNING %d INTO %d\n\r",90,degreesToDutyCycle(90));
+  printf("TURNING %d INTO %d\n\r",180,degreesToDutyCycle(180));
+
+  changeServoPosition(12);
+
   while (1)
   {
-    
 
+    
+    
+ 
       //can_tx(m);
       
       /*
