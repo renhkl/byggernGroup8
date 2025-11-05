@@ -3,5 +3,6 @@
 
 
 void pwmInit();
+void changeDutyCycle();
 
 #endif 

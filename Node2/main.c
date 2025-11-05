@@ -52,8 +52,9 @@ int main()
   // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
 
  //using can.h and not can_controller.h
-
+ pwmInit();
   can_init(CFG_250KBPS, 0);
+ 
 
   CanMsg m = (CanMsg){
     .id = 5,
@@ -90,10 +91,11 @@ int main()
 
       //can_tx(m);
       
-      
+      /*
       printf("Reading... ");
       if(can_rx(&read)) can_printmsg(read);
       else printf("empty soul, empty head\n\r");
+      */
       
       
   }
