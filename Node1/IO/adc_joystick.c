@@ -50,9 +50,9 @@ uint8_t *adcRead(void)
 
 int joystickPercentage(int value)
 {
-    printf("VAL %d ",value);
+    //printf("VAL %d ",value);
     int percentage = (value - 160) * 200 / 160;
-    printf("PERC %d ",percentage);
+    //printf("PERC %d ",percentage);
     return percentage;
 }
 
