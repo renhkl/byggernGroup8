@@ -31,7 +31,9 @@
     "iosfwd": "c",
     "limits": "c",
     "stop_token": "c",
-    "streambuf": "c"
+    "streambuf": "c",
+    "sam.h": "c",
+    "sam3x8e.h": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
