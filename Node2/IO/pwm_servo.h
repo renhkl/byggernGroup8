@@ -4,5 +4,6 @@
 
 void pwmInit();
 void changeDutyCycle();
+void interuptInit()
 
 #endif 

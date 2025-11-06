@@ -55,3 +55,11 @@ void pwmInit() {
 void changeDutyCycle() {
 
 }
+
+void interuptInit(){
+    NVIC_EnableIRQ(PWM_IRQn);
+    PWM->PWM_IER1 |= CHID0;
+    PWM->PWM_CMPVx |= CVM(0) | ;
+
+
+}
