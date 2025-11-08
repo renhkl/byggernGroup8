@@ -1,6 +1,7 @@
 #include "ir_photodiode.h"
 #include "sam.h"
 #include <stdint.h>
+#include <time.h>
 
 #define PMC_WPMR_WPEN (0x1u << 0)
 
@@ -65,12 +66,16 @@ int adcRead() {
 }
 
 
-void countGoals(uint8_t *goals, int sensor) {
-    if(sensor){
-        *goals += 1;
+void countGoals(uint8_t *goals, int sensor, uint8_t goalDelay) {
+    static unsigned long lastGoal = 0; 
+    unsigned long now = millis();
+
+    if(sensor && (now - lastGoal) > goalDelay){
+        (*goals) += 1;
+        lastGoal = now;
     }
 }
 
 int readPhotodiode() {
-return 0;
+    return 0;
 }

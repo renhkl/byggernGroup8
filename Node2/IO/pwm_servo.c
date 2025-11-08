@@ -158,3 +158,11 @@ void interruptHandler(){
         //logic to be executed 
     } 
 }
+
+uint8_t LPF(float input, float *prevOutput, float alpha){
+
+    float output = alpha * (*prevOutput) + (1 - alpha) * input;
+    *prevOutput = output;
+
+    return output
+}
