@@ -22,7 +22,12 @@ cd build \
   sudo apt install libtool pkg-config jimsh libjim-dev
 
 # how to set up git
-ssh-keygen -t rsa \
+> ssh-keygen -t rsa \
+> cat ~/.ssh/id_rsa.pub  \
+> git config --global user.email "you@example.com" \
+> git config --global user.name "Your Name"
+
+
 
 
 

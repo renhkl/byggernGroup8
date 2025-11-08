@@ -11,6 +11,8 @@ openocd/
 ../.vscode/settings.json
 ../Node1/build/IO/adc_joystick.o
 ../Node1/build/IO/oled.o
+../Node1/build/
+../Node2/build/
 ../Node2/build/can.o
 ../Node2/build/can_controller.o
 ../Node2/build/can_interrupt.o
