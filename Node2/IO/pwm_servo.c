@@ -159,10 +159,10 @@ void interruptHandler(){
     } 
 }
 
-uint8_t LPF(float input, float *prevOutput, float alpha){
+uint8_t lowpassFilter(float input, float *prevOutput, float alpha){
 
     float output = alpha * (*prevOutput) + (1 - alpha) * input;
     *prevOutput = output;
 
-    return output
+    return output;
 }

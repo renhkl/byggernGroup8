@@ -56,6 +56,26 @@ int joystickPercentage(int value)
     return percentage;
 }
 
+uint8_t joystickToServoDegrees(int value)
+{
+    //printf("VAL %d ",value);
+    double percentage = ((double)value * 5 - 316) * 45 / 236;
+    if (percentage < 0) return 0;
+    if (percentage > 180) return 180;
+    if (percentage > 80 && percentage < 100) return 90;
+    return (uint8_t)percentage;
+}
+
+uint8_t joystickToMotorDegrees(int value)
+{
+    //printf("VAL %d ",value);
+    double percentage = ((((double)value * 5 - 200) * 45 / 236)-19) * 180/165;
+    if (percentage < 0) return 0;
+    if (percentage > 180) return 180;
+    if (percentage > 80 && percentage < 100) return 90;
+    return (uint8_t)percentage;
+}
+
 void printDirection(enum Direction dir)
 {
     switch (dir)

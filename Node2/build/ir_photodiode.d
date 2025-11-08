@@ -72,4 +72,4 @@ build/ir_photodiode.o: IO/ir_photodiode.c IO/ir_photodiode.h \
  sam/sam3x/include/instance/instance_wdt.h \
  sam/sam3x/include/instance/instance_rtc.h \
  sam/sam3x/include/instance/instance_gpbr.h \
- sam/sam3x/include/pio/pio_sam3x8e.h
+ sam/sam3x/include/pio/pio_sam3x8e.h time.h

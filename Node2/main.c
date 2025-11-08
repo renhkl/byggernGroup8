@@ -93,10 +93,21 @@ int main()
   changeServoPosition(0);
   adcInit();
 
+  int goals = 0;
+  unsigned long goalDelay = 1000000;
+
   while (1)
   {
 
-    printf("ADC %d\t", adcRead());
+    
+
+    
+    int adc = adcRead();
+    printf("ADC %d ", adc);
+    uint8_t goal = isGoal(adc);
+    printf(" GOAL? %d ", goal);
+    countGoals(&goals, goal, goalDelay);
+    printf(" TOTAL %d\t", goals);
 
     
     
@@ -108,12 +119,12 @@ int main()
       if(can_rx(&read)) can_printmsg(read);
       else printf("empty soul, empty head");
 
-      printf(" STATE %d", read.byte[0]);
-      if (read.byte[0] == 1) {
-        printf(" CHANGE TO ANGLE %d", read.byte[1]);
-        changeServoPosition(read.byte[1]);
-      }
+      printf(" SERVO ANGLE %d", read.byte[0]);
+      changeServoPosition(read.byte[0]);
       
+      printf(" MOTOR ANGLE %d", read.byte[1]);
+      changeServoPosition(read.byte[1]);
+
       printf("\n\r");
       
       

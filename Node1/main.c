@@ -110,8 +110,14 @@ int main()
       uint8_t state = getJoystickState(xPercentage, yPercentage);
       printf(" %d\t",state);
 
-      m.data[0] = state; 
-      m.data[1] = angle;
+      uint8_t servo = joystickToServoDegrees(values[2]);
+      printf(" %d\t",servo);
+
+      uint8_t motor = joystickToMotorDegrees(values[3]);
+      printf(" %d\t",motor);
+
+      m.data[0] = servo;
+      m.data[1] = motor;
       
 
       //CAN transmit

@@ -16,6 +16,8 @@ uint8_t JoystickPercentageToServoAngle(int deltaX, int deltaY);
 uint8_t getJoystickState(int deltaX, int deltaY);
 void printDirection(enum Direction dir);
 enum Direction getJoystickDirection();
+uint8_t joystickToServoDegrees(int value);
+uint8_t joystickToMotorDegrees(int value);
 
 enum Direction
 {
