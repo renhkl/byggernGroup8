@@ -6,41 +6,54 @@ when finishing project, merge branch to main and also include the github link in
 # how to install
 install toolchain from home (cd)
 
-sudo apt-get install gcc-avr avr-libc avrdude \
-sudo apt install gcc-arm-none-eabi \
-sudo apt install libusb-dev libusb-1.0-0-dev libusb-1.0-0 \
-sudo apt install libhidapi-dev libftdi-dev libftdi1-dev \
-git clone https://git.code.sf.net/p/openocd/code openocd \
-cd openocd \
-./bootstrap \
-mkdir build \
-cd build \
- ../configure --enable-cmsis-dap --enable-openjtag --prefix=/opt/openocd \
-  make \
-  sudo make install \
+> sudo apt-get install gcc-avr avr-libc avrdude \
+> sudo apt install gcc-arm-none-eabi \
+> sudo apt install libusb-dev libusb-1.0-0-dev libusb-1.0-0 \
+> sudo apt install libhidapi-dev libftdi-dev libftdi1-dev \
+> git clone https://git.code.sf.net/p/openocd/code openocd \
+> cd openocd \
+> ./bootstrap \
+> mkdir build \
+> cd build \
+> ../configure --enable-cmsis-dap --enable-openjtag --prefix=/opt/openocd \
+>  make \
+>  sudo make install 
 
   sudo apt install libtool pkg-config jimsh libjim-dev
 
 # how to set up git
 > ssh-keygen -t rsa \
+Press enter on all \
 > cat ~/.ssh/id_rsa.pub  \
+Add public key to github account under SSH and GPG keys
 > git config --global user.email "you@example.com" \
+
 > git config --global user.name "Your Name"
 
 
+# how to git
+Load project to new computer: git clone git@github.com:renhkl/byggernGroup8.git \
 
+Update project: git pull \
+
+
+To solve merge conflicts \
+add filepath \
+rm filepath \
+manually keep/delete changes in files \
+
+Save changes
+git add ../Node1 ../Node2 \
+git commit -m "descriptive commit message" \
+git push \
 
 
 # how to run
-make && make flash 
+> (sudo) make && (sudo) make flash \
 make sure to be in the right folder as there are one makefile for each of the nodes
 
 
-# how to add to Git when not in group folder
-git add ../Node1 ../Node2
-
-
-# to find the RS232 device
+# how to find the RS232 device
 1. dmesg | grep tty (might need sudo priviliges)
 
 
@@ -51,7 +64,7 @@ picocom -b 9600 -r -l /dev/ttyS0 \
 - ATSAM
 picocom -b 9600 -r -l /dev/ttyACM1
 
-
+# terminal commands
 *** Picocom commands (all prefixed by [C-a]) \
 
 *** [C-x] : Exit picocom \

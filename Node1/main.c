@@ -74,8 +74,8 @@ int main()
 
     frame m = {
       .id = 3,
-      .length = 5,
-      .data = {4, 7, 9, 12, 15}
+      .length = 2,
+      .data = {4, 7}
     };
 
 
@@ -93,20 +93,31 @@ int main()
       int xPercentage = joystickPercentage(values[3]);
       int yPercentage = joystickPercentage(values[2]);
 
-      
+      /*
       enum Direction direction = getJoystickDirection();
       printDirection(direction);
-      printf(" %d %d\n",row,column);
+      printf(" %d %d",row,column);
       removeSymbol(row, 1);
       moveArrowWithJoystick(&row, &column, direction);
       oledPrintArrow(row, 1);
+      */
+      printf(" %d %d",xPercentage,yPercentage);
+      uint8_t angle = JoystickPercentageToServoAngle(xPercentage, yPercentage);
+      printf(" %d",angle);
 
+      uint8_t state = getJoystickState(xPercentage, yPercentage);
+      printf(" %d\n",state);
+
+      /*
       m.data[0] = row; 
       m.data[1] = column;
       m.data[2] = xPercentage;
       m.data[3] = yPercentage;
       m.data[4] = direction;
+      */
 
+      m.data[0] = state; 
+      m.data[1] = angle;
 
       //CAN transmit
       canTransmit(m);

@@ -25,7 +25,7 @@ int main()
   //uart_init(/*cpufreq*/, /*baud*/);
   uart_init(84000000, 9600);
   
-
+  //signal pin test
   PIOB->PIO_OER = PIO_OER_P13; //make output
   PIOB->PIO_SODR = PIO_SODR_P13; //set high 
   //PIOB->PIO_ODR = PIO_CODR_P13; //clear/low
@@ -90,7 +90,7 @@ int main()
   printf("TURNING %d INTO %d\n\r",90,degreesToDutyCycle(90));
   printf("TURNING %d INTO %d\n\r",180,degreesToDutyCycle(180));
 
-  changeServoPosition(12);
+  changeServoPosition(0);
 
   while (1)
   {
@@ -100,11 +100,13 @@ int main()
  
       //can_tx(m);
       
-      /*
+      
       printf("Reading... ");
       if(can_rx(&read)) can_printmsg(read);
       else printf("empty soul, empty head\n\r");
-      */
+
+      if (m.byte[0] == 1) {changeServoPosition(m.byte[1]);}
+      
       
       
   }

@@ -13,7 +13,8 @@ SOURCE_FILES = \
 	CAN/can.c \
 	CAN/can_controller.c \
 	CAN/can_interrupt.c \
-	IO/pwm_servo.c
+	IO/pwm_servo.c \
+	IO/ir_photodiode.c \
 #	../path_to/uart.c \
 #   filename1.c \
 #   filename2.c \

@@ -72,7 +72,7 @@ TXBnSIDL)
 //mcp2515RTSAll();
 
 uint8_t CanCTRL = mcp2515Read(TXB0CTRL);
-printf("%d\n",CanCTRL);
+//printf("%d\n",CanCTRL);
 //printf("CANCTRL: %d\t", CanCTRL);
 if ((CanCTRL >> 3) & 1) {
     printf("TRANSMIT FAIL. BUSY.\n");
@@ -83,7 +83,7 @@ uint8_t databytes = message.length;
 
 uint8_t dlc = (message.length > 8) ? 8 : message.length;
 
-printf("ID %d\n", message.id);
+//printf("ID %d\n", message.id);
 
 PORTB &= ~(1 << CAN_CS);
 SPIMCP2515Transmit(MCP_LOAD_TX0);
@@ -99,7 +99,7 @@ for (uint8_t byte = 0; byte < dlc; byte++) {
 }
 
 PORTB |= (1 << CAN_CS);
-printf("data: %d\n", mcp2515Read(TXB0D0));
+//printf("data: %d\n", mcp2515Read(TXB0D0));
 
 mcp2515RTS(0);
 //mcp2515BitModify(TXB0CTRL, 0b00000100, 0);

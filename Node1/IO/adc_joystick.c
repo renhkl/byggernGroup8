@@ -107,15 +107,20 @@ enum Direction JoystickPercentageToDirection(int Xpercentage, int Ypercentage)
     return direction;
 }
 
-uint8_t voltageToAngle(uint8_t *values)
+uint8_t JoystickPercentageToServoAngle(int deltaX, int deltaY)
 {
-    double deltaX = joystickPercentage(values[3]);
-    double deltaY = joystickPercentage(values[2]);
-    double rad = atan2(deltaY, deltaX);
+    double rad = atan2((double)deltaY, (double)deltaX);
 
     uint8_t deg = (uint8_t)((rad * 180 / M_PI));
 
     return deg;
+}
+
+uint8_t getJoystickState(int deltaX, int deltaY)
+{
+     if (JoystickPercentageToDirection(deltaX, deltaY) == NEUTRAL) {return 0;} //IDLE STATE
+     if (deltaY >= 0) {return 1;} // Upper hemisphere, SERVO STATE
+     if (deltaY < 0) {return 2;} // Lower hemisphere, MOTOR STATE
 }
 
 
