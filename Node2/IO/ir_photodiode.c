@@ -65,7 +65,6 @@ int adcRead() {
 
 }
 
-
 void countGoals(uint8_t *goals, int sensor, unsigned long goalDelay) {
     static unsigned long lastGoal = 0; 
     unsigned long now = time_now();
