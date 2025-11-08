@@ -91,9 +91,12 @@ int main()
   printf("TURNING %d INTO %d\n\r",180,degreesToDutyCycle(180));
 
   changeServoPosition(0);
+  adcInit();
 
   while (1)
   {
+
+    printf("ADC %d\n", adcRead());
 
     
     

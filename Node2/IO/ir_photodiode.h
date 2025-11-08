@@ -3,5 +3,7 @@
 
 void countGoals();
 int readPhotodiode();
+void adcInit();
+int adcRead();
 
 #endif
