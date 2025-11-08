@@ -6,7 +6,8 @@
 
 void pwmInit();
 void changeDutyCycle();
-void interuptInit()
+void interruptInit();
+void interruptHandle();
 void changeDutyCycle(int dutyCycle);
 void changeServoPosition(uint8_t degrees);
 int degreesToDutyCycle(int degrees);
