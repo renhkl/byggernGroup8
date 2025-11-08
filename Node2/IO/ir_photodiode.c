@@ -1,5 +1,6 @@
 #include "ir_photodiode.h"
 #include "sam.h"
+#include <stdint.h>
 
 void adcInit() {
 
@@ -28,8 +29,11 @@ int adcRead() {
 
 }
 
-void countGoals() {
-    ;
+
+void countGoals(uint8_t *goals, int sensor) {
+    if(sensor){
+        *goals += 1;
+    }
 }
 
 int readPhotodiode() {
