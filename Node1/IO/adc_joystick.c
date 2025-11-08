@@ -84,19 +84,19 @@ void printDirection(enum Direction dir)
 enum Direction JoystickPercentageToDirection(int Xpercentage, int Ypercentage)
 {
     enum Direction direction;
-    if (Xpercentage < -33)
+    if (Xpercentage < -40)
     {
         direction = LEFT;
     }
-    else if (Xpercentage > 33)
+    else if (Xpercentage > 40)
     {
         direction = RIGHT;
     }
-    else if (Ypercentage > 33)
+    else if (Ypercentage > 40)
     {
         direction = UP;
     }
-    else if (Ypercentage < -33)
+    else if (Ypercentage < -40)
     {
         direction = DOWN;
     }

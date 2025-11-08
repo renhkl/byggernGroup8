@@ -103,10 +103,15 @@ int main()
       
       printf("Reading... ");
       if(can_rx(&read)) can_printmsg(read);
-      else printf("empty soul, empty head\n\r");
+      else printf("empty soul, empty head");
 
-      if (m.byte[0] == 1) {changeServoPosition(m.byte[1]);}
+      printf(" STATE %d", read.byte[0]);
+      if (read.byte[0] == 1) {
+        printf(" CHANGE TO ANGLE %d", read.byte[1]);
+        changeServoPosition(read.byte[1]);
+      }
       
+      printf("\n\r");
       
       
   }
