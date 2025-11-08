@@ -4,6 +4,7 @@
 void countGoals();
 int readPhotodiode();
 void adcInit();
+void adcINIT();
 int adcRead();
 
 #endif

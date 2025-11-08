@@ -52,7 +52,7 @@ int main()
   // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
 
  //using can.h and not can_controller.h
- pwmInit();
+ pwmInit13();
   can_init(CFG_250KBPS, 0);
  
 
@@ -96,7 +96,7 @@ int main()
   while (1)
   {
 
-    printf("ADC %d\n", adcRead());
+    printf("ADC %d\t", adcRead());
 
     
     

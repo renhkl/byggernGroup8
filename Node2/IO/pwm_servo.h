@@ -4,11 +4,11 @@
 #include <stdint.h>
 
 
-void pwmInit();
-void changeDutyCycle();
+void pwmInit12();
+void pwmInit13();
 void interruptInit();
-void interruptHandle();
-void changeDutyCycle(int dutyCycle);
+void interruptHandler();
+void changeDutyCycle(int dutyCycle, int channel);
 void changeServoPosition(uint8_t degrees);
 int degreesToDutyCycle(int degrees);
 

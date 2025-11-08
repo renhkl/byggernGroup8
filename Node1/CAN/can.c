@@ -75,7 +75,7 @@ uint8_t CanCTRL = mcp2515Read(TXB0CTRL);
 //printf("%d\n",CanCTRL);
 //printf("CANCTRL: %d\t", CanCTRL);
 if ((CanCTRL >> 3) & 1) {
-    printf("TRANSMIT FAIL. BUSY.\n");
+    printf("TRANSMIT FAIL. BUSY.");
     return;
 }
 
@@ -83,7 +83,7 @@ uint8_t databytes = message.length;
 
 uint8_t dlc = (message.length > 8) ? 8 : message.length;
 
-//printf("ID %d\n", message.id);
+printf("Transmitting.. ID %d", message.id);
 
 PORTB &= ~(1 << CAN_CS);
 SPIMCP2515Transmit(MCP_LOAD_TX0);

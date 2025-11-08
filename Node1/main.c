@@ -89,6 +89,7 @@ int main()
       for (uint8_t i = 0; i < m.length; i++) {printf("%d ",m.data[i]);}
       */
 
+      
       uint8_t *values = adcRead();
       int xPercentage = joystickPercentage(values[3]);
       int yPercentage = joystickPercentage(values[2]);
@@ -101,32 +102,33 @@ int main()
       moveArrowWithJoystick(&row, &column, direction);
       oledPrintArrow(row, 1);
       */
+
       printf(" %d %d",xPercentage,yPercentage);
       uint8_t angle = JoystickPercentageToServoAngle(xPercentage, yPercentage);
       printf(" %d",angle);
 
       uint8_t state = getJoystickState(xPercentage, yPercentage);
-      printf(" %d\n",state);
+      printf(" %d\t",state);
+
+      m.data[0] = state; 
+      m.data[1] = angle;
+      
+
+      //CAN transmit
+      canTransmit(m);
+      printf("\n");
+      
+
+    
 
       /*
       m.data[0] = row; 
       m.data[1] = column;
       m.data[2] = xPercentage;
       m.data[3] = yPercentage;
-      m.data[4] = direction;
-      */
-
-      m.data[0] = state; 
-      m.data[1] = angle;
-
-      //CAN transmit
-      canTransmit(m);
+      m.data[4] = direction;  
       
-
-    
-
-      /*
-        buttons = buttonTest(buttons);
+      buttons = buttonTest(buttons);
         uint8_t *values = adcRead();
         int xPercentage = joystickPercentage(values[3]);
         int yPercentage = joystickPercentage(values[2]);
