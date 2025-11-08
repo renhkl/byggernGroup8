@@ -17,37 +17,27 @@
 
 int main()
 {
-  SystemInit();
 
+  SystemInit();
   WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
 
-  //Uncomment after including uart above
+
   //uart_init(/*cpufreq*/, /*baud*/);
   uart_init(84000000, 9600);
   
+
   PIOB->PIO_OER = PIO_OER_P13; //make output
   PIOB->PIO_SODR = PIO_SODR_P13; //set high 
   //PIOB->PIO_ODR = PIO_CODR_P13; //clear/low
-  int baud = 14343;
 
-
-  /*
-  uint32_t phaseSeg2;  // Phase 2 segment
-  uint32_t propagTimeSeg;  // Propagation time segment
-  uint32_t phaseSeg1;  // Phase 1 segment
-  uint32_t syncJumpWidth;     // Synchronization jump width
-  uint32_t baudRatePrescaler;     // Baud rate prescaler
-  uint32_t samplingMode;     // Sampling mode
-  uint32_t reg;
-  */
 
   CanInit tConfig = {
       .phase2 = 4,
       .propag = 1,
       .phase1 = 5,
-      .sjw    = 3,
-      .brp    = 20,
-      .smp    = 0
+      .sjw    = 3, //synchronization jump width
+      .brp    = 20, //baud rate prescaler
+      .smp    = 0 //sampling mode
   };
 
   static const CanInit CFG_250KBPS = {
@@ -61,9 +51,10 @@ int main()
   
   // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
 
-  //can_init_def_tx_rx_mb(tConfig); //init with predfined mailboxes
-
+ //using can.h and not can_controller.h
+ pwmInit();
   can_init(CFG_250KBPS, 0);
+ 
 
   CanMsg m = (CanMsg){
     .id = 5,
@@ -94,16 +85,26 @@ int main()
   //PIO_PB13;
   printf("CHARIZARD\n\r");
   can_printmsg(m);
+
+  printf("TURNING %d INTO %d\n\r",0,degreesToDutyCycle(0));
+  printf("TURNING %d INTO %d\n\r",90,degreesToDutyCycle(90));
+  printf("TURNING %d INTO %d\n\r",180,degreesToDutyCycle(180));
+
+  changeServoPosition(12);
+
   while (1)
   {
+
     
-      //can_send(&message, 0);
-      can_tx(m);
+    
+ 
+      //can_tx(m);
       
-      
-      /*printf("Reading... ");
+      /*
+      printf("Reading... ");
       if(can_rx(&read)) can_printmsg(read);
-      else printf("empty soul, empty head\n\r");*/
+      else printf("empty soul, empty head\n\r");
+      */
       
       
   }

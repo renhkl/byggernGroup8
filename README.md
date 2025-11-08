@@ -6,6 +6,25 @@ when finishing project, merge branch to main and also include the github link in
 # how to install
 install toolchain from home (cd)
 
+sudo apt-get install gcc-avr avr-libc avrdude \
+sudo apt install gcc-arm-none-eabi \
+sudo apt install libusb-dev libusb-1.0-0-dev libusb-1.0-0 \
+sudo apt install libhidapi-dev libftdi-dev libftdi1-dev \
+git clone https://git.code.sf.net/p/openocd/code openocd \
+cd openocd \
+./bootstrap \
+mkdir build \
+cd build \
+ ../configure --enable-cmsis-dap --enable-openjtag --prefix=/opt/openocd \
+  make \
+  sudo make install \
+
+  sudo apt install libtool pkg-config jimsh libjim-dev
+
+# how to set up git
+ssh-keygen -t rsa \
+
+
 
 # how to run
 make && make flash 

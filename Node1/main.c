@@ -74,8 +74,8 @@ int main()
 
     frame m = {
       .id = 3,
-      .length = 2,
-      .data = {4, 7}
+      .length = 5,
+      .data = {4, 7, 9, 12, 15}
     };
 
 
@@ -83,10 +83,16 @@ int main()
     while (1)
     {
       /*
+      //CAN receive
       frame m = canReceive();
       printf("\nCAN READ VALUE ID %d\t LENGTH %d\t DATA ", m.id, m.length);
       for (uint8_t i = 0; i < m.length; i++) {printf("%d ",m.data[i]);}
       */
+
+      uint8_t *values = adcRead();
+      int xPercentage = joystickPercentage(values[3]);
+      int yPercentage = joystickPercentage(values[2]);
+
       
       enum Direction direction = getJoystickDirection();
       printDirection(direction);
@@ -94,6 +100,19 @@ int main()
       removeSymbol(row, 1);
       moveArrowWithJoystick(&row, &column, direction);
       oledPrintArrow(row, 1);
+
+      m.data[0] = row; 
+      m.data[1] = column;
+      m.data[2] = xPercentage;
+      m.data[3] = yPercentage;
+      m.data[4] = direction;
+
+
+      //CAN transmit
+      canTransmit(m);
+      
+
+    
 
       /*
         buttons = buttonTest(buttons);

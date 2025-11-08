@@ -126,7 +126,7 @@ void oledClearScreen() {
         oledClearPage(3);
         oledClearPage(4);
         oledClearPage(5);
-         oledClearPage(6);
+        oledClearPage(6);
         oledClearPage(7);
 
 }
@@ -304,10 +304,11 @@ void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction directi
         }
         }
 
-         if (!(PIND & (1 << PIN5))) {
+         if (!(PIND & (1 << PIN5))) { //get joystick position on button press
          printf("%d %d\n", page, col);
         }
 
+        //update the global variables again
         *row = page;
         *column = col;
 }
