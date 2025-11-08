@@ -23,4 +23,6 @@ openocd/
 ../Node2/build/uart.o
 ../Node2/sam/openocd.cfg
 ../Node2/build/pwm_servo.o
+../Node2/build/main.elf
+../Node2/build/pwm_servo.o
 

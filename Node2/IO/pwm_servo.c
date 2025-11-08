@@ -35,10 +35,16 @@ void pwmInit() {
     PWM->PWM_WPCR |=  PWM_WPCR_WPCMD(0); 
 
     
+<<<<<<< HEAD
     //choose clk 32 prescaler
     PWM->PWM_CLK = PWM_CLK_PREB(0b101) | PWM_CLK_PREA(0b101);
     PWM->PWM_CH_NUM[0].PWM_CMR = PWM_CMR_CPRE_MCK_DIV_32; 
     PWM->PWM_CH_NUM[0].PWM_CMR |= PWM_CMR_CPOL; //change channel polarity 
+=======
+    //choose clk without prescaler, else default
+    PWM->PWM_CLK = PWM_CLK_PREB(0b101) | PWM_CLK_PREA(0b101);
+    PWM->PWM_CH_NUM[0].PWM_CMR = PWM_CMR_CPRE_MCK_DIV_32; 
+>>>>>>> 56a70098966cbf933a8a56fd7fc137ecdc8726d8
     PWM->PWM_CH_NUM[0].PWM_CPRD = 52500; //period
     PWM->PWM_CH_NUM[0].PWM_CDTY = 4000; //duty cycle
     PWM->PWM_ENA |= PWM_ENA_CHID0; //enable channel 0
