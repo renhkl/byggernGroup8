@@ -1,3 +1,10 @@
+//States struct to store velocity and position. 
+typedef struct {
+    double velocity;
+    double position;
+} states;
+
+//Controller struct to be passed into "computeGain".
 typedef struct {
     double Kp; //Proportional gain.
     double Ki; //Integral gain.
