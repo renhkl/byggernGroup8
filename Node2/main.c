@@ -28,7 +28,7 @@ int main()
   //signal pin test
   PIOB->PIO_OER = PIO_OER_P13; //make output
   PIOB->PIO_SODR = PIO_SODR_P13; //set high 
-  //PIOB->PIO_ODR = PIO_CODR_P13; //clear/low
+  //PIOB->PIO_CODR = PIO_CODR_P13; //clear/low
 
 
   CanInit tConfig = {
@@ -52,7 +52,7 @@ int main()
   // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
 
  //using can.h and not can_controller.h
- pwmInit13();
+ pwmServoInit();
   can_init(CFG_250KBPS, 0);
  
 
@@ -96,6 +96,8 @@ int main()
   int goals = 0;
   unsigned long goalDelay = 1000000;
 
+  setMotorDirection(0);
+
   while (1)
   {
 
@@ -123,7 +125,7 @@ int main()
       changeServoPosition(read.byte[0]);
       
       printf(" MOTOR ANGLE %d", read.byte[1]);
-      changeServoPosition(read.byte[1]);
+      changeMotorPosition(read.byte[1]);
 
       printf("\n\r");
       

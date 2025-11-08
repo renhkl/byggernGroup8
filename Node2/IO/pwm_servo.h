@@ -3,9 +3,7 @@
 
 #include <stdint.h>
 
-
-void pwmInit12();
-void pwmInit13();
+void pwmServoInit();
 void interruptInit();
 void interruptHandler();
 void changeDutyCycle(int dutyCycle, int channel);
