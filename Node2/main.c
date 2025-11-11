@@ -92,6 +92,7 @@ int main()
 
   changeServoPosition(0);
   adcInit();
+  decoderInit();
 
   int goals = 0;
   unsigned long goalDelay = 1000000;
@@ -111,6 +112,8 @@ int main()
     countGoals(&goals, goal, goalDelay);
     printf(" TOTAL %d\t", goals);
 
+    printf(" DECODER VALUE %d\t",  getDecoderValue());
+   
     
     
  
@@ -124,8 +127,22 @@ int main()
       printf(" SERVO ANGLE %d", read.byte[0]);
       changeServoPosition(read.byte[0]);
       
-      printf(" MOTOR ANGLE %d", read.byte[1]);
-      changeMotorPosition(read.byte[1]);
+      uint8_t motorAngle = read.byte[1];
+      if (motorAngle > 180) {
+        motorAngle=180;
+      }
+      if (motorAngle < 90) {
+        setMotorDirection(1);
+        motorAngle *= 2;
+        printf(" MOTOR LEFT %d", motorAngle);
+      }
+      else {
+        setMotorDirection(0);
+        motorAngle -= 90;
+        motorAngle *= 2;
+        printf(" MOTOR RIGHT %d", motorAngle);
+      }
+      changeMotorPosition(motorAngle);
 
       printf("\n\r");
       
