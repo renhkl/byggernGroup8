@@ -3,6 +3,7 @@
 #include "sam.h"
 #include "CAN/can_controller.h"
 #include "CAN/can.h"
+#include "IO/PID_Con.h"
 
 /*
  * Remember to update the Makefile with the (relative) path to the uart.c file.
@@ -99,6 +100,10 @@ int main()
 
   setMotorDirection(0);
 
+  int currentPosition = 0;
+
+  printf("TEST DOUBLE %lf", (double)0.18347);
+
   while (1)
   {
 
@@ -112,7 +117,7 @@ int main()
     countGoals(&goals, goal, goalDelay);
     printf(" TOTAL %d\t", goals);
 
-    printf(" DECODER VALUE %d\t",  getDecoderValue());
+    printf(" DECODER VALUE %d\t", getDecoderValue());
    
     
     
@@ -124,28 +129,96 @@ int main()
       if(can_rx(&read)) can_printmsg(read);
       else printf("empty soul, empty head");
 
-      printf(" SERVO ANGLE %d", read.byte[0]);
-      changeServoPosition(read.byte[0]);
+      uint8_t servoAngle = read.byte[0];
+      printf(" SERVO ANGLE %d", servoAngle);
+      changeServoPosition(servoAngle);
       
       uint8_t motorAngle = read.byte[1];
-      if (motorAngle > 180) {
-        motorAngle=180;
-      }
-      if (motorAngle < 90) {
-        setMotorDirection(1);
-        motorAngle *= 2;
-        printf(" MOTOR LEFT %d", motorAngle);
-      }
-      else {
-        setMotorDirection(0);
-        motorAngle -= 90;
-        motorAngle *= 2;
-        printf(" MOTOR RIGHT %d", motorAngle);
-      }
-      changeMotorPosition(motorAngle);
+      currentPosition = desiredMotorPosition(currentPosition, motorAngle);
+      printf(" CURRENT POS %d", currentPosition);
 
-      printf("\n\r");
       
+      PIDCon controller = {
+        .Kp = 1, 
+        .Ki = 1,
+        .Kd = 0,
+
+        .T = (1/4000000),
+        .integral = 0
+      };
+      ringBufferInit(&controller.errorPrev);
+      double gain = compute_gain(&controller, currentPosition, getDecoderValue(), 0, 0, 0);
+      
+      gain = gain * (double)180/(double)5635;
+      printf(" GAINS %lf", gain);
+      if (gain > 0) {
+        setMotorDirection(0);
+      };
+      if (gain <= 0) {
+        setMotorDirection(1);
+        gain *= -1;
+      }
+
+      if ((int)gain < 90) {motorDisable();}
+      else {motorEnable();}
+      changeMotorPosition((uint8_t)gain);
+     /*
+      motorEnable();
+      if (motorAngle < 90) {setMotorDirection(0);}
+      else if (motorAngle != 90) {setMotorDirection(1);}
+      else {motorDisable();}
+      changeMotorPosition(motorAngle);
+      */
+
+      
+
+    /*
+
+      if (motorAngle > 180) {
+
+
+        motorAngle=180;
+
+
+      }
+
+
+      if (motorAngle < 90) {
+
+
+        setMotorDirection(1);
+
+
+        motorAngle *= 2;
+
+
+        printf(" MOTOR LEFT %d", motorAngle);
+
+
+      }
+
+
+      else {
+
+
+        setMotorDirection(0);
+
+
+        motorAngle -= 90;
+
+
+        motorAngle *= 2;
+
+
+        printf(" MOTOR RIGHT %d", motorAngle);
+
+
+      }
+
+
+      changeMotorPosition(motorAngle);
+    */
+      printf("\n\r");
       
   }
     

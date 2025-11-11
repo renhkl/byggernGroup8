@@ -56,14 +56,33 @@ void pwmMotorInit() {
 }
 
 void changeMotorPosition(uint8_t degrees) {
-    int DutyCycle = degreesToDutyCycle((int)degrees);
-    changeDutyCycle(DutyCycle, 0);
+    if (degrees < 0) {degrees = 0;}
+    if (degrees > 180) {degrees = 180;}
+    double DutyCycle = (5000/1.9) * ((double)degrees/180);
+    changeDutyCycle((int)DutyCycle, 0);
 }
 
 void setMotorDirection(uint8_t direction) {
     PIOC->PIO_OER = PIO_OER_P23;
     if (direction == 1) {PIOC->PIO_SODR = PIO_OER_P23;} //set high 
     if (direction == 0) {PIOC->PIO_CODR = PIO_CODR_P23;} //set low 
+}
+
+void motorEnable() {
+    PWM->PWM_ENA |= PWM_ENA_CHID0; //enable channel 0
+}
+
+void motorDisable() {
+    // WPSWS1 and WPHWS1 clear
+    PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D); 
+    PWM->PWM_WPCR |= PWM_WPCR_WPRG1; //groups it applies to
+    PWM->PWM_WPCR |=  PWM_WPCR_WPCMD(0); 
+    
+    PWM->PWM_DIS |= PWM_DIS_CHID0; //disable channel 0
+
+    PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D); 
+    PWM->PWM_WPCR |= PWM_WPCR_WPRG1; //groups it applies to
+    PWM->PWM_WPCR |=  PWM_WPCR_WPCMD(1); 
 }
 
 void timerCounterInit()
@@ -116,6 +135,10 @@ void decoderInit()
     PMC->PMC_WPMR |= PMC_WPMR_WPKEY(0x504D43);
     PMC->PMC_WPMR &= ~PMC_WPMR_WPEN;
 
+    //some clock stuff, idk why it works but it must be done
+    PMC->PMC_PCER0 |= (1 << ID_PIOC);
+    PMC->PMC_PCER1 |= (1 << (ID_TC6) -32);
+
     //peripheral clock for TC2
     PMC->PMC_PCER0 |= PMC_PCER0_PID29;
 
@@ -138,8 +161,9 @@ void decoderInit()
     TC2->TC_WPMR |= TC_WPMR_WPKEY(0x54494D);
     TC2->TC_WPMR &= ~TC_WPMR_WPEN;   
 
+    TC2->TC_CHANNEL[0].TC_CMR &= ~TC_CMR_WAVE; //set capture mode, just to be sure
     TC2-> TC_CHANNEL[0].TC_CMR |= TC_CMR_TCCLKS_XC0;    //XC0 as clock
-    TC2-> TC_CHANNEL[0].TC_CMR |= TC_CMR_ETRGEDG_RISING;//Triggering edge
+    TC2-> TC_CHANNEL[0].TC_CMR |= TC_CMR_ETRGEDG_RISING; //Triggering edge
     TC2-> TC_CHANNEL[0].TC_CMR |= TC_CMR_ABETRG;        //TIOA as external trigger
 
     //set block mode
@@ -159,4 +183,16 @@ int getDecoderValue() {
     int value = TC2->TC_CHANNEL[0].TC_CV; 
     //read value
     return REG_TC2_CV0;
+    //return value;
+}
+
+int desiredMotorPosition(int currentPosition, uint8_t motorAngle) {
+    int scale = 2;
+    if (motorAngle < 90) {currentPosition -= (90 - motorAngle) * scale;}
+    else if (motorAngle != 90) {currentPosition += (motorAngle - 90) * scale;}
+
+    if (currentPosition < 0) {currentPosition = 0;}
+    if (currentPosition > 5627) {currentPosition = 5627;}
+    
+    return currentPosition;
 }

@@ -60,12 +60,11 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
     }
 
     //Gain compute. Note that the last term is derivative action. This can be turned off by setting "Kd" to 0 in the controller struct.
-    double gain = controller->Kp * error + controller->Ki * controller->integral + 
-                 (controller->Kd)/(controller->T) * (error - ringBufferGet(&controller->errorPrev, 0));
+    double gain = controller->Kp * error + controller->Ki * controller->integral;
 
     controller->Kp = Kp;
 
-    controller->errorPrev = error;
+    ringBufferAdd(&controller->errorPrev, error);
 
     return gain;
 }

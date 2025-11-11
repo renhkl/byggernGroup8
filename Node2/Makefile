@@ -17,6 +17,7 @@ SOURCE_FILES = \
 	IO/ir_photodiode.c \
 	IO/motor.c \
 	IO/solenoid.c \
+	IO/PID_Con.c\
 #	../path_to/uart.c \
 #   filename1.c \
 #   filename2.c \
