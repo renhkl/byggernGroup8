@@ -82,6 +82,6 @@ int readPhotodiode() {
 
 uint8_t isGoal(int sensorValue)
 {
-    if (sensorValue > 2000) return 0;
+    if (sensorValue > 1000) return 0;
     else return 1;
 }

@@ -68,12 +68,95 @@ void setMotorDirection(uint8_t direction) {
 
 void timerCounterInit()
 {
+
+    //write protections in control register
+    PMC->PMC_WPMR |= PMC_WPMR_WPKEY(0x504D43);
+    PMC->PMC_WPMR &= ~PMC_WPMR_WPEN;
+
+    //peripheral clock for TC2
+    PMC->PMC_PCER0 |= PMC_PCER0_PID29;
+
+    //PIO
+    PIOC->PIO_WPMR |= PIO_WPMR_WPKEY(0x50494F); 
+    PIOC->PIO_WPMR &= ~PIO_WPMR_WPEN;
+
+    //enable peripheral control of pin, disable PIO
+    PIOC->PIO_PDR |= PIO_PDR_P25;
+    PIOC->PIO_PDR |= PIO_PDR_P26;
+
+    //choose peripheral B
+    PIOC->PIO_ABSR |= PIO_ABSR_P25; 
+    PIOC->PIO_ABSR |= PIO_ABSR_P26; 
+
+    //TIMER/COUNTER 2
+    //write protection
+    TC2->TC_WPMR |= TC_WPMR_WPKEY(0x54494D);
+    TC2->TC_WPMR &= ~TC_WPMR_WPEN;   //enable peripheral control of pin, disable PIO
+
+    TC2-> TC_CHANNEL[0].TC_CMR |= TC_CMR_TCCLKS_XC0;
+    //TC->TC_BMR |= TC_BMR_TC0XC0S_TCLK0; //?
+
     //set block mode
+
+    TC2->TC_BMR |= TC_BMR_POSEN; //position on channel 0 and 1
+    TC2->TC_BMR |= TC_BMR_QDEN;
+    //TC->TC_BMR |= TC_BMR_SPEEDEN; //speed on channel 0
+
+
+    TC2-> TC_CHANNEL[0].TC_CCR |= TC_CCR_SWTRG;    
+
 //enable
+TC2-> TC_CHANNEL[0].TC_CCR |= TC_CCR_CLKEN;
 }
 
-int getDecoderValue() {
+void decoderInit()
+{
+    //PMC
+    //write protections in control register
+    PMC->PMC_WPMR |= PMC_WPMR_WPKEY(0x504D43);
+    PMC->PMC_WPMR &= ~PMC_WPMR_WPEN;
 
+    //peripheral clock for TC2
+    PMC->PMC_PCER0 |= PMC_PCER0_PID29;
+
+    //PIO
+    //write protections
+    PIOC->PIO_WPMR |= PIO_WPMR_WPKEY(0x50494F); 
+    PIOC->PIO_WPMR &= ~PIO_WPMR_WPEN;
+
+    //enable peripheral control of pin, disable PIO
+    PIOC->PIO_PDR |= PIO_PDR_P25;
+    PIOC->PIO_PDR |= PIO_PDR_P26;
+
+    //choose peripheral B
+    PIOC->PIO_ABSR |= PIO_ABSR_P25; 
+    PIOC->PIO_ABSR |= PIO_ABSR_P26; 
+    
+    //TIMER/COUNTER 2
+
+    //write protection
+    TC2->TC_WPMR |= TC_WPMR_WPKEY(0x54494D);
+    TC2->TC_WPMR &= ~TC_WPMR_WPEN;   
+
+    TC2-> TC_CHANNEL[0].TC_CMR |= TC_CMR_TCCLKS_XC0;    //XC0 as clock
+    TC2-> TC_CHANNEL[0].TC_CMR |= TC_CMR_ETRGEDG_RISING;//Triggering edge
+    TC2-> TC_CHANNEL[0].TC_CMR |= TC_CMR_ABETRG;        //TIOA as external trigger
+
+    //set block mode
+    TC2->TC_BMR |= TC_BMR_QDEN;
+    TC2->TC_BMR |= TC_BMR_POSEN; //position on channel 0 and 1
+    //TC->TC_BMR |= TC_BMR_SPEEDEN; //speed on channel 0
+    TC2->TC_BMR |= TC_BMR_EDGPHA;
+    //TC2->TC_BMR |= TC_BMR_MAXFILT(5);
+
+    TC2-> TC_CHANNEL[0].TC_CCR |= TC_CCR_SWTRG; //sw trigger
+    TC2-> TC_CHANNEL[0].TC_CCR |= TC_CCR_CLKEN; //enable
+
+}
+
+
+int getDecoderValue() {
+    int value = TC2->TC_CHANNEL[0].TC_CV; 
     //read value
-    return 0;
+    return REG_TC2_CV0;
 }
