@@ -1,3 +1,4 @@
+#include <stdbool.h>
 //States struct to store velocity and position. 
 typedef struct {
     double velocity;
@@ -15,3 +16,6 @@ typedef struct {
     double errorPrev; //Difference between previous target and previous measurement for derivative action.
 
 } PIDCon;
+
+double integrateVelocity(states *currentState, double measurement, double T);
+double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold); 
