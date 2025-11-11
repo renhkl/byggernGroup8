@@ -12,12 +12,23 @@ double integrateVelocity(states *currentState, double measurement, double T){
     return currentState->position;
 }
 
+//Calculates PID gain, with the option of using integral anti-windup according to the Pedersen scheme.
 //Init a controller (se header file) and feed the desired position into "target" and the current measurement into "measurement". 
-double compute_gain(PIDCon *controller, double target, double measurement) {
+double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold) {
 
     double error = target - measurement;
 
-    controller->integral += error * controller->T;
+    if(antiWindup){
+        if(error <= antiWindupThreshold){
+            controller->integral += error * controller->T;
+        }
+        else{
+            controller->integral = 0;
+        }
+    }
+    else {
+        controller->integral += error * controller->T;
+    }
 
     //Gain compute. Note that the last term is derivative action. This can be turned off by setting "Kd" to 0 in the controller struct.
     double gain = controller->Kp * error + controller->Ki * controller->integral + (controller->Kd)/(controller->T) * (error - controller->errorPrev);
