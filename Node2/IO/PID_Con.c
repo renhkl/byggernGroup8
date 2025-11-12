@@ -15,6 +15,10 @@ double integrateVelocity(states *currentState, double measurement, double T){
 void ringBufferInit(ringBuffer *rb){
     rb->head = 0;
     rb->count = 0;
+    rb->data[0] = 0;
+    rb->data[1] = 0;
+    rb->data[2] = 0;
+    rb->data[3] = 0;
 }
 
 void ringBufferAdd(ringBuffer *rb, double value){
