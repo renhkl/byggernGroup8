@@ -68,6 +68,7 @@ void changeDutyCycle(int degrees, int channel) {
 
     else if (channel == 1) {
         PWM->PWM_CH_NUM[1].PWM_CDTY = degrees; //duty cycle
+        printf(" SERVO DUTY %d", degrees);
     }
         //make write protection for pwm active again
     PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D); 

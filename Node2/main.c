@@ -54,6 +54,8 @@ int main()
 
  //using can.h and not can_controller.h
  pwmServoInit();
+ //pwmMotorInit();
+ 
   can_init(CFG_250KBPS, 0);
  
 
@@ -87,10 +89,6 @@ int main()
   printf("CHARIZARD\n\r");
   can_printmsg(m);
 
-  printf("TURNING %d INTO %d\n\r",0,degreesToDutyCycle(0));
-  printf("TURNING %d INTO %d\n\r",90,degreesToDutyCycle(90));
-  printf("TURNING %d INTO %d\n\r",180,degreesToDutyCycle(180));
-
   changeServoPosition(0);
   adcInit();
   decoderInit();
@@ -98,7 +96,7 @@ int main()
   int goals = 0;
   unsigned long goalDelay = 1000000;
 
-  setMotorDirection(0);
+  setMotorDirection(1);
 
   int currentPosition = 0;
 
@@ -106,9 +104,7 @@ int main()
 
   while (1)
   {
-
     
-
     
     int adc = adcRead();
     printf("ADC %d\t", adc);
@@ -116,8 +112,8 @@ int main()
     printf(" GOAL? %d ", goal);
     countGoals(&goals, goal, goalDelay);
     printf(" TOTAL %d\t", goals);
-
-    printf(" DECODER VALUE %d\t", getDecoderValue());
+    int motorPosition = getDecoderValue();
+    printf(" DECODER VALUE %d\t", motorPosition);
    
     
     
@@ -129,27 +125,32 @@ int main()
       if(can_rx(&read)) can_printmsg(read);
       else printf("empty soul, empty head");
 
+      
       uint8_t servoAngle = read.byte[0];
       printf(" SERVO ANGLE %d", servoAngle);
       changeServoPosition(servoAngle);
       
+      
       uint8_t motorAngle = read.byte[1];
-      currentPosition = desiredMotorPosition(currentPosition, motorAngle);
+      currentPosition = desiredMotorPosition(currentPosition, motorAngle, motorPosition);
       printf(" CURRENT POS %d", currentPosition);
 
       
       PIDCon controller = {
-        .Kp = 0.001, 
-        .Ki = 0,
+        .Kp = 10, 
+        .Ki = 10,
         .Kd = 0,
 
         .T = (1/4000000),
         .integral = 0
       };
       ringBufferInit(&controller.errorPrev);
-      double gain = compute_gain(&controller, currentPosition, getDecoderValue(), 1, 1, 1);
+      double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 1, 1);
       
       moveMotor(gain);
+      
+      
+
      /*
       motorEnable();
       if (motorAngle < 90) {setMotorDirection(0);}
@@ -173,7 +174,7 @@ int main()
 
       if (motorAngle < 90) {
 
-
+1
         setMotorDirection(1);
 
 
@@ -206,7 +207,8 @@ int main()
 
       setMotorVelocity(motorAngle);
     */
-      printf("\n\r");
+      
+    printf("\n\r");
       
   }
     

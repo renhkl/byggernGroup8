@@ -42,7 +42,7 @@ void pwmMotorInit() {
     PWM->PWM_CH_NUM[0].PWM_CMR |= PWM_CMR_CPOL; //change channel polarity 
     
     PWM->PWM_CH_NUM[0].PWM_CPRD = 52500; //period
-    PWM->PWM_CH_NUM[0].PWM_CDTY = 4000; //duty cycle
+    PWM->PWM_CH_NUM[0].PWM_CDTY = 25000; //duty cycle
     PWM->PWM_ENA |= PWM_ENA_CHID0; //enable channel 0
 
     printf("%d \n", PWM->PWM_SR & PWM_SR_CHID0);
@@ -55,50 +55,35 @@ void pwmMotorInit() {
 
 }
 
-void setMotorVelocity(double degrees) {
-    if ((int)degrees < 0) {degrees = 0;}
-    if (degrees > 180) {degrees = 180;}
-    double DutyCycle = (5000/1.9) * (degrees/180);
-    changeDutyCycle((int)DutyCycle, 0);
+void motorStartPosition() {
+    setMotorDirection(0);
+    setMotorVelocity(52500);
+}
+
+void setMotorVelocity(int DutyCycle) {
+    if ((int)DutyCycle < 200) {DutyCycle = 200;}
+    if ((int)DutyCycle > 52500) {DutyCycle = 52500;}
+    changeDutyCycle((int)DutyCycle, 0); // from 0 to 52500
 }
 
 void setMotorDirection(uint8_t direction) {
     PIOC->PIO_OER = PIO_OER_P23;
-    if (direction == 1) {PIOC->PIO_SODR = PIO_OER_P23;} //set high 
-    if (direction == 0) {PIOC->PIO_CODR = PIO_CODR_P23;} //set low 
+    if (direction == 1) {PIOC->PIO_SODR = PIO_SODR_P23;
+    printf(" MOVING LEFT");} //set high 
+    if (direction == 0) {PIOC->PIO_CODR = PIO_CODR_P23; //pioper10 PIOD
+    printf(" MOVING RIGHT");} //set low 
 }
 
 void moveMotor(double gain) {
-    gain = gain * (double)180/(double)5635;
     printf(" GAINS %lf", gain);
-    if (gain > 0) {
-    setMotorDirection(0);
+    if (gain > 0){
+        setMotorDirection(0);
     };
-    if (gain <= 0) {
-    setMotorDirection(1);
-    gain *= -1;
+    if (gain < 0) {
+        setMotorDirection(1);
+        gain *= -1;
     }
-
-    if ((int)gain < 90) {motorDisable();}
-    else {motorEnable();}
-    setMotorVelocity(gain);
-}
-
-void motorEnable() {
-    PWM->PWM_ENA |= PWM_ENA_CHID0; //enable channel 0
-}
-
-void motorDisable() {
-    // WPSWS1 and WPHWS1 clear
-    PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D); 
-    PWM->PWM_WPCR |= PWM_WPCR_WPRG1; //groups it applies to
-    PWM->PWM_WPCR |=  PWM_WPCR_WPCMD(0); 
-    
-    PWM->PWM_DIS |= PWM_DIS_CHID0; //disable channel 0
-
-    PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D); 
-    PWM->PWM_WPCR |= PWM_WPCR_WPRG1; //groups it applies to
-    PWM->PWM_WPCR |=  PWM_WPCR_WPCMD(1); 
+    setMotorVelocity((int)gain);
 }
 
 void timerCounterInit()
@@ -202,13 +187,34 @@ int getDecoderValue() {
     //return value;
 }
 
-int desiredMotorPosition(int currentPosition, uint8_t motorAngle) {
-    int scale = 2;
-    if (motorAngle < 90) {currentPosition -= (90 - motorAngle) * scale;}
-    else if (motorAngle != 90) {currentPosition += (motorAngle - 90) * scale;}
+int desiredMotorPosition(int currentPosition, uint8_t joystickAngle, int motorPosition) {
+    int scale = 10;
 
-    if (currentPosition < -5632) {currentPosition = -5632;}
-    if (currentPosition > 5632) {currentPosition = 5632;}
+    int deltaPosition;
+    if (joystickAngle < 90) {deltaPosition = (90 - joystickAngle) * -scale;}
+    else if (joystickAngle != 90) {deltaPosition = (joystickAngle - 90) * scale;}
+    else {deltaPosition = 0;}
+    
+    static int lowerBound;
+    static int upperBound;
+
+    static uint8_t initialized = 0;
+
+    if (!initialized) {
+        lowerBound = motorPosition;
+        upperBound = motorPosition;
+        initialized = 1;
+    }
+
+    printf(" LOWER %d", lowerBound);
+    printf(" UPPER %d", upperBound);
+    if (lowerBound > motorPosition + deltaPosition) {lowerBound = motorPosition + deltaPosition;}
+    if (upperBound < motorPosition + deltaPosition) {upperBound = motorPosition + deltaPosition;}
+
+    currentPosition += deltaPosition;
+
+    if (currentPosition < lowerBound) {currentPosition = lowerBound;}
+    if (currentPosition > upperBound) {currentPosition = upperBound;}
     
     return currentPosition;
 }

@@ -4,16 +4,14 @@
 #include <stdint.h>
 
 void pwmMotorInit();
-void setMotorVelocity(double degrees);
+void motorStartPosition();
+void setMotorVelocity(int DutyCycle);
 void setMotorDirection(uint8_t direction);
-
-void motorEnable();
-void motorDisable();
 
 void timerCounterInit();
 int getDecoderValue();
 void decoderInit();
 
-int desiredMotorPosition(int currentPosition, uint8_t motorAngle);
+int desiredMotorPosition(int currentPosition, uint8_t joystickAngle, int motorPosition);
 
 #endif
