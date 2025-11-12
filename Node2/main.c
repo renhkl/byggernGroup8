@@ -111,7 +111,7 @@ int main()
 
     
     int adc = adcRead();
-    printf("ADC %d ", adc);
+    printf("ADC %d\t", adc);
     uint8_t goal = isGoal(adc);
     printf(" GOAL? %d ", goal);
     countGoals(&goals, goal, goalDelay);

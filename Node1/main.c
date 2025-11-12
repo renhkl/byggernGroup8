@@ -78,7 +78,7 @@ int main()
       .data = {4, 7}
     };
 
-
+    uint8_t ice = 1;
 
     while (1)
     {
@@ -103,26 +103,36 @@ int main()
       oledPrintArrow(row, 1);
       */
 
-      printf(" %d %d",xPercentage,yPercentage);
-      uint8_t angle = JoystickPercentageToServoAngle(xPercentage, yPercentage);
-      printf(" %d",angle);
+      if (xPercentage != -200 && yPercentage != -200)
+      {
+        ice = 1;
+        printf(" %d %d",xPercentage,yPercentage);
+        uint8_t angle = JoystickPercentageToServoAngle(xPercentage, yPercentage);
+        printf(" %d",angle);
 
-      uint8_t state = getJoystickState(xPercentage, yPercentage);
-      printf(" %d\t",state);
+        uint8_t state = getJoystickState(xPercentage, yPercentage);
+        printf(" %d\t",state);
 
-      uint8_t servo = joystickToServoDegrees(values[2]);
-      printf(" %d\t",servo);
+        uint8_t servo = joystickToServoDegrees(values[2]);
+        printf(" %d\t",servo);
 
-      uint8_t motor = joystickToMotorDegrees(values[3]);
-      printf(" %d\t",motor);
+        uint8_t motor = joystickToMotorDegrees(values[3]);
+        printf(" %d\t",motor);
 
-      m.data[0] = servo;
-      m.data[1] = motor;
-      
+        m.data[0] = servo;
+        m.data[1] = motor;
+        
 
-      //CAN transmit
-      canTransmit(m);
-      printf("\n");
+        //CAN transmit
+        canTransmit(m);
+        printf("\n");
+      }
+      else if (ice)
+      {
+        printf("ICE DISCONNECTED\n");
+        ice = 0;
+      }
+
       
 
     
