@@ -139,35 +139,23 @@ int main()
 
       
       PIDCon controller = {
-        .Kp = 1, 
-        .Ki = 1,
+        .Kp = 0.001, 
+        .Ki = 0,
         .Kd = 0,
 
         .T = (1/4000000),
         .integral = 0
       };
       ringBufferInit(&controller.errorPrev);
-      double gain = compute_gain(&controller, currentPosition, getDecoderValue(), 0, 0, 0);
+      double gain = compute_gain(&controller, currentPosition, getDecoderValue(), 1, 1, 1);
       
-      gain = gain * (double)180/(double)5635;
-      printf(" GAINS %lf", gain);
-      if (gain > 0) {
-        setMotorDirection(0);
-      };
-      if (gain <= 0) {
-        setMotorDirection(1);
-        gain *= -1;
-      }
-
-      if ((int)gain < 90) {motorDisable();}
-      else {motorEnable();}
-      changeMotorPosition((uint8_t)gain);
+      moveMotor(gain);
      /*
       motorEnable();
       if (motorAngle < 90) {setMotorDirection(0);}
       else if (motorAngle != 90) {setMotorDirection(1);}
       else {motorDisable();}
-      changeMotorPosition(motorAngle);
+      setMotorVelocity(motorAngle);
       */
 
       
@@ -216,7 +204,7 @@ int main()
       }
 
 
-      changeMotorPosition(motorAngle);
+      setMotorVelocity(motorAngle);
     */
       printf("\n\r");
       

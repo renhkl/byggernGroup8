@@ -63,6 +63,7 @@ void changeDutyCycle(int degrees, int channel) {
 
     if (channel == 0) {
         PWM->PWM_CH_NUM[0].PWM_CDTY = degrees; //duty cycle
+        printf(" MOTOR DUTY %d", degrees);
     }
 
     else if (channel == 1) {

@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 void pwmMotorInit();
-void changeMotorPosition(uint8_t degrees);
+void setMotorVelocity(double degrees);
 void setMotorDirection(uint8_t direction);
 
 void motorEnable();

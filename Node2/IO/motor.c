@@ -55,10 +55,10 @@ void pwmMotorInit() {
 
 }
 
-void changeMotorPosition(uint8_t degrees) {
-    if (degrees < 0) {degrees = 0;}
+void setMotorVelocity(double degrees) {
+    if ((int)degrees < 0) {degrees = 0;}
     if (degrees > 180) {degrees = 180;}
-    double DutyCycle = (5000/1.9) * ((double)degrees/180);
+    double DutyCycle = (5000/1.9) * (degrees/180);
     changeDutyCycle((int)DutyCycle, 0);
 }
 
@@ -66,6 +66,22 @@ void setMotorDirection(uint8_t direction) {
     PIOC->PIO_OER = PIO_OER_P23;
     if (direction == 1) {PIOC->PIO_SODR = PIO_OER_P23;} //set high 
     if (direction == 0) {PIOC->PIO_CODR = PIO_CODR_P23;} //set low 
+}
+
+void moveMotor(double gain) {
+    gain = gain * (double)180/(double)5635;
+    printf(" GAINS %lf", gain);
+    if (gain > 0) {
+    setMotorDirection(0);
+    };
+    if (gain <= 0) {
+    setMotorDirection(1);
+    gain *= -1;
+    }
+
+    if ((int)gain < 90) {motorDisable();}
+    else {motorEnable();}
+    setMotorVelocity(gain);
 }
 
 void motorEnable() {
@@ -191,8 +207,8 @@ int desiredMotorPosition(int currentPosition, uint8_t motorAngle) {
     if (motorAngle < 90) {currentPosition -= (90 - motorAngle) * scale;}
     else if (motorAngle != 90) {currentPosition += (motorAngle - 90) * scale;}
 
-    if (currentPosition < 0) {currentPosition = 0;}
-    if (currentPosition > 5627) {currentPosition = 5627;}
+    if (currentPosition < -5632) {currentPosition = -5632;}
+    if (currentPosition > 5632) {currentPosition = 5632;}
     
     return currentPosition;
 }
