@@ -94,17 +94,24 @@ void changeServoPosition(uint8_t degrees) {
 }
 
 void interruptInit(){ 
-    NVIC_EnableIRQ(PWM_IRQn); 
+    printf("1int");
+    NVIC_EnableIRQ(PWM_IRQn);
+    printf("2int"); 
     PWM->PWM_ENA |= PWM_ENA_CHID0; 
+    printf("3int");
     PWM->PWM_IER2 = PWM_IER2_CMPM0; 
+    printf("4");
     PWM->PWM_CMP[0].PWM_CMPM = PWM_CMPM_CEN;
+    printf("5");
     PWM->PWM_CMP[0].PWM_CMPV = 500; 
+    printf("6");
 } 
 
 void interruptHandler(){ 
     uint32_t status = PWM->PWM_ISR2; 
     if (status & PWM_ISR2_CMPM0){ 
-        //logic to be executed 
+        //logic to be executed
+        printf("INTERRUPTION.\n");
     } 
 }
 

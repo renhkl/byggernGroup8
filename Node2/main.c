@@ -88,36 +88,39 @@ int main()
   //PIO_PB13;
   printf("CHARIZARD\n\r");
   can_printmsg(m);
-
+  printf("before\n\r");
   deactivateSolenoid();
   changeServoPosition(0);
   adcInit();
   decoderInit();
-
+  printf("beforel");
   int goals = 0;
   unsigned long goalDelay = 1000000;
-
+  printf("beforeg");
   moveMotor(0);
-
+  printf("beforeh");
   int currentPosition = 0;
+  printf("before\n\r");
+  regulatorTimertInit();
 
-  printf("TEST DOUBLE %lf", (double)0.18347);
+  PIDCon controller = {
+        .Kp = 10, 
+        .Ki = 3,
+        .Kd = 0,
 
+        .T = (0.5),
+        .integral = 0
+      };
+  ringBufferInit(&controller.errorPrev);
+  
+  uint8_t gameInitialized = 0;
+  int upperBound = 0;
   while (1)
   {
     
     
-    int adc = adcRead();
-    printf("ADC %d\t", adc);
-    uint8_t goal = isGoal(adc);
-    printf(" GOAL? %d ", goal);
-    countGoals(&goals, goal, goalDelay);
-    printf(" TOTAL %d\t", goals);
-    int motorPosition = getDecoderValue();
-    printf(" DECODER VALUE %d\t", motorPosition);
    
-    
-    
+    //printf("\n\rCURRENT TIME1 %d\n\r", time_now());
  
       //can_tx(m);
       
@@ -126,95 +129,59 @@ int main()
       if(can_rx(&read)) can_printmsg(read);
       else printf("empty soul, empty head");
 
+      uint8_t running = read.byte[2] & 0b10;
+
+      int motorPosition = getDecoderValue();
+      printf(" DECODER VALUE %d\t", motorPosition);
       
-      uint8_t servoAngle = read.byte[0];
-      printf(" SERVO ANGLE %d", servoAngle);
-      changeServoPosition(servoAngle);
-      
-      
-      uint8_t motorAngle = read.byte[1];
-      currentPosition = desiredMotorPosition(currentPosition, motorAngle, motorPosition);
-      printf(" CURRENT POS %d", currentPosition);
+      printf("upperBound %d ",upperBound);
 
-      uint8_t solenoidState = read.byte[2];
-      pulseSolenoid(solenoidState);
-      printf(" SOLENOID %d", solenoidState);
-      /*
+      if (running) {
+          if (!gameInitialized) {
+              gameInitialized = calibrateField(motorPosition, &upperBound);
+              if (gameInitialized) {printf("\n\rINITIALIZE\n\r");}
+          }
+          else {
+              TC0_Handler();
 
+              uint8_t servoAngle = read.byte[0];
+              //printf(" SERVO ANGLE %d", servoAngle);
+              changeServoPosition(servoAngle);
 
-      
-      PIDCon controller = {
-        .Kp = 10, 
-        .Ki = 10,
-        .Kd = 0,
+              int adc = adcRead();
+              //printf("ADC %d\t", adc);
 
-        .T = (1/4000000),
-        .integral = 0
-      };
-      ringBufferInit(&controller.errorPrev);
-      double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 1, 1);
-      
-      moveMotor(gain);
-      */
-      
-      
+              uint8_t goal = isGoal(adc);
+              //printf(" GOAL? %d ", goal);
 
-     /*
-      motorEnable();
-      if (motorAngle < 90) {setMotorDirection(0);}
-      else if (motorAngle != 90) {setMotorDirection(1);}
-      else {motorDisable();}
-      setMotorVelocity(motorAngle);
-      */
+              countGoals(&goals, goal, goalDelay);
+              //printf(" TOTAL %d\t", goals);
 
-      
+              uint8_t joystickAngleX = read.byte[1];
+              printf(" JOYSTICK %d", joystickAngleX);
+              int relativePosition = angleToRelativePosition(joystickAngleX);
+              printf(" RELATIVEPOS %d", relativePosition);
+              currentPosition = actuallyGetTargetPosition(relativePosition, upperBound);
+              printf(" CURRENT POS %d", currentPosition);
 
-    /*
+              uint8_t solenoidState = read.byte[2] & 0b1;
+              pulseSolenoid(solenoidState);
+              printf(" SOLENOID %d", solenoidState);
 
-      if (motorAngle > 180) {
-
-
-        motorAngle=180;
-
-
+              if(setFlag(0)){
+                double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 1, 1);
+                moveMotor(gain);
+              }
+          } 
       }
-
-
-      if (motorAngle < 90) {
-
-1
-        setMotorDirection(1);
-
-
-        motorAngle *= 2;
-
-
-        printf(" MOTOR LEFT %d", motorAngle);
-
-
-      }
-
-
       else {
-
-
-        setMotorDirection(0);
-
-
-        motorAngle -= 90;
-
-
-        motorAngle *= 2;
-
-
-        printf(" MOTOR RIGHT %d", motorAngle);
-
-
+        if (gameInitialized) {
+          gameInitialized = 0;
+        }
       }
+      
 
-
-      setMotorVelocity(motorAngle);
-    */
+  
     
     printf("\n\r");
       

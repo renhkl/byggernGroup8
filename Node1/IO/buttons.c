@@ -8,7 +8,7 @@ Buttons ioButton(void){
 }
 
 uint8_t getSolenoidButton(Buttons buttons) {
-    return buttons.right == SR6;
+    return buttons.R6;
 }
 
 Buttons buttonTest(Buttons prevButtons){

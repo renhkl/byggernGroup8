@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "adc_joystick.h"
+#include "buttons.h"
 #include <avr/io.h>
 
 #define DISPLAY_OFF 0xAE
@@ -57,4 +58,6 @@ void oledPrintArrow(uint8_t row, uint8_t col);
 void oledMakeTextMenu();
 
 void oledPrintCircle(uint8_t row, uint8_t col);
+
+uint8_t moveArrowWithNav(Buttons buttons);
 #endif

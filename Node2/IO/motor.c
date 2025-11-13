@@ -187,6 +187,8 @@ int getDecoderValue() {
     //return value;
 }
 
+#define MAXBOUNDS 5632
+
 int desiredMotorPosition(int currentPosition, uint8_t joystickAngle, int motorPosition) {
     int scale = 10;
 
@@ -206,15 +208,75 @@ int desiredMotorPosition(int currentPosition, uint8_t joystickAngle, int motorPo
         initialized = 1;
     }
 
-    printf(" LOWER %d", lowerBound);
-    printf(" UPPER %d", upperBound);
+    //printf(" LOWER %d", lowerBound);
+    //printf(" UPPER %d", upperBound);
     if (lowerBound > motorPosition + deltaPosition) {lowerBound = motorPosition + deltaPosition;}
     if (upperBound < motorPosition + deltaPosition) {upperBound = motorPosition + deltaPosition;}
 
-    currentPosition += deltaPosition;
+    currentPosition = motorPosition + 3*deltaPosition;
 
-    if (currentPosition < lowerBound) {currentPosition = lowerBound;}
-    if (currentPosition > upperBound) {currentPosition = upperBound;}
-    
+    if (!(upperBound - lowerBound < 5632*0.9)) {
+        if (currentPosition < lowerBound) {currentPosition = lowerBound;}
+        if (currentPosition > upperBound) {currentPosition = upperBound;}
+    }
     return currentPosition;
+}
+
+int angleToRelativePosition(uint8_t joystickAngle) {
+    double scale = 5632/180;
+
+    double position;
+    if (joystickAngle < 90) {position = (90 - (double)joystickAngle) * -scale;}
+    else if (joystickAngle != 90) {position = ((double)joystickAngle - 90) * scale;}
+    else {position = 0;}
+
+    return (int)position;
+}
+
+int getTargetPosition(int motorPosition, int relativePosition) {
+    static int lowerBound;
+    static int upperBound;
+
+    static uint8_t initialized = 0;
+
+    if (!initialized) {
+        lowerBound = motorPosition;
+        upperBound = motorPosition;
+        initialized = 1;
+    }
+
+    if (lowerBound-2000 > motorPosition) {lowerBound = motorPosition+2000;}
+    if (upperBound+2000 < motorPosition) {upperBound = motorPosition-2000;}
+
+    if (!(upperBound - lowerBound < 5632*0.9)) {
+        return relativePosition*2 + (upperBound-lowerBound)/2;
+    }
+
+    return relativePosition + (upperBound-lowerBound)/2;
+}
+
+int actuallyGetTargetPosition(int relativePosition, int upperBound) {
+    return relativePosition + upperBound - 5632/2;
+}
+
+uint8_t calibrateField(int position, int *upperBound){
+    motorStartPosition();
+    static int init = 0;
+    static int posPrev = 0;
+    if (!init) {
+        posPrev = position - 1;
+        init = 1;
+    }
+
+    uint8_t state = (posPrev == position);
+
+    printf(" POS %d PREV %d",position,posPrev);
+
+    if (position > posPrev){
+        *upperBound = position;
+    }
+    printf(" BOUND %d",*upperBound);
+
+    posPrev = position;
+    return state;
 }

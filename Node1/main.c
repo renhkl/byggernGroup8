@@ -104,6 +104,10 @@ int main()
       oledPrintArrow(row, 1);
       */
 
+      Buttons buttons = ioButton();
+      uint8_t gameState = moveArrowWithNav(buttons);
+
+
       if (xPercentage != -200 && yPercentage != -200)
       {
         ice = 1;
@@ -120,13 +124,12 @@ int main()
         uint8_t motor = joystickToMotorDegrees(values[3]);
         printf(" %d\t",motor);
 
-        Buttons buttons = ioButton();
         uint8_t solenoid = getSolenoidButton(buttons);
         printf(" %d\t",solenoid);
 
         m.data[0] = servo;
         m.data[1] = motor;
-        m.data[2] = solenoid;
+        m.data[2] = solenoid | (gameState << 1);
         
 
         //CAN transmit

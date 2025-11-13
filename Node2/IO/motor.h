@@ -13,5 +13,8 @@ int getDecoderValue();
 void decoderInit();
 
 int desiredMotorPosition(int currentPosition, uint8_t joystickAngle, int motorPosition);
-
+int angleToRelativePosition(uint8_t joystickAngle);
+int getTargetPosition(int motorPosition, int relativePosition);
+uint8_t calibrateField(int position, int *upperBound);
+int actuallyGetTargetPosition(int relativePosition, int upperBound);
 #endif

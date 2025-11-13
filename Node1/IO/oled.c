@@ -3,6 +3,7 @@
 #include "fonts.h"
 #include "adc_joystick.h"
 #include <avr/pgmspace.h>
+#include "buttons.h"
 
 void oledPrintArrow(uint8_t row, uint8_t col) {
     oledSetPosition(row, col);
@@ -313,4 +314,28 @@ void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction directi
         *column = col;
 }
 
-void test() {}
+uint8_t moveArrowWithNav(Buttons buttons) {
+        static uint8_t page = 0;
+        static uint8_t state = 0;
+
+        if (buttons.NU) {
+          if (page > 0){
+            removeSymbol(page, 1);
+            page--;
+            oledPrintArrow(page, 1);
+          }
+
+        }
+
+        else if (buttons.ND) {
+          if (page < 7) {
+          removeSymbol(page, 1);
+          page++;
+          oledPrintArrow(page, 1);
+          }
+        }
+
+        else if (buttons.NB && page == 2) {state = 1;}
+        else if (buttons.NB && page == 3) {state = 0;}
+        return state;
+}
