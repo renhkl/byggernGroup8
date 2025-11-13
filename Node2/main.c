@@ -3,6 +3,7 @@
 #include "sam.h"
 #include "CAN/can_controller.h"
 #include "CAN/can.h"
+#include "IO/PID_Con.h"
 
 /*
  * Remember to update the Makefile with the (relative) path to the uart.c file.
@@ -25,10 +26,10 @@ int main()
   //uart_init(/*cpufreq*/, /*baud*/);
   uart_init(84000000, 9600);
   
-
+  //signal pin test
   PIOB->PIO_OER = PIO_OER_P13; //make output
   PIOB->PIO_SODR = PIO_SODR_P13; //set high 
-  //PIOB->PIO_ODR = PIO_CODR_P13; //clear/low
+  //PIOB->PIO_CODR = PIO_CODR_P13; //clear/low
 
 
   CanInit tConfig = {
@@ -52,8 +53,11 @@ int main()
   // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
 
  //using can.h and not can_controller.h
-
+ pwmServoInit();
+ pwmMotorInit();
+ 
   can_init(CFG_250KBPS, 0);
+ 
 
   CanMsg m = (CanMsg){
     .id = 5,
@@ -84,17 +88,131 @@ int main()
   //PIO_PB13;
   printf("CHARIZARD\n\r");
   can_printmsg(m);
+
+  changeServoPosition(0);
+  adcInit();
+  decoderInit();
+
+  int goals = 0;
+  unsigned long goalDelay = 1000000;
+
+  moveMotor(0);
+
+  int currentPosition = 0;
+
+  printf("TEST DOUBLE %lf", (double)0.18347);
+
   while (1)
   {
     
-
+    
+    int adc = adcRead();
+    printf("ADC %d\t", adc);
+    uint8_t goal = isGoal(adc);
+    printf(" GOAL? %d ", goal);
+    countGoals(&goals, goal, goalDelay);
+    printf(" TOTAL %d\t", goals);
+    int motorPosition = getDecoderValue();
+    printf(" DECODER VALUE %d\t", motorPosition);
+   
+    
+    
+ 
       //can_tx(m);
       
       
       printf("Reading... ");
       if(can_rx(&read)) can_printmsg(read);
-      else printf("empty soul, empty head\n\r");
+      else printf("empty soul, empty head");
+
       
+      uint8_t servoAngle = read.byte[0];
+      printf(" SERVO ANGLE %d", servoAngle);
+      changeServoPosition(servoAngle);
+      
+      
+      uint8_t motorAngle = read.byte[1];
+      currentPosition = desiredMotorPosition(currentPosition, motorAngle, motorPosition);
+      printf(" CURRENT POS %d", currentPosition);
+
+      uint8_t solenoidState = read.byte[2];
+
+
+      
+      PIDCon controller = {
+        .Kp = 10, 
+        .Ki = 10,
+        .Kd = 0,
+
+        .T = (1/4000000),
+        .integral = 0
+      };
+      ringBufferInit(&controller.errorPrev);
+      double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 1, 1);
+      
+      moveMotor(gain);
+      
+      
+      
+
+     /*
+      motorEnable();
+      if (motorAngle < 90) {setMotorDirection(0);}
+      else if (motorAngle != 90) {setMotorDirection(1);}
+      else {motorDisable();}
+      setMotorVelocity(motorAngle);
+      */
+
+      
+
+    /*
+
+      if (motorAngle > 180) {
+
+
+        motorAngle=180;
+
+
+      }
+
+
+      if (motorAngle < 90) {
+
+1
+        setMotorDirection(1);
+
+
+        motorAngle *= 2;
+
+
+        printf(" MOTOR LEFT %d", motorAngle);
+
+
+      }
+
+
+      else {
+
+
+        setMotorDirection(0);
+
+
+        motorAngle -= 90;
+
+
+        motorAngle *= 2;
+
+
+        printf(" MOTOR RIGHT %d", motorAngle);
+
+
+      }
+
+
+      setMotorVelocity(motorAngle);
+    */
+      
+    printf("\n\r");
       
   }
     

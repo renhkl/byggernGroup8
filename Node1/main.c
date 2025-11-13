@@ -7,6 +7,7 @@
 #include "MCU/xmem.h"
 #include "IO/adc_joystick.h"
 #include "IO/oled.h"
+#include "IO/buttons.h"
 #include <avr/interrupt.h>
 
 #include "MCU/uart.h"
@@ -74,11 +75,11 @@ int main()
 
     frame m = {
       .id = 3,
-      .length = 5,
-      .data = {4, 7, 9, 12, 15}
+      .length = 3,
+      .data = {4, 7, 5}
     };
 
-
+    uint8_t ice = 1;
 
     while (1)
     {
@@ -89,33 +90,67 @@ int main()
       for (uint8_t i = 0; i < m.length; i++) {printf("%d ",m.data[i]);}
       */
 
+      
       uint8_t *values = adcRead();
       int xPercentage = joystickPercentage(values[3]);
       int yPercentage = joystickPercentage(values[2]);
 
-      
+      /*
       enum Direction direction = getJoystickDirection();
       printDirection(direction);
-      printf(" %d %d\n",row,column);
+      printf(" %d %d",row,column);
       removeSymbol(row, 1);
       moveArrowWithJoystick(&row, &column, direction);
       oledPrintArrow(row, 1);
+      */
 
-      m.data[0] = row; 
-      m.data[1] = column;
-      m.data[2] = xPercentage;
-      m.data[3] = yPercentage;
-      m.data[4] = direction;
+      if (xPercentage != -200 && yPercentage != -200)
+      {
+        ice = 1;
+        printf(" %d %d",xPercentage,yPercentage);
+        uint8_t angle = JoystickPercentageToServoAngle(xPercentage, yPercentage);
+        printf(" %d",angle);
 
+        uint8_t state = getJoystickState(xPercentage, yPercentage);
+        printf(" %d\t",state);
 
-      //CAN transmit
-      canTransmit(m);
+        uint8_t servo = joystickToServoDegrees(values[2]);
+        printf(" %d\t",servo);
+
+        uint8_t motor = joystickToMotorDegrees(values[3]);
+        printf(" %d\t",motor);
+
+        Buttons buttons = ioButton();
+        uint8_t solenoid = getSolenoidButton(buttons);
+        printf(" %d\t",solenoid);
+
+        m.data[0] = servo;
+        m.data[1] = motor;
+        m.data[2] = solenoid;
+        
+
+        //CAN transmit
+        canTransmit(m);
+        printf("\n");
+      }
+      else if (ice)
+      {
+        printf("ICE DISCONNECTED\n");
+        ice = 0;
+      }
+
       
 
     
 
       /*
-        buttons = buttonTest(buttons);
+      m.data[0] = row;
+      m.data[1] = column;
+      m.data[2] = xPercentage;
+      m.data[3] = yPercentage;
+      m.data[4] = direction;
+      
+      buttons = buttonTest(buttons);
         uint8_t *values = adcRead();
         int xPercentage = joystickPercentage(values[3]);
         int yPercentage = joystickPercentage(values[2]);

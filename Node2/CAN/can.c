@@ -11,7 +11,7 @@ void can_printmsg(CanMsg m){
     for(uint8_t i = 1; i < m.length; i++){
         printf(", %d", m.byte[i]);
     }
-    printf("})\n\r");
+    printf("})");
 }
 
 
@@ -94,11 +94,9 @@ uint8_t can_rx(CanMsg* m){
 
     // Get message ID
     m->id = (uint8_t)((CAN0->CAN_MB[rxMailbox].CAN_MID & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos);
-    printf("ID: %d\t",m->id);
         
     // Get data length
     m->length = (uint8_t)((CAN0->CAN_MB[rxMailbox].CAN_MSR & CAN_MSR_MDLC_Msk) >> CAN_MSR_MDLC_Pos);
-    printf("LENGTH: %d\t",m->length);
     
     // Get data from CAN mailbox
     m->dword[0] = CAN0->CAN_MB[rxMailbox].CAN_MDL;

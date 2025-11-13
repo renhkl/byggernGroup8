@@ -1,5 +1,6 @@
 {
   "files.associations": {
+    "*.py": "python",
     "io.h": "c",
     "sfr_defs.h": "c",
     "uart.h": "c",
@@ -31,7 +32,12 @@
     "iosfwd": "c",
     "limits": "c",
     "stop_token": "c",
-    "streambuf": "c"
+    "streambuf": "c",
+    "sam.h": "c",
+    "sam3x8e.h": "c",
+    "stdint.h": "c",
+    "component_pwm.h": "c",
+    "buttons.h": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

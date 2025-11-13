@@ -353,7 +353,7 @@ typedef struct {
 /* -------- PMC_FOCR : (PMC Offset: 0x0078) Fault Output Clear Register -------- */
 #define PMC_FOCR_FOCLR (0x1u << 0) /**< \brief (PMC_FOCR) Fault Output Clear */
 /* -------- PMC_WPMR : (PMC Offset: 0x00E4) Write Protect Mode Register -------- */
-#define PMC_WPMR_WPEN (0x1u << 0) /**< \brief (PMC_WPMR) Write Protect Enable */
+#define PMC_WPMR_ (0x1u << 0) /**< \brief (PMC_WPMR) Write Protect Enable */
 #define PMC_WPMR_WPKEY_Pos 8
 #define PMC_WPMR_WPKEY_Msk (0xffffffu << PMC_WPMR_WPKEY_Pos) /**< \brief (PMC_WPMR) Write Protect KEY */
 #define PMC_WPMR_WPKEY(value) ((PMC_WPMR_WPKEY_Msk & ((value) << PMC_WPMR_WPKEY_Pos)))

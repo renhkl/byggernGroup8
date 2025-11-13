@@ -12,9 +12,12 @@ void counterInit(void);
 uint8_t *adcRead(void);
 enum Direction JoystickPercentageToDirection(int Xpercentage, int Ypercentage);
 int joystickPercentage(int value);
-uint8_t voltageToAngle(uint8_t *values);
+uint8_t JoystickPercentageToServoAngle(int deltaX, int deltaY);
+uint8_t getJoystickState(int deltaX, int deltaY);
 void printDirection(enum Direction dir);
 enum Direction getJoystickDirection();
+uint8_t joystickToServoDegrees(int value);
+uint8_t joystickToMotorDegrees(int value);
 
 enum Direction
 {

@@ -56,6 +56,26 @@ int joystickPercentage(int value)
     return percentage;
 }
 
+uint8_t joystickToServoDegrees(int value)
+{
+    //printf("VAL %d ",value);
+    double percentage = ((double)value * 5 - 316) * 45 / 236;
+    if (percentage < 0) return 0;
+    if (percentage > 180) return 180;
+    if (percentage > 80 && percentage < 100) return 90;
+    return (uint8_t)percentage;
+}
+
+uint8_t joystickToMotorDegrees(int value)
+{
+    //printf("VAL %d ",value);
+    double percentage = ((((double)value * 5 - 200) * 45 / 236)-19) * 180/165;
+    if (percentage < 0) return 0;
+    if (percentage > 180) return 180;
+    if (percentage > 80 && percentage < 100) return 90;
+    return (uint8_t)percentage;
+}
+
 void printDirection(enum Direction dir)
 {
     switch (dir)
@@ -84,19 +104,19 @@ void printDirection(enum Direction dir)
 enum Direction JoystickPercentageToDirection(int Xpercentage, int Ypercentage)
 {
     enum Direction direction;
-    if (Xpercentage < -33)
+    if (Xpercentage < -40)
     {
         direction = LEFT;
     }
-    else if (Xpercentage > 33)
+    else if (Xpercentage > 40)
     {
         direction = RIGHT;
     }
-    else if (Ypercentage > 33)
+    else if (Ypercentage > 40)
     {
         direction = UP;
     }
-    else if (Ypercentage < -33)
+    else if (Ypercentage < -40)
     {
         direction = DOWN;
     }
@@ -107,15 +127,20 @@ enum Direction JoystickPercentageToDirection(int Xpercentage, int Ypercentage)
     return direction;
 }
 
-uint8_t voltageToAngle(uint8_t *values)
+uint8_t JoystickPercentageToServoAngle(int deltaX, int deltaY)
 {
-    double deltaX = joystickPercentage(values[3]);
-    double deltaY = joystickPercentage(values[2]);
-    double rad = atan2(deltaY, deltaX);
+    double rad = atan2((double)deltaY, (double)deltaX);
 
     uint8_t deg = (uint8_t)((rad * 180 / M_PI));
 
     return deg;
+}
+
+uint8_t getJoystickState(int deltaX, int deltaY)
+{
+     if (JoystickPercentageToDirection(deltaX, deltaY) == NEUTRAL) {return 0;} //IDLE STATE
+     if (deltaY >= 0) {return 1;} // Upper hemisphere, SERVO STATE
+     if (deltaY < 0) {return 2;} // Lower hemisphere, MOTOR STATE
 }
 
 
