@@ -36,7 +36,8 @@
     "sam.h": "c",
     "sam3x8e.h": "c",
     "stdint.h": "c",
-    "component_pwm.h": "c"
+    "component_pwm.h": "c",
+    "buttons.h": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

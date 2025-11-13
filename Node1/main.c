@@ -7,6 +7,7 @@
 #include "MCU/xmem.h"
 #include "IO/adc_joystick.h"
 #include "IO/oled.h"
+#include "IO/buttons.h"
 #include <avr/interrupt.h>
 
 #include "MCU/uart.h"
@@ -74,8 +75,8 @@ int main()
 
     frame m = {
       .id = 3,
-      .length = 2,
-      .data = {4, 7}
+      .length = 3,
+      .data = {4, 7, 5}
     };
 
     uint8_t ice = 1;
@@ -119,8 +120,13 @@ int main()
         uint8_t motor = joystickToMotorDegrees(values[3]);
         printf(" %d\t",motor);
 
+        Buttons buttons = ioButton();
+        uint8_t solenoid = getSolenoidButton(buttons);
+        printf(" %d\t",solenoid);
+
         m.data[0] = servo;
         m.data[1] = motor;
+        m.data[2] = solenoid;
         
 
         //CAN transmit
@@ -138,11 +144,11 @@ int main()
     
 
       /*
-      m.data[0] = row; 
+      m.data[0] = row;
       m.data[1] = column;
       m.data[2] = xPercentage;
       m.data[3] = yPercentage;
-      m.data[4] = direction;  
+      m.data[4] = direction;
       
       buttons = buttonTest(buttons);
         uint8_t *values = adcRead();

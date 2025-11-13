@@ -17,7 +17,7 @@ install toolchain from home (cd)
 > cd build \
 > ../configure --enable-cmsis-dap --enable-openjtag --prefix=/opt/openocd \
 >  make \
->  sudo make install 
+>  sudo make install
 
   sudo apt install libtool pkg-config jimsh libjim-dev
 
