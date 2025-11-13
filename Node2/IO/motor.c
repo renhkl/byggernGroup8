@@ -61,7 +61,7 @@ void motorStartPosition() {
 }
 
 void setMotorVelocity(int DutyCycle) {
-    if ((int)DutyCycle < 200) {DutyCycle = 200;}
+    if ((int)DutyCycle < 200) {DutyCycle = 0;}
     if ((int)DutyCycle > 52500) {DutyCycle = 52500;}
     changeDutyCycle((int)DutyCycle, 0); // from 0 to 52500
 }
@@ -69,9 +69,9 @@ void setMotorVelocity(int DutyCycle) {
 void setMotorDirection(uint8_t direction) {
     PIOC->PIO_OER = PIO_OER_P23;
     if (direction == 1) {PIOC->PIO_SODR = PIO_SODR_P23;
-    printf(" MOVING LEFT");} //set high 
+    printf(" MOVING LEFT");} //set high
     if (direction == 0) {PIOC->PIO_CODR = PIO_CODR_P23; //pioper10 PIOD
-    printf(" MOVING RIGHT");} //set low 
+    printf(" MOVING RIGHT");} //set low
 }
 
 void moveMotor(double gain) {

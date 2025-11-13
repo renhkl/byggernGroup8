@@ -54,7 +54,7 @@ int main()
 
  //using can.h and not can_controller.h
  pwmServoInit();
- //pwmMotorInit();
+ pwmMotorInit();
  
   can_init(CFG_250KBPS, 0);
  
@@ -96,7 +96,7 @@ int main()
   int goals = 0;
   unsigned long goalDelay = 1000000;
 
-  setMotorDirection(1);
+  moveMotor(0);
 
   int currentPosition = 0;
 
@@ -135,6 +135,9 @@ int main()
       currentPosition = desiredMotorPosition(currentPosition, motorAngle, motorPosition);
       printf(" CURRENT POS %d", currentPosition);
 
+      uint8_t solenoidState = read.byte[2];
+
+
       
       PIDCon controller = {
         .Kp = 10, 
@@ -148,6 +151,7 @@ int main()
       double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 1, 1);
       
       moveMotor(gain);
+      
       
       
 
