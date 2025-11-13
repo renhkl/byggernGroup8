@@ -89,6 +89,7 @@ int main()
   printf("CHARIZARD\n\r");
   can_printmsg(m);
 
+  deactivateSolenoid();
   changeServoPosition(0);
   adcInit();
   decoderInit();
@@ -136,6 +137,9 @@ int main()
       printf(" CURRENT POS %d", currentPosition);
 
       uint8_t solenoidState = read.byte[2];
+      pulseSolenoid(solenoidState);
+      printf(" SOLENOID %d", solenoidState);
+      /*
 
 
       
@@ -151,7 +155,7 @@ int main()
       double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 1, 1);
       
       moveMotor(gain);
-      
+      */
       
       
 
@@ -211,7 +215,7 @@ int main()
 
       setMotorVelocity(motorAngle);
     */
-      
+    
     printf("\n\r");
       
   }
