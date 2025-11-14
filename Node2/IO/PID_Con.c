@@ -38,12 +38,13 @@ double ringBufferGet(ringBuffer *rb, int index){
 //Calculates PID gain, with the option of using integral anti-windup according to the Pedersen scheme.
 //Also feature anti-stick logic. 
 //Init a controller (se header file) and feed the desired position into "target" and the current measurement into "measurement". 
-double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold, bool antiStick) {
+double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold, bool antiStick, bool targetBooster) {
 
     double error = target - measurement;
+    printf(" ERROR: %lf\t", error);
 
     if(antiWindup){
-        if(error <= antiWindupThreshold){
+        if(abs(error) <= antiWindupThreshold){
             controller->integral += error * controller->T;
         }
         else{
@@ -54,22 +55,35 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
         controller->integral += error * controller->T;
     }
 
-    double Kp = controller->Kp;
+    printf(" INTEGRAL: %lf\t", controller->integral);
+
+    double boost = 1;
+    double targetBoost = 1;
+
     if(antiStick){
         if((int)ringBufferGet(&controller->errorPrev, 0) == (int)error && (int)ringBufferGet(&controller->errorPrev, 1) == (int)error &&
            (int)ringBufferGet(&controller->errorPrev, 2) == (int)error && (int)ringBufferGet(&controller->errorPrev, 3) == (int)error){
-            double boostedKp = Kp * 5;
-            controller->Kp = boostedKp; 
+            boost = 5;
+        }
+    }
+
+    /*if(targetBooster){
+        double eps = 0.1;
+        targetBoost = 1/(error + (error == 0)*eps);
+        printf("TARGETBOOST: %lf\t", targetBoost);
+    }*/
+
+    if(targetBooster){
+        if(abs(error) <= 1000){
+            targetBoost = 10;
         }
     }
 
     //Gain compute. Note that the last term is derivative action. This can be turned off by setting "Kd" to 0 in the controller struct.
-    double gain = controller->Kp * error + controller->Ki * controller->integral;
-
-    controller->Kp = Kp;
+    double gain = controller->Kp * boost * targetBoost * error + controller->Ki * controller->integral;
 
     ringBufferAdd(&controller->errorPrev, error);
-
+    printf("GAIN: %lf\t", gain);
     return gain;
 }
 

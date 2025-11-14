@@ -45,7 +45,7 @@ void pwmMotorInit() {
     PWM->PWM_CH_NUM[0].PWM_CDTY = 25000; //duty cycle
     PWM->PWM_ENA |= PWM_ENA_CHID0; //enable channel 0
 
-    printf("%d \n", PWM->PWM_SR & PWM_SR_CHID0);
+    //printf("%d \n", PWM->PWM_SR & PWM_SR_CHID0);
 
     //make write protection for pwm active again
     PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D); 
@@ -68,14 +68,14 @@ void setMotorVelocity(int DutyCycle) {
 
 void setMotorDirection(uint8_t direction) {
     PIOC->PIO_OER = PIO_OER_P23;
-    if (direction == 1) {PIOC->PIO_SODR = PIO_SODR_P23;
-    printf(" MOVING LEFT");} //set high
-    if (direction == 0) {PIOC->PIO_CODR = PIO_CODR_P23; //pioper10 PIOD
-    printf(" MOVING RIGHT");} //set low
+    if (direction == 1) {PIOC->PIO_SODR = PIO_SODR_P23;}
+    //printf(" MOVING LEFT");} //set high
+    if (direction == 0) {PIOC->PIO_CODR = PIO_CODR_P23;} //pioper10 PIOD
+    //printf(" MOVING RIGHT");} //set low
 }
 
 void moveMotor(double gain) {
-    printf(" GAINS %lf", gain);
+    //printf(" GAINS %lf", gain);
     if (gain > 0){
         setMotorDirection(0);
     };

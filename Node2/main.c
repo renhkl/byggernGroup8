@@ -105,10 +105,10 @@ int main()
 
   PIDCon controller = {
         .Kp = 10, 
-        .Ki = 3,
+        .Ki = 8.5,
         .Kd = 0,
 
-        .T = (0.5),
+        .T = (0.125),
         .integral = 0
       };
   ringBufferInit(&controller.errorPrev);
@@ -125,21 +125,20 @@ int main()
       //can_tx(m);
       
       
-      printf("Reading... ");
-      if(can_rx(&read)) can_printmsg(read);
-      else printf("empty soul, empty head");
-
-      uint8_t running = read.byte[2] & 0b10;
+      if(can_rx(&read))
+      {
+        can_printdata(read);
+        uint8_t running = read.byte[2] & 0b10;
 
       int motorPosition = getDecoderValue();
-      printf(" DECODER VALUE %d\t", motorPosition);
+      //printf(" DECODER VALUE %d\t", motorPosition);
       
-      printf("upperBound %d ",upperBound);
+      //printf("upperBound %d ",upperBound);
 
       if (running) {
           if (!gameInitialized) {
               gameInitialized = calibrateField(motorPosition, &upperBound);
-              if (gameInitialized) {printf("\n\rINITIALIZE\n\r");}
+              if (gameInitialized) {printf("\n\n\rINITIALIZE\n\n\r");}
           }
           else {
               TC0_Handler();
@@ -158,18 +157,18 @@ int main()
               //printf(" TOTAL %d\t", goals);
 
               uint8_t joystickAngleX = read.byte[1];
-              printf(" JOYSTICK %d", joystickAngleX);
+              //printf(" JOYSTICK %d", joystickAngleX);
               int relativePosition = angleToRelativePosition(joystickAngleX);
-              printf(" RELATIVEPOS %d", relativePosition);
+              //printf(" RELATIVEPOS %d", relativePosition);
               currentPosition = actuallyGetTargetPosition(relativePosition, upperBound);
-              printf(" CURRENT POS %d", currentPosition);
+              //printf(" CURRENT POS %d", currentPosition);
 
               uint8_t solenoidState = read.byte[2] & 0b1;
               pulseSolenoid(solenoidState);
-              printf(" SOLENOID %d", solenoidState);
+              //printf(" SOLENOID %d", solenoidState);
 
               if(setFlag(0)){
-                double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 1, 1);
+                double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 250, 0, 0);
                 moveMotor(gain);
               }
           } 
@@ -179,11 +178,8 @@ int main()
           gameInitialized = 0;
         }
       }
-      
-
-  
-    
-    printf("\n\r");
+      printf("\n\r");
+      }
       
   }
     

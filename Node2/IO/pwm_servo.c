@@ -45,7 +45,7 @@ void pwmServoInit() {
     PWM->PWM_CH_NUM[1].PWM_CDTY = 4000; //duty cycle
     PWM->PWM_ENA |= PWM_ENA_CHID1; //enable channel 1
 
-    printf("%d \n", PWM->PWM_SR & PWM_SR_CHID1);
+    //printf("%d \n", PWM->PWM_SR & PWM_SR_CHID1);
 
     //make write protection for pwm active again
     PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D); 
@@ -63,15 +63,15 @@ void changeDutyCycle(int degrees, int channel) {
 
     if (channel == 0) {
         PWM->PWM_CH_NUM[0].PWM_CDTY = degrees; //duty cycle
-        printf(" MOTOR DUTY %d", degrees);
+        //printf(" MOTOR DUTY %d", degrees);
     }
 
     else if (channel == 1) {
         PWM->PWM_CH_NUM[1].PWM_CDTY = degrees; //duty cycle
-        printf(" SERVO DUTY %d", degrees);
+        //printf(" SERVO DUTY %d", degrees);
     }
         //make write protection for pwm active again
-    PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D); 
+    PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D);
     PWM->PWM_WPCR |= PWM_WPCR_WPRG0 | PWM_WPCR_WPRG2 | PWM_WPCR_WPRG3; //groups it applies to
     PWM->PWM_WPCR |=  PWM_WPCR_WPCMD(1); 
 
@@ -94,17 +94,11 @@ void changeServoPosition(uint8_t degrees) {
 }
 
 void interruptInit(){ 
-    printf("1int");
     NVIC_EnableIRQ(PWM_IRQn);
-    printf("2int"); 
     PWM->PWM_ENA |= PWM_ENA_CHID0; 
-    printf("3int");
     PWM->PWM_IER2 = PWM_IER2_CMPM0; 
-    printf("4");
     PWM->PWM_CMP[0].PWM_CMPM = PWM_CMPM_CEN;
-    printf("5");
     PWM->PWM_CMP[0].PWM_CMPV = 500; 
-    printf("6");
 } 
 
 void interruptHandler(){ 
