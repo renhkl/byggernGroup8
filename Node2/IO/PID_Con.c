@@ -41,7 +41,7 @@ double ringBufferGet(ringBuffer *rb, int index){
 double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold, bool antiStick, bool turboBooster) {
 
     double error = target - measurement;
-    printf(" ERROR: %lf\t", error);
+    //printf(" ERROR: %lf\t", error);
 
     if(antiWindup){
         if(abs(error) <= antiWindupThreshold){
@@ -55,7 +55,7 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
         controller->integral += error * controller->T;
     }
 
-    printf(" INTEGRAL: %lf\t", controller->integral);
+    //printf(" INTEGRAL: %lf\t", controller->integral);
 
     double boost = 1;
     double targetBoost = 1;
@@ -83,7 +83,7 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
     double gain = controller->Kp * boost * targetBoost * error + controller->Ki * controller->integral;
 
     ringBufferAdd(&controller->errorPrev, error);
-    printf("GAIN: %lf\t", gain);
+    //printf("GAIN: %lf\t", gain);
     return gain;
 }
 

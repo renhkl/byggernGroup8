@@ -49,7 +49,7 @@ int main()
     uint8_t row = 0;
     uint8_t column = 0;
 
-    Buttons buttons = ioButton();
+    //Buttons buttons = ioButton();
 
     uint8_t read = mcp2515Read(MCP_CANSTAT);
     //printf("MCP_CANSTAT VALUE: %d\n", read);
@@ -109,20 +109,42 @@ int main()
       oledPrintArrow(row, 1);
       */
 
-      Buttons buttons = ioButton();
-      if (!gameRunning) {gameRunning = moveArrowHomeMenu(buttons);}
-      else              {gameRunning = moveArrowPlayMenu(buttons);}
       
-      if (gameRunning && screenInitialized) {
-        screenInitialized = 0;
-        oledClearScreen();
-        oledMakePlayMenu();
+      //printf("PRESS %d ",buttons.NB);
+      //printf("gameRunning? %d",gameRunning);
+      if (!gameRunning) {
+        if (!screenInitialized) {
+          screenInitialized = 1;
+          oledClearScreen();
+          oledMakeHomeMenu();
+          //_delay_ms(5000);
+          ioButton();
+          ioButton();
+          ioButton();
+        }
+        Buttons buttons = ioButton();
+        printf(" HOME. BUTTON %d. RUNNING %d.", buttons.NB,gameRunning);
+        moveArrowHomeMenu(buttons, &gameRunning);
+        printf(" NEW STATE %d.",gameRunning);
       }
-      if (!gameRunning && !screenInitialized) {
-        screenInitialized = 1;
-        oledClearScreen();
-        oledMakeHomeMenu();
+      else {
+        if (screenInitialized) {
+          screenInitialized = 0;
+          oledClearScreen();
+          oledMakePlayMenu();
+          //_delay_ms(5000);
+          ioButton();
+          ioButton();
+          ioButton();
+        }
+        oledUpdateScore(goals);
+        
+        Buttons buttons = ioButton();
+        //printf(" PLAY. BUTTON %d. RUNNING %d.", buttons.NB,gameRunning);
+        moveArrowPlayMenu(buttons, &gameRunning);
+        //printf(" NEW STATE %d.",gameRunning);
       }
+      
 
 
       uint8_t *values = adcRead();
@@ -132,21 +154,22 @@ int main()
       if (xPercentage != -200 && yPercentage != -200)
       {
         ice = 1;
-        printf(" %d %d",xPercentage,yPercentage);
+        //printf(" %d %d",xPercentage,yPercentage);
         uint8_t angle = JoystickPercentageToServoAngle(xPercentage, yPercentage);
-        printf(" %d",angle);
+        //printf(" %d",angle);
 
         uint8_t state = getJoystickState(xPercentage, yPercentage);
-        printf(" %d\t",state);
+        //printf(" %d\t",state);
 
         uint8_t servo = joystickToServoDegrees(values[2]);
-        printf(" %d\t",servo);
+        //printf(" %d\t",servo);
 
         uint8_t motor = joystickToMotorDegrees(values[3]);
-        printf(" %d\t",motor);
+        //printf(" %d\t",motor);
 
+        Buttons buttons = ioButton();
         uint8_t solenoid = getSolenoidButton(buttons);
-        printf(" %d\t",solenoid);
+        //printf(" %d\t",solenoid);
 
         m.data[0] = servo;
         m.data[1] = motor;
@@ -159,7 +182,7 @@ int main()
       }
       else if (ice)
       {
-        printf("ICE DISCONNECTED\n");
+        //printf("ICE DISCONNECTED\n");
         ice = 0;
       }
 
@@ -198,7 +221,7 @@ int main()
 
         // chip select test
         // xmem_write(0xF0, 0x1D00); //sram address, active high
-        // xmem_write(0x0F, 0x1500);//adc address, active low
+        // xmem_write(0x0F, 0x1500); //adc address, active low
 
         // printf("%d\n", adcRead());
         // printf("%d\n", adcRead());

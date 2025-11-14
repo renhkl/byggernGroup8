@@ -113,7 +113,7 @@ int main()
       
       if(can_rx(&read))
       {
-        can_printdata(read);
+        //can_printdata(read);
         uint8_t running = read.byte[2] & 0b10;
 
       int motorPosition = getDecoderValue();
@@ -134,7 +134,7 @@ int main()
               changeServoPosition(servoAngle);
 
               int adc = adcRead();
-              //printf("ADC %d\t", adc);
+              printf("ADC %d\t", adc);
 
               uint8_t goal = isGoal(adc);
               //printf(" GOAL? %d ", goal);
@@ -167,8 +167,8 @@ int main()
                   })),
                 };
                 
-                printf("SENDING: ");
-                can_printmsg(m);
+                //printf("SENDING: ");
+                //can_printmsg(m);
                 can_tx(m);
                 
               }

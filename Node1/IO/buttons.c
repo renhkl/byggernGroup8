@@ -4,6 +4,7 @@
 Buttons ioButton(void){
     uint8_t data[3];
     SPIMasterReceive(BUTTONS, data, 3);
+    //_delay_us(40);
     return (Buttons) {data[0], data[1], data[2]};
 }
 

@@ -341,9 +341,8 @@ void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction directi
         *column = col;
 }
 
-uint8_t moveArrowHomeMenu(Buttons buttons) {
+void moveArrowHomeMenu(Buttons buttons, uint8_t *state) {
         static uint8_t page = 2;
-        static uint8_t state = 0;
 
         if (buttons.NU) {
           if (page > 2){
@@ -362,14 +361,11 @@ uint8_t moveArrowHomeMenu(Buttons buttons) {
           }
         }
 
-        else if (buttons.NB && page == 2) {state = 1;}
-        else if (buttons.NB && page == 3) {state = 0;}
-        return state;
+        else if (buttons.NB && page == 2) {*state = 1;}
 }
 
-uint8_t moveArrowPlayMenu(Buttons buttons) {
+void moveArrowPlayMenu(Buttons buttons, uint8_t *state) {
         static uint8_t page = 4;
-        static uint8_t state = 1;
 
         if (buttons.NU) {
           if (page > 4){
@@ -388,6 +384,5 @@ uint8_t moveArrowPlayMenu(Buttons buttons) {
           }
         }
 
-        else if (buttons.NB && page == 4) {state = 0;}
-        return state;
+        else if (buttons.NB && page == 4) {*state = 0;}
 }

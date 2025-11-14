@@ -60,6 +60,6 @@ void oledUpdateScore(uint8_t score);
 
 void oledPrintCircle(uint8_t row, uint8_t col);
 
-uint8_t moveArrowHomeMenu(Buttons buttons);
-uint8_t moveArrowHomeMenu(Buttons buttons);
+void moveArrowPlayMenu(Buttons buttons, uint8_t *state);
+void moveArrowHomeMenu(Buttons buttons, uint8_t *state);
 #endif
