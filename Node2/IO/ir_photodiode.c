@@ -65,7 +65,7 @@ int adcRead() {
 
 }
 
-void countGoals(uint8_t *goals, int sensor, unsigned long goalDelay) {
+uint8_t countGoals(uint8_t *goals, int sensor, unsigned long goalDelay) {
     static unsigned long lastGoal = 0; 
     unsigned long now = time_now();
     //printf("%d\t", now - lastGoal);
@@ -73,7 +73,9 @@ void countGoals(uint8_t *goals, int sensor, unsigned long goalDelay) {
     if(sensor && ((now - lastGoal) > goalDelay)){
         (*goals) += 1;
         lastGoal = now;
+        return 1;
     }
+    return 0;
 }
 
 int readPhotodiode() {

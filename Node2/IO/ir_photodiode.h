@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void countGoals(uint8_t *goals, int sensor, unsigned long goalDelay);
+uint8_t countGoals(uint8_t *goals, int sensor, unsigned long goalDelay);
 int readPhotodiode();
 void adcInit();
 void adcINIT();

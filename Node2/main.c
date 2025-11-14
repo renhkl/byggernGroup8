@@ -58,17 +58,6 @@ int main()
  
   can_init(CFG_250KBPS, 0);
  
-
-  CanMsg m = (CanMsg){
-    .id = 5,
-    .length = sizeof(YourStruct),
-    .byte8 = union_cast(Byte8, ((YourStruct){
-      .a = 10,
-      .b = 20,
-      .c = 25,
-      .d = 30,
-    })),
-  };
     
     /*
     CanMsg write = {
@@ -87,14 +76,13 @@ int main()
    
   //PIO_PB13;
   printf("CHARIZARD\n\r");
-  can_printmsg(m);
   printf("before\n\r");
   deactivateSolenoid();
   changeServoPosition(0);
   adcInit();
   decoderInit();
   printf("beforel");
-  int goals = 0;
+  uint8_t goals = 0;
   unsigned long goalDelay = 1000000;
   printf("beforeg");
   moveMotor(0);
@@ -105,7 +93,7 @@ int main()
 
   PIDCon controller = {
         .Kp = 10, 
-        .Ki = 8.5,
+        .Ki = 20,
         .Kd = 0,
 
         .T = (0.125),
@@ -121,8 +109,6 @@ int main()
     
    
     //printf("\n\rCURRENT TIME1 %d\n\r", time_now());
- 
-      //can_tx(m);
       
       
       if(can_rx(&read))
@@ -153,7 +139,7 @@ int main()
               uint8_t goal = isGoal(adc);
               //printf(" GOAL? %d ", goal);
 
-              countGoals(&goals, goal, goalDelay);
+              //countGoals(&goals, goal, goalDelay);
               //printf(" TOTAL %d\t", goals);
 
               uint8_t joystickAngleX = read.byte[1];
@@ -168,9 +154,26 @@ int main()
               //printf(" SOLENOID %d", solenoidState);
 
               if(setFlag(0)){
-                double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 250, 0, 0);
+                double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 250, 0, 1);
                 moveMotor(gain);
               }
+
+              if(countGoals(&goals, goal, goalDelay)){
+                CanMsg m = (CanMsg){
+                  .id = 5,
+                  .length = sizeof(YourStruct),
+                  .byte8 = union_cast(Byte8, ((YourStruct){
+                    .a = goals,
+                  })),
+                };
+                
+                printf("SENDING: ");
+                can_printmsg(m);
+                can_tx(m);
+                
+              }
+
+              //printf(" GOALS %d\t", goals);
           } 
       }
       else {

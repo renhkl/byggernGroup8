@@ -55,9 +55,11 @@ void test();
 //graphics
 
 void oledPrintArrow(uint8_t row, uint8_t col);
-void oledMakeTextMenu();
+void oledMakeHomeMenu();
+void oledUpdateScore(uint8_t score);
 
 void oledPrintCircle(uint8_t row, uint8_t col);
 
-uint8_t moveArrowWithNav(Buttons buttons);
+uint8_t moveArrowHomeMenu(Buttons buttons);
+uint8_t moveArrowHomeMenu(Buttons buttons);
 #endif

@@ -83,9 +83,6 @@ struct Byte8 {
 
 typedef struct {
     uint8_t  a;
-    uint8_t   b;
-    uint8_t   c;
-    uint8_t   d;
 } __attribute__((packed)) YourStruct;
 
 typedef struct CanMsg CanMsg;

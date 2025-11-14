@@ -252,7 +252,7 @@ int getJoystickButtonPosition(enum Direction direction, int row, int column) {
 
 }
 
-void oledMakeTextMenu() {
+void oledMakeHomeMenu() {
      
       oledSetPosition(0, 9);
       oledPrintString("highscore");
@@ -265,6 +265,33 @@ void oledMakeTextMenu() {
 
       oledSetPosition(3, 9);
       oledPrintString("exit");
+
+      oledPrintArrow(2, 1);
+}
+
+void oledMakePlayMenu() {
+     
+      oledSetPosition(0, 9);
+      oledPrintString("PLAYING");
+           
+      oledSetPosition(2, 9);
+      oledPrintString("Score");
+
+      oledSetPosition(2, 57);
+      oledPrintChar('0');
+
+      oledSetPosition(4, 9);
+      oledPrintString("exit");
+
+      oledPrintArrow(4, 1);
+}
+
+void oledUpdateScore(uint8_t score) {
+    char str[4];
+    sprintf(str, "%d", score);
+    
+    oledSetPosition(2, 57);
+    oledPrintString(str);
 }
 
 void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction direction) {
@@ -314,12 +341,12 @@ void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction directi
         *column = col;
 }
 
-uint8_t moveArrowWithNav(Buttons buttons) {
-        static uint8_t page = 0;
+uint8_t moveArrowHomeMenu(Buttons buttons) {
+        static uint8_t page = 2;
         static uint8_t state = 0;
 
         if (buttons.NU) {
-          if (page > 0){
+          if (page > 2){
             removeSymbol(page, 1);
             page--;
             oledPrintArrow(page, 1);
@@ -328,7 +355,7 @@ uint8_t moveArrowWithNav(Buttons buttons) {
         }
 
         else if (buttons.ND) {
-          if (page < 7) {
+          if (page < 3) {
           removeSymbol(page, 1);
           page++;
           oledPrintArrow(page, 1);
@@ -337,5 +364,30 @@ uint8_t moveArrowWithNav(Buttons buttons) {
 
         else if (buttons.NB && page == 2) {state = 1;}
         else if (buttons.NB && page == 3) {state = 0;}
+        return state;
+}
+
+uint8_t moveArrowPlayMenu(Buttons buttons) {
+        static uint8_t page = 4;
+        static uint8_t state = 1;
+
+        if (buttons.NU) {
+          if (page > 4){
+            removeSymbol(page, 1);
+            page--;
+            oledPrintArrow(page, 1);
+          }
+
+        }
+
+        else if (buttons.ND) {
+          if (page < 4) {
+          removeSymbol(page, 1);
+          page++;
+          oledPrintArrow(page, 1);
+          }
+        }
+
+        else if (buttons.NB && page == 4) {state = 0;}
         return state;
 }

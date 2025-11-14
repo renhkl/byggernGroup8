@@ -45,9 +45,6 @@ int main()
     // ADC_test();
 
     oledSetBrightness(255);
-    oledClearScreen();
-    oledMakeTextMenu();
-
  
     uint8_t row = 0;
     uint8_t column = 0;
@@ -79,22 +76,30 @@ int main()
       .data = {4, 7, 5}
     };
 
+    frame recieveMessage = {
+      .id = 3,
+      .length = 3,
+      .data = {4, 7, 5}
+    };
+
     uint8_t ice = 1;
+    uint8_t goals = 0;
+    uint8_t screenInitialized = 0;
+    uint8_t gameRunning = 0;
 
     while (1)
     {
-      /*
-      //CAN receive
-      frame m = canReceive();
-      printf("\nCAN READ VALUE ID %d\t LENGTH %d\t DATA ", m.id, m.length);
-      for (uint8_t i = 0; i < m.length; i++) {printf("%d ",m.data[i]);}
-      */
-
       
-      uint8_t *values = adcRead();
-      int xPercentage = joystickPercentage(values[3]);
-      int yPercentage = joystickPercentage(values[2]);
-
+      //CAN receive
+      frame recieveMessage = canReceive();
+      if (recieveMessage.id == 5) {
+        /*
+        printf("CAN READ VALUE ID %d\t LENGTH %d\t DATA ", recieveMessage.id, recieveMessage.length);
+        for (uint8_t i = 0; i < recieveMessage.length; i++) {printf("%d ",recieveMessage.data[i]);}
+        printf("\n");
+        */
+       goals = recieveMessage.data[0];
+      }
       /*
       enum Direction direction = getJoystickDirection();
       printDirection(direction);
@@ -105,8 +110,24 @@ int main()
       */
 
       Buttons buttons = ioButton();
-      uint8_t gameState = moveArrowWithNav(buttons);
+      if (!gameRunning) {gameRunning = moveArrowHomeMenu(buttons);}
+      else              {gameRunning = moveArrowPlayMenu(buttons);}
+      
+      if (gameRunning && screenInitialized) {
+        screenInitialized = 0;
+        oledClearScreen();
+        oledMakePlayMenu();
+      }
+      if (!gameRunning && !screenInitialized) {
+        screenInitialized = 1;
+        oledClearScreen();
+        oledMakeHomeMenu();
+      }
 
+
+      uint8_t *values = adcRead();
+      int xPercentage = joystickPercentage(values[3]);
+      int yPercentage = joystickPercentage(values[2]);
 
       if (xPercentage != -200 && yPercentage != -200)
       {
@@ -129,7 +150,7 @@ int main()
 
         m.data[0] = servo;
         m.data[1] = motor;
-        m.data[2] = solenoid | (gameState << 1);
+        m.data[2] = solenoid | (gameRunning << 1);
         
 
         //CAN transmit
