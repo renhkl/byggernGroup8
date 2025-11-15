@@ -24,6 +24,10 @@ void counterInit(void) // timer/counter 3
 
 }
 
+void joystickInit() {
+    DDRD &= ~(1 << DDD5); //set pin D5 as input (joystick pin)
+}
+
 enum Direction getJoystickDirection() {
     uint8_t *values = adcRead();
     int Xpercentage = joystickPercentage(values[3]);

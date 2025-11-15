@@ -9,6 +9,7 @@
 // struct getJoystickPosition(void);
 // enum JoystickPercentageToDirection(void);
 void counterInit(void);
+void joystickInit();
 uint8_t *adcRead(void);
 enum Direction JoystickPercentageToDirection(int Xpercentage, int Ypercentage);
 int joystickPercentage(int value);

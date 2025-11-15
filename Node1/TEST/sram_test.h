@@ -1,5 +1,5 @@
 #ifndef SRAM_TEST_H
-#define RAM_TEST_H
+#define SRAM_TEST_H
 
 #include <stdlib.h>
 #include <stdio.h>

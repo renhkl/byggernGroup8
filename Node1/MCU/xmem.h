@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-void xmem_init(void);
-void xmem_write(uint8_t data, uint16_t addr);
-uint8_t xmem_read(uint16_t addr);
+void xmemInit(void);
+void xmemWrite(uint8_t data, uint16_t addr);
+uint8_t xmemRead(uint16_t addr);
 
 #endif //XMEM_H

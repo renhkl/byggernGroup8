@@ -83,7 +83,7 @@ uint8_t databytes = message.length;
 
 uint8_t dlc = (message.length > 8) ? 8 : message.length;
 
-printf("Transmitting.. ID %d", message.id);
+//printf("Transmitting.. ID %d", message.id);
 
 PORTB &= ~(1 << CAN_CS);
 SPIMCP2515Transmit(MCP_LOAD_TX0);
