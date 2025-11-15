@@ -68,6 +68,8 @@ int adcRead() {
 uint8_t countGoals(uint8_t *goals, int sensor, unsigned long goalDelay) {
     static unsigned long lastGoal = 0; 
     unsigned long now = time_now();
+    //printf("\tNOW%d\t ", now);
+    //printf("LAST GOAL%d ", lastGoal);
     //printf("%d\t", now - lastGoal);
 
     if(sensor && ((now - lastGoal) > goalDelay)){
@@ -82,8 +84,39 @@ int readPhotodiode() {
     return 0;
 }
 
-uint8_t isGoal(int sensorValue)
-{
-    if (sensorValue > 1000) return 0;
+uint8_t isGoal(ringBufferGoals goalArray)
+{   
+    double avarage = 0;
+    for(uint8_t i = 0; i < goalArray.size; i++){
+        avarage += ringBufferGoalsGet(&goalArray, i);
+    }
+    avarage = avarage/goalArray.size;
+
+    //printf("AVARAGE :%lf", avarage);
+    if (avarage > 800) return 0;
     else return 1;
+}
+
+void ringBufferGoalsInit(ringBufferGoals *rb, uint8_t size){
+    rb->head = 0;
+    rb->count = 0;
+    rb->size = size;
+    rb->data = (double *)malloc(size * sizeof(double));
+    for(uint8_t i = 0; i < size; i++){
+        rb->data[i] = 0;
+    }
+}
+
+void ringBufferGoalsAdd(ringBufferGoals *rb, double value){
+    rb->data[rb->head] = value;
+    rb->head = (rb->head + 1) % rb->size;
+    if(rb->count < 4){
+        rb->count += 1;
+    }
+}
+
+double ringBufferGoalsGet(ringBufferGoals *rb, int index){
+    int start = (rb-> head - rb->count + rb->size) % rb->size;
+    int idx = (start + index) % rb->size;
+    return rb->data[idx];
 }

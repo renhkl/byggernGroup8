@@ -83,9 +83,10 @@ int main()
     };
 
     uint8_t ice = 1;
-    uint8_t goals = 0;
+    uint8_t goals = 255;
     uint8_t screenInitialized = 0;
     uint8_t gameRunning = 0;
+    uint8_t highscore = 255;
 
     while (1)
     {
@@ -117,19 +118,23 @@ int main()
           screenInitialized = 1;
           oledClearScreen();
           oledMakeHomeMenu();
+          printf("GOL %d HI %d",goals, highscore);
+          if (goals < highscore) highscore = goals;
+          if(highscore != 255) {oledUpdateHighscore(highscore);}
           //_delay_ms(5000);
           ioButton();
           ioButton();
           ioButton();
         }
         Buttons buttons = ioButton();
-        printf(" HOME. BUTTON %d. RUNNING %d.", buttons.NB,gameRunning);
+        //printf(" HOME. BUTTON %d. RUNNING %d.", buttons.NB,gameRunning);
         moveArrowHomeMenu(buttons, &gameRunning);
-        printf(" NEW STATE %d.",gameRunning);
+        //printf(" NEW STATE %d.",gameRunning);
       }
       else {
         if (screenInitialized) {
           screenInitialized = 0;
+          goals = 0;
           oledClearScreen();
           oledMakePlayMenu();
           //_delay_ms(5000);

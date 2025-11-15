@@ -30,9 +30,14 @@ void ringBufferAdd(ringBuffer *rb, double value){
 }
 
 double ringBufferGet(ringBuffer *rb, int index){
-    int start = (rb-> head - rb->count + 4) % 4;
+    int start = (rb->head - rb->count + 4) % 4;
     int idx = (start + index) % 4;
     return rb->data[idx];
+}
+
+double ringBufferGetLast(ringBuffer *rb){
+    if(rb->count == 0) return 0;
+    return rb->data[(rb->head - 1 + 4) % 4];
 }
 
 //Calculates PID gain, with the option of using integral anti-windup according to the Pedersen scheme.
@@ -42,6 +47,8 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
 
     double error = target - measurement;
     //printf(" ERROR: %lf\t", error);
+
+    double derivative = (error - ringBufferGetLast(&controller->errorPrev))/controller->T;
 
     if(antiWindup){
         if(abs(error) <= antiWindupThreshold){
@@ -59,6 +66,7 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
 
     double boost = 1;
     double targetBoost = 1;
+    //double targetSuperBoost = 0;
 
     if(antiStick){
         if((int)ringBufferGet(&controller->errorPrev, 0) == (int)error && (int)ringBufferGet(&controller->errorPrev, 1) == (int)error &&
@@ -74,13 +82,15 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
     }*/
 
     if(turboBooster){
-        if(abs(error) <= 1000){
+        if(abs(error) <= antiWindupThreshold){
             targetBoost = 2;
+            //double sgn = error/abs(error);
+            //targetSuperBoost = sgn  * 500;
         }
     }
 
     //Gain compute. Note that the last term is derivative action. This can be turned off by setting "Kd" to 0 in the controller struct.
-    double gain = controller->Kp * boost * targetBoost * error + controller->Ki * controller->integral;
+    double gain = controller->Kp * boost * targetBoost * error + controller->Ki * controller->integral + controller->Kd * derivative;
 
     ringBufferAdd(&controller->errorPrev, error);
     //printf("GAIN: %lf\t", gain);

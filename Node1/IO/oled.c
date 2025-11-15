@@ -255,18 +255,18 @@ int getJoystickButtonPosition(enum Direction direction, int row, int column) {
 void oledMakeHomeMenu() {
      
       oledSetPosition(0, 9);
-      oledPrintString("highscore");
-           
-      oledSetPosition(1, 9);
-      oledPrintChar('0');
-
+      oledPrintString("PING-PONG");
+  
       oledSetPosition(2, 9);
+      oledPrintString("highscore");
+
+      oledSetPosition(5, 9);
       oledPrintString("play");
 
-      oledSetPosition(3, 9);
+      oledSetPosition(6, 9);
       oledPrintString("exit");
 
-      oledPrintArrow(2, 1);
+      oledPrintArrow(5, 1);
 }
 
 void oledMakePlayMenu() {
@@ -291,6 +291,14 @@ void oledUpdateScore(uint8_t score) {
     sprintf(str, "%d", score);
     
     oledSetPosition(2, 57);
+    oledPrintString(str);
+}
+
+void oledUpdateHighscore(uint8_t score) {
+    char str[4];
+    sprintf(str, "%d", score);
+    
+    oledSetPosition(3, 9);
     oledPrintString(str);
 }
 
@@ -342,10 +350,10 @@ void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction directi
 }
 
 void moveArrowHomeMenu(Buttons buttons, uint8_t *state) {
-        static uint8_t page = 2;
+        static uint8_t page = 5;
 
         if (buttons.NU) {
-          if (page > 2){
+          if (page > 5){
             removeSymbol(page, 1);
             page--;
             oledPrintArrow(page, 1);
@@ -354,14 +362,14 @@ void moveArrowHomeMenu(Buttons buttons, uint8_t *state) {
         }
 
         else if (buttons.ND) {
-          if (page < 3) {
+          if (page < 6) {
           removeSymbol(page, 1);
           page++;
           oledPrintArrow(page, 1);
           }
         }
 
-        else if (buttons.NB && page == 2) {*state = 1;}
+        else if (buttons.NB && page == 5) {*state = 1;}
 }
 
 void moveArrowPlayMenu(Buttons buttons, uint8_t *state) {

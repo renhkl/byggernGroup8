@@ -4,6 +4,7 @@
 #include "CAN/can_controller.h"
 #include "CAN/can.h"
 #include "IO/PID_Con.h"
+#include "IO/ir_photodiode.h"
 
 /*
  * Remember to update the Makefile with the (relative) path to the uart.c file.
@@ -76,33 +77,32 @@ int main()
    
   //PIO_PB13;
   printf("CHARIZARD\n\r");
-  printf("before\n\r");
   deactivateSolenoid();
   changeServoPosition(0);
   adcInit();
   decoderInit();
-  printf("beforel");
   uint8_t goals = 0;
-  unsigned long goalDelay = 1000000;
-  printf("beforeg");
+  unsigned long goalDelay = 400000000;
   moveMotor(0);
-  printf("beforeh");
   int currentPosition = 0;
-  printf("before\n\r");
   regulatorTimertInit();
 
   PIDCon controller = {
         .Kp = 10, 
         .Ki = 20,
-        .Kd = 0,
+        .Kd = 3,
 
         .T = (0.125),
         .integral = 0
       };
   ringBufferInit(&controller.errorPrev);
+
+  ringBufferGoals goalsRing;
+  ringBufferGoalsInit(&goalsRing, 4);
   
   uint8_t gameInitialized = 0;
   int upperBound = 0;
+  unsigned long playStartTime = 0;
   while (1)
   {
     
@@ -116,15 +116,28 @@ int main()
         //can_printdata(read);
         uint8_t running = read.byte[2] & 0b10;
 
-      int motorPosition = getDecoderValue();
+      
       //printf(" DECODER VALUE %d\t", motorPosition);
       
       //printf("upperBound %d ",upperBound);
 
       if (running) {
           if (!gameInitialized) {
-              gameInitialized = calibrateField(motorPosition, &upperBound);
-              if (gameInitialized) {printf("\n\n\rINITIALIZE\n\n\r");}
+            int motorPosition = getDecoderValue();  
+            gameInitialized = calibrateField(motorPosition, &upperBound);
+              if (gameInitialized) {
+                printf("\n\n\rINITIALIZE\n\n\r");
+                playStartTime = time_now();
+
+                CanMsg m = (CanMsg){
+                  .id = 5,
+                  .length = sizeof(YourStruct),
+                  .byte8 = union_cast(Byte8, ((YourStruct){
+                    .a = 0,
+                  })),
+                };
+                can_tx(m);
+              }
           }
           else {
               TC0_Handler();
@@ -134,9 +147,10 @@ int main()
               changeServoPosition(servoAngle);
 
               int adc = adcRead();
-              printf("ADC %d\t", adc);
+              if (adc != 0) {ringBufferGoalsAdd(&goalsRing, adc);}
+              //printf("ADC %d\t", adc);
 
-              uint8_t goal = isGoal(adc);
+              uint8_t goal = isGoal(goalsRing);
               //printf(" GOAL? %d ", goal);
 
               //countGoals(&goals, goal, goalDelay);
@@ -154,11 +168,13 @@ int main()
               //printf(" SOLENOID %d", solenoidState);
 
               if(setFlag(0)){
+                int motorPosition = getDecoderValue();
+                printf(" D %d\t C %d\t U %d\n\r", motorPosition, currentPosition, upperBound);
                 double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 250, 0, 1);
                 moveMotor(gain);
               }
-
-              if(countGoals(&goals, goal, goalDelay)){
+              if ((time_now() - playStartTime) > 400000000) {
+                if(countGoals(&goals, goal, goalDelay)) {
                 CanMsg m = (CanMsg){
                   .id = 5,
                   .length = sizeof(YourStruct),
@@ -172,16 +188,19 @@ int main()
                 can_tx(m);
                 
               }
-
+              }
               //printf(" GOALS %d\t", goals);
           } 
       }
       else {
         if (gameInitialized) {
           gameInitialized = 0;
+          goals = 0;
+          moveMotor(0);
+          changeServoPosition(0);
         }
       }
-      printf("\n\r");
+      //printf("\n\r");
       }
       
   }
