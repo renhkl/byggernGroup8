@@ -3,8 +3,6 @@
 #include <math.h>
 #include <avr/interrupt.h>
 
-// joystick init with calibrate?
-
 void counterInit(void) // timer/counter 3
 {
     DDRD |= (1 << DDD4); //pin D4 to output
@@ -50,15 +48,13 @@ uint8_t *adcRead(void)
 
 int joystickPercentage(int value)
 {
-    //printf("VAL %d ",value);
     int percentage = (value - 160) * 200 / 160;
-    //printf("PERC %d ",percentage);
+   
     return percentage;
 }
 
 uint8_t joystickToServoDegrees(int value)
 {
-    //printf("VAL %d ",value);
     double percentage = ((double)value * 5 - 316) * 45 / 236;
     if (percentage < 0) return 0;
     if (percentage > 180) return 180;
@@ -68,7 +64,6 @@ uint8_t joystickToServoDegrees(int value)
 
 uint8_t joystickToMotorDegrees(int value)
 {
-    //printf("VAL %d ",value);
     double percentage = ((((double)value * 5 - 200) * 45 / 236)-19) * 180/165;
     if (percentage < 0) return 0;
     if (percentage > 180) return 180;
@@ -144,17 +139,5 @@ uint8_t getJoystickState(int deltaX, int deltaY)
 }
 
 
-/*
-// uint8_t adc_read(uint8_t channel) { //volatile
-//
-// }
 
-// function to return analog position
-struct getJoystickPosition(void)
-{
-
-    return 1;
-
-}
-    */
 

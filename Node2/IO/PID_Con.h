@@ -26,7 +26,7 @@ typedef struct {
 } PIDCon;
 
 double integrateVelocity(states *currentState, double measurement, double T);
-double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold, bool antiStick); 
+double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold, bool antiStick, bool targetBooster); 
 void ringBufferInit(ringBuffer *rb);
 void ringBufferAdd(ringBuffer *rb, double value);
 double ringBufferGet(ringBuffer *rb, int index);

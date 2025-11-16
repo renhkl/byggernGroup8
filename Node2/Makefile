@@ -18,6 +18,7 @@ SOURCE_FILES = \
 	IO/motor.c \
 	IO/solenoid.c \
 	IO/PID_Con.c\
+	IO/timer_counter.c\
 #	../path_to/uart.c \
 #   filename1.c \
 #   filename2.c \

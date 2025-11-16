@@ -3,6 +3,7 @@
 #include "fonts.h"
 #include "adc_joystick.h"
 #include <avr/pgmspace.h>
+#include "buttons.h"
 
 void oledPrintArrow(uint8_t row, uint8_t col) {
     oledSetPosition(row, col);
@@ -36,39 +37,35 @@ void removeSymbol(uint8_t row, uint8_t col) {
 
 void oledInit() { //datasheet
 
-   DDRB |= (1 << PB2);
-   //PORTB |= (1 << PIN2);
-    PORTB &= ~(1 << PIN2);
+  DDRB |= (1 << PB2);
+  PORTB &= ~(1 << PIN2);
 
-SPIMasterTransmitDisplay(DISPLAY_OFF);
-SPIMasterTransmitDisplay(SEGMENT_REMAP);
-//SPIMasterTransmitDisplay(COM_PINS_HARDWARE_CONFIGURATION);
-//SPIMasterTransmitDisplay(0x12);
-SPIMasterTransmitDisplay(COM_OUTPUT_SCAN_DIRECTION);
-//SPIMasterTransmitDisplay(MULTIPLEXER_RATIO);
-/*SPIMasterTransmitDisplay(0x3F);
-SPIMasterTransmitDisplay(DISPLAY_CLOCK_DIVIDER_RATIO);
-SPIMasterTransmitDisplay(0x80);
-SPIMasterTransmitDisplay(CONTRAST_CONTROL_FOR_BANK0);
-SPIMasterTransmitDisplay(0x50);
-SPIMasterTransmitDisplay(PRE_CHARGE_PERIOD);
-SPIMasterTransmitDisplay(0x21);
-SPIMasterTransmitDisplay(MEMORY_ADDRESSING_MODE);
-SPIMasterTransmitDisplay(0x02);
-SPIMasterTransmitDisplay(VCOMH_DESELECT_LEVEL);
-SPIMasterTransmitDisplay(0x30);
-SPIMasterTransmitDisplay(0xAD);
-SPIMasterTransmitDisplay(0x00);
-SPIMasterTransmitDisplay(ENTIRE_DISPLAY_ON);
-SPIMasterTransmitDisplay(NORMAL_DISPLAY);
-*/
-SPIMasterTransmitDisplay(DISPLAY_ON);
-
+  SPIMasterTransmitDisplay(DISPLAY_OFF);
+  SPIMasterTransmitDisplay(SEGMENT_REMAP);
+  //SPIMasterTransmitDisplay(COM_PINS_HARDWARE_CONFIGURATION);
+  //SPIMasterTransmitDisplay(0x12);
+  SPIMasterTransmitDisplay(COM_OUTPUT_SCAN_DIRECTION);
+  //SPIMasterTransmitDisplay(MULTIPLEXER_RATIO);
+  /*SPIMasterTransmitDisplay(0x3F);
+  SPIMasterTransmitDisplay(DISPLAY_CLOCK_DIVIDER_RATIO);
+  SPIMasterTransmitDisplay(0x80);
+  SPIMasterTransmitDisplay(CONTRAST_CONTROL_FOR_BANK0);
+  SPIMasterTransmitDisplay(0x50);
+  SPIMasterTransmitDisplay(PRE_CHARGE_PERIOD);
+  SPIMasterTransmitDisplay(0x21);
+  SPIMasterTransmitDisplay(MEMORY_ADDRESSING_MODE);
+  SPIMasterTransmitDisplay(0x02);
+  SPIMasterTransmitDisplay(VCOMH_DESELECT_LEVEL);
+  SPIMasterTransmitDisplay(0x30);
+  SPIMasterTransmitDisplay(0xAD);
+  SPIMasterTransmitDisplay(0x00);
+  SPIMasterTransmitDisplay(ENTIRE_DISPLAY_ON);
+  SPIMasterTransmitDisplay(NORMAL_DISPLAY);
+  */
+  SPIMasterTransmitDisplay(DISPLAY_ON);
 }
 
 void oledWriteData(uint8_t data) { //datasheet
-
-    //data = ~data; //background becomes white
 
     DDRB |= (1 << PB2);
     PORTB |= (1 << PIN2);
@@ -139,51 +136,20 @@ void oledSetBrightness(uint8_t lvl) {
 void oledPrintChar(char c) {
  
     int index = c - ASCII_OFFSET;
-    //unsigned char charData[1][8] = pgm_read_byte(*font8[index][8]);
-    //printf(pgm_read_word(&font8[index][0]));
-    unsigned char charData[9] = //{pgm_read_byte(&font8[index])};
-    { pgm_read_byte(&font8[index][0]),
-    pgm_read_byte(&font8[index][1]),
-    pgm_read_byte(&font8[index][2]),
-    pgm_read_byte(&font8[index][3]),
-    pgm_read_byte(&font8[index][4]),
-    pgm_read_byte(&font8[index][5]),
-    pgm_read_byte(&font8[index][6]),
-    pgm_read_byte(&font8[index][7])};
-    
-    
-    
-  /*
-    printf("%d %d %d\n", c, index, pgm_read_byte(&font8[0]));
-    printf("%d %d %d %d %d %d %d %d \n", pgm_read_byte(&font8[index][0]),
-    pgm_read_byte(&font8[index][1]),
-    pgm_read_byte(&font8[index][2]),
-    pgm_read_byte(&font8[index][3]),
-    pgm_read_byte(&font8[index][4]),
-    pgm_read_byte(&font8[index][5]),
-    pgm_read_byte(&font8[index][6]),
-    pgm_read_byte(&font8[index][7]));
-   
-
-oledWriteData(0b00000000);
-oledWriteData(0b00000110);
-oledWriteData(0b01011111);
-oledWriteData(0b01011111);
-oledWriteData(0b00000110);
-oledWriteData(0b00000000);
-oledWriteData(0b00000000);
-oledWriteData(0b00000000);
-*/
-
+    unsigned char charData[9] = 
+    {pgm_read_byte(&font8[index][0]),
+     pgm_read_byte(&font8[index][1]),
+     pgm_read_byte(&font8[index][2]),
+     pgm_read_byte(&font8[index][3]),
+     pgm_read_byte(&font8[index][4]),
+     pgm_read_byte(&font8[index][5]),
+     pgm_read_byte(&font8[index][6]),
+     pgm_read_byte(&font8[index][7])};
 
     for (int i = 0; i < 9; i++) {
 
         oledWriteData(charData[i]);
-        //printf("%d\n", charData[i]);
-
-    }
-        
-        
+    }       
 }
 
 void oledPrintString(char *str) {
@@ -196,12 +162,6 @@ void oledPrintString(char *str) {
 
 int getJoystickButtonPosition(enum Direction direction, int row, int column) {
     DDRD &= ~(1 << DDD5); //set pin D5 as input
-
-    /*
-    struct joystickCoordinates jsCoord;
-    jsCoord.row = row;
-    jsCoord.column = column;
-    */
 
     switch (direction) {
         case LEFT:
@@ -246,24 +206,56 @@ int getJoystickButtonPosition(enum Direction direction, int row, int column) {
         return column;
     }
 
-    //oledSetPosition(row, column);
-
-
 }
 
-void oledMakeTextMenu() {
+void oledMakeHomeMenu() {
      
       oledSetPosition(0, 9);
-      oledPrintString("highscore");
-           
-      oledSetPosition(1, 9);
-      oledPrintChar('0');
-
+      oledPrintString("PING-PONG");
+  
       oledSetPosition(2, 9);
+      oledPrintString("highscore");
+
+      oledSetPosition(5, 9);
       oledPrintString("play");
 
-      oledSetPosition(3, 9);
+      oledSetPosition(6, 9);
       oledPrintString("exit");
+
+      oledPrintArrow(5, 1);
+}
+
+void oledMakePlayMenu() {
+     
+      oledSetPosition(0, 9);
+      oledPrintString("PLAYING");
+           
+      oledSetPosition(2, 9);
+      oledPrintString("Score");
+
+      oledSetPosition(2, 57);
+      oledPrintChar('0');
+
+      oledSetPosition(4, 9);
+      oledPrintString("exit");
+
+      oledPrintArrow(4, 1);
+}
+
+void oledUpdateScore(uint8_t score) {
+    char str[4];
+    sprintf(str, "%d", score);
+    
+    oledSetPosition(2, 57);
+    oledPrintString(str);
+}
+
+void oledUpdateHighscore(uint8_t score) {
+    char str[4];
+    sprintf(str, "%d", score);
+    
+    oledSetPosition(3, 9);
+    oledPrintString(str);
 }
 
 void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction direction) {
@@ -313,4 +305,48 @@ void moveArrowWithJoystick(uint8_t *row, uint8_t *column, enum Direction directi
         *column = col;
 }
 
-void test() {}
+void moveArrowHomeMenu(Buttons buttons, uint8_t *state) {
+        static uint8_t page = 5;
+
+        if (buttons.NU) {
+          if (page > 5){
+            removeSymbol(page, 1);
+            page--;
+            oledPrintArrow(page, 1);
+          }
+
+        }
+
+        else if (buttons.ND) {
+          if (page < 6) {
+          removeSymbol(page, 1);
+          page++;
+          oledPrintArrow(page, 1);
+          }
+        }
+
+        else if (buttons.NB && page == 5) {*state = 1;}
+}
+
+void moveArrowPlayMenu(Buttons buttons, uint8_t *state) {
+        static uint8_t page = 4;
+
+        if (buttons.NU) {
+          if (page > 4){
+            removeSymbol(page, 1);
+            page--;
+            oledPrintArrow(page, 1);
+          }
+
+        }
+
+        else if (buttons.ND) {
+          if (page < 4) {
+          removeSymbol(page, 1);
+          page++;
+          oledPrintArrow(page, 1);
+          }
+        }
+
+        else if (buttons.NB && page == 4) {*state = 0;}
+}

@@ -4,6 +4,7 @@
 #include "CAN/can_controller.h"
 #include "CAN/can.h"
 #include "IO/PID_Con.h"
+#include "IO/ir_photodiode.h"
 
 /*
  * Remember to update the Makefile with the (relative) path to the uart.c file.
@@ -22,8 +23,6 @@ int main()
   SystemInit();
   WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
 
-
-  //uart_init(/*cpufreq*/, /*baud*/);
   uart_init(84000000, 9600);
   
   //signal pin test
@@ -50,169 +49,121 @@ int main()
       .smp    = 0
   };
   
-  // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
+ // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
 
  //using can.h and not can_controller.h
  pwmServoInit();
  pwmMotorInit();
  
-  can_init(CFG_250KBPS, 0);
- 
+ can_init(CFG_250KBPS, 0);
 
-  CanMsg m = (CanMsg){
-    .id = 5,
-    .length = sizeof(YourStruct),
-    .byte8 = union_cast(Byte8, ((YourStruct){
-      .a = 10,
-      .b = 20,
-      .c = 25,
-      .d = 30,
-    })),
-  };
-    
-    /*
-    CanMsg write = {
-    .id = 3,
-    .length = 1,
-       .byte[8] = 3,
-        .dword[2] = 6,
-        .byte8 = 0
-  };
-  */
-
-  CanMsg read = {
-    .id = 3,
-    .length = 2
-  };
+ CanMsg read = {
+   .id = 3,
+   .length = 2
+ };
    
-  //PIO_PB13;
   printf("CHARIZARD\n\r");
-  can_printmsg(m);
-
+  deactivateSolenoid();
   changeServoPosition(0);
   adcInit();
   decoderInit();
-
-  int goals = 0;
-  unsigned long goalDelay = 1000000;
-
+  uint8_t goals = 0;
+  unsigned long goalDelay = 400000000;
   moveMotor(0);
-
   int currentPosition = 0;
+  regulatorTimertInit();
 
-  printf("TEST DOUBLE %lf", (double)0.18347);
-
-  while (1)
-  {
-    
-    
-    int adc = adcRead();
-    printf("ADC %d\t", adc);
-    uint8_t goal = isGoal(adc);
-    printf(" GOAL? %d ", goal);
-    countGoals(&goals, goal, goalDelay);
-    printf(" TOTAL %d\t", goals);
-    int motorPosition = getDecoderValue();
-    printf(" DECODER VALUE %d\t", motorPosition);
-   
-    
-    
- 
-      //can_tx(m);
-      
-      
-      printf("Reading... ");
-      if(can_rx(&read)) can_printmsg(read);
-      else printf("empty soul, empty head");
-
-      
-      uint8_t servoAngle = read.byte[0];
-      printf(" SERVO ANGLE %d", servoAngle);
-      changeServoPosition(servoAngle);
-      
-      
-      uint8_t motorAngle = read.byte[1];
-      currentPosition = desiredMotorPosition(currentPosition, motorAngle, motorPosition);
-      printf(" CURRENT POS %d", currentPosition);
-
-      uint8_t solenoidState = read.byte[2];
-
-
-      
-      PIDCon controller = {
+  PIDCon controller = {
         .Kp = 10, 
-        .Ki = 10,
-        .Kd = 0,
+        .Ki = 20,
+        .Kd = 4,
 
-        .T = (1/4000000),
+        .T = (0.125),
         .integral = 0
       };
-      ringBufferInit(&controller.errorPrev);
-      double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 1, 1);
+  ringBufferInit(&controller.errorPrev);
+
+  ringBufferGoals goalsRing;
+  ringBufferGoalsInit(&goalsRing, 4);
+  
+  uint8_t gameInitialized = 0;
+  int upperBound = 0;
+  unsigned long playStartTime = 0;
+  while (1)
+  {
+        
+    if(can_rx(&read)){
+      uint8_t running = read.byte[2] & 0b10;
+
+    if (running){
+        if (!gameInitialized) {
+          int motorPosition = getDecoderValue();  
+          gameInitialized = calibrateField(motorPosition, &upperBound);
+            if (gameInitialized) {
+              printf("\n\n\rINITIALIZE\n\n\r");
+              playStartTime = time_now();
+
+              CanMsg m = (CanMsg){
+                .id = 5,
+                .length = sizeof(YourStruct),
+                .byte8 = union_cast(Byte8, ((YourStruct){
+                  .a = 0,
+                })),
+              };
+              can_tx(m);
+            }
+        }
+        else {
+            TC0_Handler();
+
+            uint8_t servoAngle = read.byte[0];
+            changeServoPosition(servoAngle);
+
+            int adc = adcRead();
+            if (adc != 0) {ringBufferGoalsAdd(&goalsRing, adc);}
       
-      moveMotor(gain);
-      
-      
-      
+            uint8_t goal = isGoal(goalsRing);
+            
+            uint8_t joystickAngleX = read.byte[1];
+            int relativePosition = angleToRelativePosition(joystickAngleX);
+            
+            currentPosition = actuallyGetTargetPosition(relativePosition, upperBound);
 
-     /*
-      motorEnable();
-      if (motorAngle < 90) {setMotorDirection(0);}
-      else if (motorAngle != 90) {setMotorDirection(1);}
-      else {motorDisable();}
-      setMotorVelocity(motorAngle);
-      */
+            uint8_t solenoidState = read.byte[2] & 0b1;
+            pulseSolenoid(solenoidState);
 
-      
+            if(setFlag(0)){
+              int motorPosition = getDecoderValue();
+              printf(" D %d\t C %d\t U %d\n\r", motorPosition, currentPosition, upperBound);
+              double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 250, 0, 1);
+              moveMotor(gain);
+            }
 
-    /*
-
-      if (motorAngle > 180) {
-
-
-        motorAngle=180;
-
-
+            if ((time_now() - playStartTime) > 400000000) {
+              if(countGoals(&goals, goal, goalDelay)) {
+              CanMsg m = (CanMsg){
+                .id = 5,
+                .length = sizeof(YourStruct),
+                .byte8 = union_cast(Byte8, ((YourStruct){
+                  .a = goals,
+                })),
+              };
+            
+              can_tx(m);
+              
+             }
+            }
+        } 
       }
-
-
-      if (motorAngle < 90) {
-
-1
-        setMotorDirection(1);
-
-
-        motorAngle *= 2;
-
-
-        printf(" MOTOR LEFT %d", motorAngle);
-
-
-      }
-
-
       else {
-
-
-        setMotorDirection(0);
-
-
-        motorAngle -= 90;
-
-
-        motorAngle *= 2;
-
-
-        printf(" MOTOR RIGHT %d", motorAngle);
-
-
+        if (gameInitialized) {
+          gameInitialized = 0;
+          goals = 0;
+          moveMotor(0);
+          changeServoPosition(0);
+        }
       }
-
-
-      setMotorVelocity(motorAngle);
-    */
-      
-    printf("\n\r");
+    }
       
   }
     

@@ -1,5 +1,5 @@
-build/solenoid.o: IO/solenoid.c IO/solenoid.h time.h \
- sam/sam3x/include/sam.h sam/sam3x/include/sam3x8e.h sam/cmsis/core_cm3.h \
+build/solenoid.o: IO/solenoid.c IO/solenoid.h sam/sam3x/include/sam.h \
+ sam/sam3x/include/sam3x8e.h sam/cmsis/core_cm3.h \
  sam/cmsis/cmsis_version.h sam/cmsis/cmsis_compiler.h \
  sam/cmsis/cmsis_gcc.h sam/cmsis/mpu_armv7.h \
  sam/sam3x/source/system_sam3x.h sam/compiler.h sam/parts.h \

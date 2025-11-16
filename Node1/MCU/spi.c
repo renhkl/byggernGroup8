@@ -49,7 +49,7 @@ void SPIMasterReceive(IOcommands command, char *data, uint8_t lenData){
 
     PORTB |= (1 << DISPLAY_SS | 1 << IO_SS | 1 << CAN_SS);
 
-    _delay_ms(0.408);
+    //_delay_ms(0.408);
 
     PORTB &= ~(1 << IO_SS);
 

@@ -30,20 +30,28 @@ void ringBufferAdd(ringBuffer *rb, double value){
 }
 
 double ringBufferGet(ringBuffer *rb, int index){
-    int start = (rb-> head - rb->count + 4) % 4;
+    int start = (rb->head - rb->count + 4) % 4;
     int idx = (start + index) % 4;
     return rb->data[idx];
 }
 
+double ringBufferGetLast(ringBuffer *rb){
+    if(rb->count == 0) return 0;
+    return rb->data[(rb->head - 1 + 4) % 4];
+}
+
 //Calculates PID gain, with the option of using integral anti-windup according to the Pedersen scheme.
-//Also feature anti-stick logic. 
+//Also feature anti-stick logic and target boost logic (additional gain if enabled and state within set proximity of target).
 //Init a controller (se header file) and feed the desired position into "target" and the current measurement into "measurement". 
-double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold, bool antiStick) {
+double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold, bool antiStick, bool turboBooster) {
 
     double error = target - measurement;
+    //printf(" ERROR: %lf\t", error);
+
+    double derivative = (error - ringBufferGetLast(&controller->errorPrev))/controller->T;
 
     if(antiWindup){
-        if(error <= antiWindupThreshold){
+        if(abs(error) <= antiWindupThreshold){
             controller->integral += error * controller->T;
         }
         else{
@@ -54,22 +62,27 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
         controller->integral += error * controller->T;
     }
 
-    double Kp = controller->Kp;
+    double boost = 1;
+    double targetBoost = 1;
+
     if(antiStick){
         if((int)ringBufferGet(&controller->errorPrev, 0) == (int)error && (int)ringBufferGet(&controller->errorPrev, 1) == (int)error &&
            (int)ringBufferGet(&controller->errorPrev, 2) == (int)error && (int)ringBufferGet(&controller->errorPrev, 3) == (int)error){
-            double boostedKp = Kp * 5;
-            controller->Kp = boostedKp; 
+            boost = 5;
+        }
+    }
+
+    if(turboBooster){
+        if(abs(error) <= antiWindupThreshold){
+            targetBoost = 2;
         }
     }
 
     //Gain compute. Note that the last term is derivative action. This can be turned off by setting "Kd" to 0 in the controller struct.
-    double gain = controller->Kp * error + controller->Ki * controller->integral;
-
-    controller->Kp = Kp;
+    double gain = controller->Kp * boost * targetBoost * error + controller->Ki * controller->integral + controller->Kd * derivative;
 
     ringBufferAdd(&controller->errorPrev, error);
-
+  
     return gain;
 }
 

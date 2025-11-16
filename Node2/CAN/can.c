@@ -14,6 +14,17 @@ void can_printmsg(CanMsg m){
     printf("})");
 }
 
+void can_printdata(CanMsg m){
+    printf("Can{", m.id, m.length);
+    if(m.length){
+        printf("%d", m.byte[0]);
+    }
+    for(uint8_t i = 1; i < m.length; i++){
+        printf(", %d", m.byte[i]);
+    }
+    printf("}");
+}
+
 
 #define txMailbox 0
 #define rxMailbox 1
