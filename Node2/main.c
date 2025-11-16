@@ -23,8 +23,6 @@ int main()
   SystemInit();
   WDT->WDT_MR = WDT_MR_WDDIS; //Disable Watchdog Timer
 
-
-  //uart_init(/*cpufreq*/, /*baud*/);
   uart_init(84000000, 9600);
   
   //signal pin test
@@ -51,31 +49,19 @@ int main()
       .smp    = 0
   };
   
-  // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
+ // brp = F_CPU/2000000-1, .phase1 = 5, .phase2 = 1, .propag = 6
 
  //using can.h and not can_controller.h
  pwmServoInit();
  pwmMotorInit();
  
-  can_init(CFG_250KBPS, 0);
- 
-    
-    /*
-    CanMsg write = {
-    .id = 3,
-    .length = 1,
-       .byte[8] = 3,
-        .dword[2] = 6,
-        .byte8 = 0
-  };
-  */
+ can_init(CFG_250KBPS, 0);
 
-  CanMsg read = {
-    .id = 3,
-    .length = 2
-  };
+ CanMsg read = {
+   .id = 3,
+   .length = 2
+ };
    
-  //PIO_PB13;
   printf("CHARIZARD\n\r");
   deactivateSolenoid();
   changeServoPosition(0);
@@ -90,7 +76,7 @@ int main()
   PIDCon controller = {
         .Kp = 10, 
         .Ki = 20,
-        .Kd = 3,
+        .Kd = 4,
 
         .T = (0.125),
         .integral = 0
@@ -105,92 +91,69 @@ int main()
   unsigned long playStartTime = 0;
   while (1)
   {
-    
-    
-   
-    //printf("\n\rCURRENT TIME1 %d\n\r", time_now());
+        
+    if(can_rx(&read)){
+      uint8_t running = read.byte[2] & 0b10;
+
+    if (running){
+        if (!gameInitialized) {
+          int motorPosition = getDecoderValue();  
+          gameInitialized = calibrateField(motorPosition, &upperBound);
+            if (gameInitialized) {
+              printf("\n\n\rINITIALIZE\n\n\r");
+              playStartTime = time_now();
+
+              CanMsg m = (CanMsg){
+                .id = 5,
+                .length = sizeof(YourStruct),
+                .byte8 = union_cast(Byte8, ((YourStruct){
+                  .a = 0,
+                })),
+              };
+              can_tx(m);
+            }
+        }
+        else {
+            TC0_Handler();
+
+            uint8_t servoAngle = read.byte[0];
+            changeServoPosition(servoAngle);
+
+            int adc = adcRead();
+            if (adc != 0) {ringBufferGoalsAdd(&goalsRing, adc);}
       
-      
-      if(can_rx(&read))
-      {
-        //can_printdata(read);
-        uint8_t running = read.byte[2] & 0b10;
+            uint8_t goal = isGoal(goalsRing);
+            
+            uint8_t joystickAngleX = read.byte[1];
+            int relativePosition = angleToRelativePosition(joystickAngleX);
+            
+            currentPosition = actuallyGetTargetPosition(relativePosition, upperBound);
 
-      
-      //printf(" DECODER VALUE %d\t", motorPosition);
-      
-      //printf("upperBound %d ",upperBound);
+            uint8_t solenoidState = read.byte[2] & 0b1;
+            pulseSolenoid(solenoidState);
 
-      if (running) {
-          if (!gameInitialized) {
-            int motorPosition = getDecoderValue();  
-            gameInitialized = calibrateField(motorPosition, &upperBound);
-              if (gameInitialized) {
-                printf("\n\n\rINITIALIZE\n\n\r");
-                playStartTime = time_now();
+            if(setFlag(0)){
+              int motorPosition = getDecoderValue();
+              printf(" D %d\t C %d\t U %d\n\r", motorPosition, currentPosition, upperBound);
+              double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 250, 0, 1);
+              moveMotor(gain);
+            }
 
-                CanMsg m = (CanMsg){
-                  .id = 5,
-                  .length = sizeof(YourStruct),
-                  .byte8 = union_cast(Byte8, ((YourStruct){
-                    .a = 0,
-                  })),
-                };
-                can_tx(m);
-              }
-          }
-          else {
-              TC0_Handler();
-
-              uint8_t servoAngle = read.byte[0];
-              //printf(" SERVO ANGLE %d", servoAngle);
-              changeServoPosition(servoAngle);
-
-              int adc = adcRead();
-              if (adc != 0) {ringBufferGoalsAdd(&goalsRing, adc);}
-              //printf("ADC %d\t", adc);
-
-              uint8_t goal = isGoal(goalsRing);
-              //printf(" GOAL? %d ", goal);
-
-              //countGoals(&goals, goal, goalDelay);
-              //printf(" TOTAL %d\t", goals);
-
-              uint8_t joystickAngleX = read.byte[1];
-              //printf(" JOYSTICK %d", joystickAngleX);
-              int relativePosition = angleToRelativePosition(joystickAngleX);
-              //printf(" RELATIVEPOS %d", relativePosition);
-              currentPosition = actuallyGetTargetPosition(relativePosition, upperBound);
-              //printf(" CURRENT POS %d", currentPosition);
-
-              uint8_t solenoidState = read.byte[2] & 0b1;
-              pulseSolenoid(solenoidState);
-              //printf(" SOLENOID %d", solenoidState);
-
-              if(setFlag(0)){
-                int motorPosition = getDecoderValue();
-                printf(" D %d\t C %d\t U %d\n\r", motorPosition, currentPosition, upperBound);
-                double gain = compute_gain(&controller, currentPosition, motorPosition, 1, 250, 0, 1);
-                moveMotor(gain);
-              }
-              if ((time_now() - playStartTime) > 400000000) {
-                if(countGoals(&goals, goal, goalDelay)) {
-                CanMsg m = (CanMsg){
-                  .id = 5,
-                  .length = sizeof(YourStruct),
-                  .byte8 = union_cast(Byte8, ((YourStruct){
-                    .a = goals,
-                  })),
-                };
-                
-                //printf("SENDING: ");
-                //can_printmsg(m);
-                can_tx(m);
-                
-              }
-              }
-              //printf(" GOALS %d\t", goals);
-          } 
+            if ((time_now() - playStartTime) > 400000000) {
+              if(countGoals(&goals, goal, goalDelay)) {
+              CanMsg m = (CanMsg){
+                .id = 5,
+                .length = sizeof(YourStruct),
+                .byte8 = union_cast(Byte8, ((YourStruct){
+                  .a = goals,
+                })),
+              };
+            
+              can_tx(m);
+              
+             }
+            }
+        } 
       }
       else {
         if (gameInitialized) {
@@ -200,8 +163,7 @@ int main()
           changeServoPosition(0);
         }
       }
-      //printf("\n\r");
-      }
+    }
       
   }
     

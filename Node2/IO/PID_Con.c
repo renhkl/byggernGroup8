@@ -41,7 +41,7 @@ double ringBufferGetLast(ringBuffer *rb){
 }
 
 //Calculates PID gain, with the option of using integral anti-windup according to the Pedersen scheme.
-//Also feature anti-stick logic. 
+//Also feature anti-stick logic and target boost logic (additional gain if enabled and state within set proximity of target).
 //Init a controller (se header file) and feed the desired position into "target" and the current measurement into "measurement". 
 double compute_gain(PIDCon *controller, double target, double measurement, bool antiWindup, double antiWindupThreshold, bool antiStick, bool turboBooster) {
 
@@ -62,11 +62,8 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
         controller->integral += error * controller->T;
     }
 
-    //printf(" INTEGRAL: %lf\t", controller->integral);
-
     double boost = 1;
     double targetBoost = 1;
-    //double targetSuperBoost = 0;
 
     if(antiStick){
         if((int)ringBufferGet(&controller->errorPrev, 0) == (int)error && (int)ringBufferGet(&controller->errorPrev, 1) == (int)error &&
@@ -75,17 +72,9 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
         }
     }
 
-    /*if(targetBooster){
-        double eps = 0.1;
-        targetBoost = 1/(error + (error == 0)*eps);
-        printf("TARGETBOOST: %lf\t", targetBoost);
-    }*/
-
     if(turboBooster){
         if(abs(error) <= antiWindupThreshold){
             targetBoost = 2;
-            //double sgn = error/abs(error);
-            //targetSuperBoost = sgn  * 500;
         }
     }
 
@@ -93,7 +82,7 @@ double compute_gain(PIDCon *controller, double target, double measurement, bool 
     double gain = controller->Kp * boost * targetBoost * error + controller->Ki * controller->integral + controller->Kd * derivative;
 
     ringBufferAdd(&controller->errorPrev, error);
-    //printf("GAIN: %lf\t", gain);
+  
     return gain;
 }
 

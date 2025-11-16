@@ -45,8 +45,6 @@ void pwmMotorInit() {
     PWM->PWM_CH_NUM[0].PWM_CDTY = 25000; //duty cycle
     PWM->PWM_ENA |= PWM_ENA_CHID0; //enable channel 0
 
-    //printf("%d \n", PWM->PWM_SR & PWM_SR_CHID0);
-
     //make write protection for pwm active again
     PWM->PWM_WPCR |=  PWM_WPCR_WPKEY(0x50574D); 
     PWM->PWM_WPCR |= PWM_WPCR_WPRG0 | PWM_WPCR_WPRG2 | PWM_WPCR_WPRG3; //groups it applies to
@@ -69,13 +67,13 @@ void setMotorVelocity(int DutyCycle) {
 void setMotorDirection(uint8_t direction) {
     PIOC->PIO_OER = PIO_OER_P23;
     if (direction == 1) {PIOC->PIO_SODR = PIO_SODR_P23;}
-    //printf(" MOVING LEFT");} //set high
+    
     if (direction == 0) {PIOC->PIO_CODR = PIO_CODR_P23;} //pioper10 PIOD
-    //printf(" MOVING RIGHT");} //set low
+    
 }
 
-void moveMotor(double gain) {
-    //printf(" GAINS %lf", gain);
+void moveMotor(double gain){
+   
     if (gain > 0){
         setMotorDirection(0);
     };
@@ -86,8 +84,7 @@ void moveMotor(double gain) {
     setMotorVelocity((int)gain);
 }
 
-void timerCounterInit()
-{
+void timerCounterInit(){
 
     //write protections in control register
     PMC->PMC_WPMR |= PMC_WPMR_WPKEY(0x504D43);
@@ -129,8 +126,7 @@ void timerCounterInit()
 TC2-> TC_CHANNEL[0].TC_CCR |= TC_CCR_CLKEN;
 }
 
-void decoderInit()
-{
+void decoderInit(){
     //PMC
     //write protections in control register
     PMC->PMC_WPMR |= PMC_WPMR_WPKEY(0x504D43);
@@ -180,7 +176,7 @@ void decoderInit()
 }
 
 
-int getDecoderValue() {
+int getDecoderValue(){
     int value = TC2->TC_CHANNEL[0].TC_CV; 
     //read value
     return REG_TC2_CV0;
@@ -208,8 +204,6 @@ int desiredMotorPosition(int currentPosition, uint8_t joystickAngle, int motorPo
         initialized = 1;
     }
 
-    //printf(" LOWER %d", lowerBound);
-    //printf(" UPPER %d", upperBound);
     if (lowerBound > motorPosition + deltaPosition) {lowerBound = motorPosition + deltaPosition;}
     if (upperBound < motorPosition + deltaPosition) {upperBound = motorPosition + deltaPosition;}
 

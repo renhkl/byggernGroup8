@@ -52,15 +52,11 @@ uint8_t mcp2515Init ()
     // Self - test
     _delay_ms(10);
     uint8_t value = mcp2515Read(MCP_CANSTAT);
-    //printf("VALUE IS: %d\n", value);
     if ((value & MODE_MASK) != MODE_CONFIG) {
-        //printf("MCP2515 is NOT in configuration mode after reset!\n");
         return 1;
     }
-    else {
-        //printf("MCP2515 is in configuration mode after reset!\n");
-    }
-    // More initialization
+    else {// for debugging}
+    // More initialization if needed
     return 0;
 }
 

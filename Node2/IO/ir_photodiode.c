@@ -25,7 +25,7 @@ void adcInit() {
     
     //ADC
 
-      //PIOA->PIO_ = PIO_OER_P13; //make output
+    //PIOA->PIO_ = PIO_OER_P13; //make output
 
     //write protections in control register
     ADC->ADC_WPMR |= ADC_WPMR_WPKEY(0x414443);
@@ -56,10 +56,6 @@ void adcINIT() {
 }
 
 int adcRead() {
-
-    
-    //last coverted value??
-    //printf("ADC status %d", ADC->ADC_CHSR);
     int value = ADC->ADC_CDR[0];
     return value;
 
@@ -68,9 +64,6 @@ int adcRead() {
 uint8_t countGoals(uint8_t *goals, int sensor, unsigned long goalDelay) {
     static unsigned long lastGoal = 0; 
     unsigned long now = time_now();
-    //printf("\tNOW%d\t ", now);
-    //printf("LAST GOAL%d ", lastGoal);
-    //printf("%d\t", now - lastGoal);
 
     if(sensor && ((now - lastGoal) > goalDelay)){
         (*goals) += 1;
@@ -84,6 +77,7 @@ int readPhotodiode() {
     return 0;
 }
 
+//Uses ring buffer to avarage last samples (noise reduction) for goal detection.  
 uint8_t isGoal(ringBufferGoals goalArray)
 {   
     double avarage = 0;
@@ -92,7 +86,6 @@ uint8_t isGoal(ringBufferGoals goalArray)
     }
     avarage = avarage/goalArray.size;
 
-    //printf("AVARAGE :%lf", avarage);
     if (avarage > 800) return 0;
     else return 1;
 }

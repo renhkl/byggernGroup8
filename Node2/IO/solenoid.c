@@ -8,9 +8,6 @@ void pulseSolenoid(uint8_t solenoidState) {
     unsigned long pulseLength = 10000000;
     static unsigned long lastPulse = 0; 
     unsigned long now = time_now();
-    //printf(" DELAYTIME %d", delay);
-    //printf(" CURRENTTIME %d", now);
-    //printf(" LASTTIME %d", lastPulse);
 
     if(solenoidState && !state && ((now - lastPulse) > delay))
     {
@@ -52,11 +49,9 @@ void toggleSolenoid() {
 void activateSolenoid() {
     PIOC->PIO_OER = PIO_OER_P24;
     PIOC->PIO_CODR = PIO_CODR_P24; //set low
-    //printf(" ACTIVATE");
 }
 
 void deactivateSolenoid() {
     PIOC->PIO_OER |= PIO_OER_P24;
     PIOC->PIO_SODR = PIO_SODR_P24; //set high
-    //printf(" DEACTIVATE");
 }

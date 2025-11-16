@@ -21,24 +21,14 @@ void canInit(canTimeConfig tConfig) {
     uint8_t cnf2 = propag + (phase1 << 3) + (1 << 7);
     uint8_t cnf3 = phase2;
 
-    //printf("CNF1 %d\n",cnf1);
-    //printf("CNF2 %d\n",cnf2);
-    //printf("CNF3 %d\n",cnf3);
 
     uint8_t value = mcp2515Read(MCP_CANSTAT);
     if ((value & MODE_MASK) == MODE_CONFIG) {
-        //printf("MCP2515 is in configuration mode during initialization\n");
     }
 
     mcp2515Write(MCP_CNF3, MCP_16MHz_250kBPS_CFG3);
     mcp2515Write(MCP_CNF2, MCP_16MHz_250kBPS_CFG2);
     mcp2515Write(MCP_CNF1, MCP_16MHz_250kBPS_CFG1);
-
-    
-    //printf("cnf1 %d\n",mcp2515Read(MCP_CNF1));
-    //printf("cnf2 %d\n",mcp2515Read(MCP_CNF2));
-    //printf("cnf3 %d\n",mcp2515Read(MCP_CNF3));
-    
 
     canSetNormalMode();
 }
@@ -54,77 +44,37 @@ void canSetNormalMode() {
 
 void canTransmit(frame message) {
 
+    uint8_t CanCTRL = mcp2515Read(TXB0CTRL);
+    if ((CanCTRL >> 3) & 1) {
+        printf("TRANSMIT FAIL. BUSY.");
+        return;
+    }
 
- //init message transmission
-    /* Setup
-- Message ID (TXBnSIDH &
-TXBnSIDL)
-- Data length (TXBnDLC)
-- Data (TXBnDm)
-▶ Request-to-send command.
-(TXBnCTRL.TXREQ)
-▶ Datasheet chapter 3*/
+    uint8_t databytes = message.length;
 
-//TXBnSIDH.SID3 |= 0;mcp2515RTSAll();
-//TXBnSIDL.SID3 |= 1;
+    uint8_t dlc = (message.length > 8) ? 8 : message.length;
 
-//printf("TRANSMITTING....\n");
-//mcp2515RTSAll();
+    printf("Transmitting.. ID %d", message.id);
 
-uint8_t CanCTRL = mcp2515Read(TXB0CTRL);
-//printf("%d\n",CanCTRL);
-//printf("CANCTRL: %d\t", CanCTRL);
-if ((CanCTRL >> 3) & 1) {
-    printf("TRANSMIT FAIL. BUSY.");
-    return;
-}
+    PORTB &= ~(1 << CAN_CS);
+    SPIMCP2515Transmit(MCP_LOAD_TX0);
+    SPIMCP2515Transmit((message.id >> 3) & 0xFF); //high
+    SPIMCP2515Transmit((message.id << 5) & 0b11100000); //low
+    SPIMCP2515Transmit(0x00);
+    SPIMCP2515Transmit(0x00);
+    SPIMCP2515Transmit(message.length & 0x0F);
 
-uint8_t databytes = message.length;
+    for (uint8_t byte = 0; byte < dlc; byte++) {
+        SPIMCP2515Transmit(message.data[byte]);
+    }
 
-uint8_t dlc = (message.length > 8) ? 8 : message.length;
+    PORTB |= (1 << CAN_CS);
 
-printf("Transmitting.. ID %d", message.id);
-
-PORTB &= ~(1 << CAN_CS);
-SPIMCP2515Transmit(MCP_LOAD_TX0);
-SPIMCP2515Transmit((message.id >> 3) & 0xFF); //high
-SPIMCP2515Transmit((message.id << 5) & 0b11100000); //low
-SPIMCP2515Transmit(0x00);
-SPIMCP2515Transmit(0x00);
-SPIMCP2515Transmit(message.length & 0x0F);
-
-for (uint8_t byte = 0; byte < dlc; byte++) {
-    //mcp2515Write(TXB0D0+byte, message.data[byte]);
-    SPIMCP2515Transmit(message.data[byte]);
-}
-
-PORTB |= (1 << CAN_CS);
-//printf("data: %d\n", mcp2515Read(TXB0D0));
-
-mcp2515RTS(0);
-//mcp2515BitModify(TXB0CTRL, 0b00000100, 0);
-//mcp2515BitModify(MCP_CANINTF, 0b00000011, 0);
-
-
-    
+    mcp2515RTS(0);
 
 }
 
 frame canReceive() {
-    /*Wait for a received message
-- Interrupt pin (enable using
-CANINTE.RXnIE)
-- Read status registers (check
-CANINTF.RXnIF)
-
-▶ Read message
-- ID (RXBnSIDH & RXBnSIDL)
-- Data length (RXBnDLC)
-- Data (RXBnDM)
-▶ Filter and Masks
-- RXBxCTRL.FILHIT<2:0> with
-RXFnSIDH, RXMnSIDH. . . .
-▶ Datasheet chapter 4 */
 
     mcp2515BitModify(MCP_CANINTE, 0b00000001, 0b00000001); //interrupt enable for receive buffer 0
 
@@ -150,16 +100,5 @@ RXFnSIDH, RXMnSIDH. . . .
         
         return m;
     }
-/*
-bytes += mcp2515Read(RXB0D0);
-bytes += mcp2515Read(RXB0D1) << BYTE_SIZE;
-bytes += mcp2515Read(RXB0D2) << BYTE_SIZE*2;
-bytes += mcp2515Read(RXB0D3) << BYTE_SIZE*32515BitModify(MCP_CANINTF,0b00000011, 0);;
-bytes += mcp2515Read(RXB0D4) << BYTE_SIZE*4;
-bytes += mcp2515Read(RXB0D5) << BYTE_SIZE*5;
-bytes += mcp2515Read(RXB0D6) << BYTE_SIZE*6;
-bytes += mcp2515Read(RXB0D7) << BYTE_SIZE*7;
-*/
-//mcp2515BitModify(MCP_RXF0SIDH, 0b10000000, 0b100000000);
 }
 
